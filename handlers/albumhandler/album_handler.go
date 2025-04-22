@@ -1,7 +1,6 @@
 package albumhandler
 
 import (
-	"net/http"
 	"strconv"
 
 	"github.com/espitman/jbm-hr-backend/contract"
@@ -33,9 +32,9 @@ func New(service *albumservice.AlbumService) *AlbumHandler {
 func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {
 	albums, err := h.service.GetAllAlbums(c.Request().Context())
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.NewErrorResponse("Failed to retrieve albums"))
+		return dto.InternalServerErrorJSON(c, "Failed to retrieve albums")
 	}
-	return c.JSON(http.StatusOK, NewAlbumsResponse(albums))
+	return dto.SuccessJSON(c, albums)
 }
 
 // CreateAlbum godoc
@@ -52,7 +51,7 @@ func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {
 func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 	var req CreateAlbumRequest
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.NewErrorResponse(err.Error()))
+		return dto.BadRequestJSON(c, err.Error())
 	}
 
 	input := contract.CreateAlbumInput{
@@ -62,10 +61,10 @@ func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 
 	album, err := h.service.CreateAlbum(c.Request().Context(), &input)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(err.Error()))
+		return dto.InternalServerErrorJSON(c, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, NewAlbumResponse(album))
+	return dto.CreatedJSON(c, album)
 }
 
 // @Summary     Get album by ID
@@ -80,29 +79,14 @@ func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, &AlbumResponse{
-			Response: dto.Response{
-				Success: false,
-				Message: "Invalid album ID",
-			},
-		})
+		return dto.BadRequestJSON(c, "Invalid album ID")
 	}
 
 	album, err := h.service.GetAlbumByID(c.Request().Context(), id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, &AlbumResponse{
-			Response: dto.Response{
-				Success: false,
-				Message: "Failed to get album",
-			},
-		})
+		return dto.InternalServerErrorJSON(c, "Failed to get album")
 	}
-	return c.JSON(http.StatusOK, &AlbumResponse{
-		Response: dto.Response{
-			Success: true,
-		},
-		Data: album,
-	})
+	return dto.SuccessJSON(c, album)
 }
 
 // UpdateAlbum godoc
@@ -121,12 +105,12 @@ func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.NewErrorResponse("Invalid album ID"))
+		return dto.BadRequestJSON(c, "Invalid album ID")
 	}
 
 	var req UpdateAlbumRequest
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.NewErrorResponse(err.Error()))
+		return dto.BadRequestJSON(c, err.Error())
 	}
 
 	input := contract.UpdateAlbumInput{
@@ -136,10 +120,10 @@ func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 
 	album, err := h.service.UpdateAlbum(c.Request().Context(), id, &input)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(err.Error()))
+		return dto.InternalServerErrorJSON(c, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, NewAlbumResponse(album))
+	return dto.SuccessJSON(c, album)
 }
 
 // @Summary     Delete album
@@ -154,27 +138,12 @@ func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 func (h *AlbumHandler) DeleteAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, &AlbumResponse{
-			Response: dto.Response{
-				Success: false,
-				Message: "Invalid album ID",
-			},
-		})
+		return dto.BadRequestJSON(c, "Invalid album ID")
 	}
 
 	err = h.service.DeleteAlbum(c.Request().Context(), id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, &AlbumResponse{
-			Response: dto.Response{
-				Success: false,
-				Message: "Failed to delete album",
-			},
-		})
+		return dto.InternalServerErrorJSON(c, "Failed to delete album")
 	}
-	return c.JSON(http.StatusOK, &AlbumResponse{
-		Response: dto.Response{
-			Success: true,
-			Message: "Album deleted successfully",
-		},
-	})
+	return dto.SuccessJSON(c, "Album deleted successfully")
 }
