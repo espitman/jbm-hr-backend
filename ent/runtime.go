@@ -3,8 +3,8 @@
 package ent
 
 import (
-	"gin-project/ent/album"
-	"gin-project/ent/schema"
+	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/schema"
 )
 
 // The init function reads all schema descriptors with runtime code

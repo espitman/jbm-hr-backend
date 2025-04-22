@@ -5,13 +5,12 @@ package enttest
 import (
 	"context"
 
-	"gin-project/ent"
+	"github.com/espitman/jbm-hr-backend/ent"
 	// required by schema hooks.
-	_ "gin-project/ent/runtime"
-
-	"gin-project/ent/migrate"
+	_ "github.com/espitman/jbm-hr-backend/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
+	"github.com/espitman/jbm-hr-backend/ent/migrate"
 )
 
 type (

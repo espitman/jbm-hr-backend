@@ -3,9 +3,8 @@
 package album
 
 import (
-	"gin-project/ent/predicate"
-
 	"entgo.io/ent/dialect/sql"
+	"github.com/espitman/jbm-hr-backend/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

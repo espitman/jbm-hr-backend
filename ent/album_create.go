@@ -6,10 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gin-project/ent/album"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/espitman/jbm-hr-backend/ent/album"
 )
 
 // AlbumCreate is the builder for creating a Album entity.

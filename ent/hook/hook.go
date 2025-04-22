@@ -5,7 +5,8 @@ package hook
 import (
 	"context"
 	"fmt"
-	"gin-project/ent"
+
+	"github.com/espitman/jbm-hr-backend/ent"
 )
 
 // The AlbumFunc type is an adapter to allow the use of ordinary

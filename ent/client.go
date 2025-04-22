@@ -9,13 +9,12 @@ import (
 	"log"
 	"reflect"
 
-	"gin-project/ent/migrate"
-
-	"gin-project/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"github.com/espitman/jbm-hr-backend/ent/album"
 )
 
 // Client is the client that holds all ent builders.

@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"fmt"
-	"gin-project/ent/album"
-	"gin-project/ent/predicate"
 	"math"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/predicate"
 )
 
 // AlbumQuery is the builder for querying Album entities.

@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"gin-project/ent/album"
 	"strings"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/espitman/jbm-hr-backend/ent/album"
 )
 
 // Album is the model entity for the Album schema.
