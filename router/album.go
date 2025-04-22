@@ -1,11 +1,11 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
 // registerAlbumRoutes registers all album-related routes
-func (r *Router) registerAlbumRoutes(group *gin.RouterGroup) {
+func (r *Router) registerAlbumRoutes(group *echo.Group) {
 	albums := group.Group("/albums")
 	{
 		albums.GET("", r.albumHandler.GetAllAlbums)

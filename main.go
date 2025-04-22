@@ -14,13 +14,13 @@ import (
 )
 
 // @title           JBM HR Backend API
-// @version         1.0
+// @version         1.01
 // @description     This is the backend API for JBM HR system.
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support
 // @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
+// @contact.email  s.heidari@jabama.com
 
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
@@ -56,7 +56,7 @@ func main() {
 
 	// Start server
 	log.Println("Server starting on port 8080...")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := r.Start(":8080"); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("failed starting server: %v", err)
 	}
 }

@@ -64,7 +64,7 @@ definitions:
 host: localhost:8080
 info:
   contact:
-    email: support@swagger.io
+    email: s.heidari@jabama.com
     name: API Support
     url: http://www.swagger.io/support
   description: This is the backend API for JBM HR system.
@@ -73,7 +73,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
   title: JBM HR Backend API
-  version: "1.0"
+  version: "1.01"
 paths:
   /albums:
     get:

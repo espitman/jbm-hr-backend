@@ -7,7 +7,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/handlers/dto"
 	"github.com/espitman/jbm-hr-backend/services/albumservice"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
 // AlbumHandler handles HTTP requests for albums
@@ -30,13 +30,12 @@ func New(service *albumservice.AlbumService) *AlbumHandler {
 // @Success 200 {object} AlbumsResponse
 // @Failure 500 {object} dto.Response
 // @Router /albums [get]
-func (h *AlbumHandler) GetAllAlbums(c *gin.Context) {
-	albums, err := h.service.GetAllAlbums(c.Request.Context())
+func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {
+	albums, err := h.service.GetAllAlbums(c.Request().Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse("Failed to retrieve albums"))
-		return
+		return c.JSON(http.StatusInternalServerError, dto.NewErrorResponse("Failed to retrieve albums"))
 	}
-	c.JSON(http.StatusOK, NewAlbumsResponse(albums))
+	return c.JSON(http.StatusOK, NewAlbumsResponse(albums))
 }
 
 // CreateAlbum godoc
@@ -50,11 +49,10 @@ func (h *AlbumHandler) GetAllAlbums(c *gin.Context) {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /albums [post]
-func (h *AlbumHandler) CreateAlbum(c *gin.Context) {
+func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 	var req CreateAlbumRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(err.Error()))
-		return
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.NewErrorResponse(err.Error()))
 	}
 
 	input := contract.CreateAlbumInput{
@@ -62,13 +60,12 @@ func (h *AlbumHandler) CreateAlbum(c *gin.Context) {
 		Caption: req.Caption,
 	}
 
-	album, err := h.service.CreateAlbum(c.Request.Context(), &input)
+	album, err := h.service.CreateAlbum(c.Request().Context(), &input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(err.Error()))
-		return
+		return c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(err.Error()))
 	}
 
-	c.JSON(http.StatusCreated, NewAlbumResponse(album))
+	return c.JSON(http.StatusCreated, NewAlbumResponse(album))
 }
 
 // @Summary     Get album by ID
@@ -80,29 +77,27 @@ func (h *AlbumHandler) CreateAlbum(c *gin.Context) {
 // @Failure     400 {object} AlbumResponse
 // @Failure     500 {object} AlbumResponse
 // @Router      /albums/{id} [get]
-func (h *AlbumHandler) GetAlbumByID(c *gin.Context) {
+func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &AlbumResponse{
+		return c.JSON(http.StatusBadRequest, &AlbumResponse{
 			Response: dto.Response{
 				Success: false,
 				Message: "Invalid album ID",
 			},
 		})
-		return
 	}
 
-	album, err := h.service.GetAlbumByID(c.Request.Context(), id)
+	album, err := h.service.GetAlbumByID(c.Request().Context(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &AlbumResponse{
+		return c.JSON(http.StatusInternalServerError, &AlbumResponse{
 			Response: dto.Response{
 				Success: false,
 				Message: "Failed to get album",
 			},
 		})
-		return
 	}
-	c.JSON(http.StatusOK, &AlbumResponse{
+	return c.JSON(http.StatusOK, &AlbumResponse{
 		Response: dto.Response{
 			Success: true,
 		},
@@ -123,17 +118,15 @@ func (h *AlbumHandler) GetAlbumByID(c *gin.Context) {
 // @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /albums/{id} [put]
-func (h *AlbumHandler) UpdateAlbum(c *gin.Context) {
+func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.NewErrorResponse("Invalid album ID"))
-		return
+		return c.JSON(http.StatusBadRequest, dto.NewErrorResponse("Invalid album ID"))
 	}
 
 	var req UpdateAlbumRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(err.Error()))
-		return
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.NewErrorResponse(err.Error()))
 	}
 
 	input := contract.UpdateAlbumInput{
@@ -141,13 +134,12 @@ func (h *AlbumHandler) UpdateAlbum(c *gin.Context) {
 		Caption: req.Caption,
 	}
 
-	album, err := h.service.UpdateAlbum(c.Request.Context(), id, &input)
+	album, err := h.service.UpdateAlbum(c.Request().Context(), id, &input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(err.Error()))
-		return
+		return c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(err.Error()))
 	}
 
-	c.JSON(http.StatusOK, NewAlbumResponse(album))
+	return c.JSON(http.StatusOK, NewAlbumResponse(album))
 }
 
 // @Summary     Delete album
@@ -159,29 +151,27 @@ func (h *AlbumHandler) UpdateAlbum(c *gin.Context) {
 // @Failure     400 {object} AlbumResponse
 // @Failure     500 {object} AlbumResponse
 // @Router      /albums/{id} [delete]
-func (h *AlbumHandler) DeleteAlbum(c *gin.Context) {
+func (h *AlbumHandler) DeleteAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, &AlbumResponse{
+		return c.JSON(http.StatusBadRequest, &AlbumResponse{
 			Response: dto.Response{
 				Success: false,
 				Message: "Invalid album ID",
 			},
 		})
-		return
 	}
 
-	err = h.service.DeleteAlbum(c.Request.Context(), id)
+	err = h.service.DeleteAlbum(c.Request().Context(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &AlbumResponse{
+		return c.JSON(http.StatusInternalServerError, &AlbumResponse{
 			Response: dto.Response{
 				Success: false,
 				Message: "Failed to delete album",
 			},
 		})
-		return
 	}
-	c.JSON(http.StatusOK, &AlbumResponse{
+	return c.JSON(http.StatusOK, &AlbumResponse{
 		Response: dto.Response{
 			Success: true,
 			Message: "Album deleted successfully",

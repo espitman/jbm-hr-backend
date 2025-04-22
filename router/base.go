@@ -1,14 +1,16 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 // registerBaseRoutes registers all base routes
 func (r *Router) registerBaseRoutes() {
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Welcome to Gin API",
+	r.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{
+			"message": "Welcome to Echo API",
 		})
 	})
 }

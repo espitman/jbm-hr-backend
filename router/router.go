@@ -1,29 +1,30 @@
 package router
 
 import (
-	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
-	"github.com/espitman/jbm-hr-backend/middleware"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
+	customMiddleware "github.com/espitman/jbm-hr-backend/middleware"
+	"github.com/labstack/echo/v4"
+	echoMiddleware "github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-// Router holds the gin engine and handlers
+// Router holds the echo instance and handlers
 type Router struct {
-	*gin.Engine
+	*echo.Echo
 	albumHandler *albumhandler.AlbumHandler
 }
 
 // NewRouter creates a new router instance
 func NewRouter(albumHandler *albumhandler.AlbumHandler) *Router {
-	engine := gin.Default()
-	engine.Use(middleware.Logger())
+	e := echo.New()
+	e.Use(customMiddleware.Logger())
+	e.Use(echoMiddleware.Recover())
+	e.Use(echoMiddleware.CORS())
 
 	return &Router{
-		Engine:       engine,
+		Echo:         e,
 		albumHandler: albumHandler,
 	}
 }
@@ -40,15 +41,15 @@ func (r *Router) SetupRoutes() {
 	r.registerAlbumRoutes(apiV1)
 
 	// Add Swagger
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/swagger/*", echoSwagger.WrapHandler)
 }
 
-// GetEngine returns the gin engine
-func (r *Router) GetEngine() *gin.Engine {
-	return r.Engine
+// GetEcho returns the echo instance
+func (r *Router) GetEcho() *echo.Echo {
+	return r.Echo
 }
 
 // ServeHTTP implements the http.Handler interface
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	r.Engine.ServeHTTP(w, req)
+	r.Echo.ServeHTTP(w, req)
 }
