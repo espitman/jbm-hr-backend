@@ -2,8 +2,9 @@ package albumservice
 
 import (
 	"context"
-	"gin-project/ent"
-	"gin-project/ent/album"
+
+	"github.com/espitman/jbm-hr-backend/ent"
+	"github.com/espitman/jbm-hr-backend/ent/album"
 )
 
 // AlbumService handles album-related business logic

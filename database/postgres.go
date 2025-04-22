@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"gin-project/ent"
+	"github.com/espitman/jbm-hr-backend/ent"
 
 	_ "github.com/lib/pq"
 )

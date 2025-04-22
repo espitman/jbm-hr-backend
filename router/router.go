@@ -1,8 +1,8 @@
 package router
 
 import (
-	"gin-project/handlers/albumhandler"
-	"gin-project/middleware"
+	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/middleware"
 
 	"github.com/gin-gonic/gin"
 )

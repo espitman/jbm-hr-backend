@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"gin-project/services/albumservice"
+	"github.com/espitman/jbm-hr-backend/services/albumservice"
 
 	"github.com/gin-gonic/gin"
 )

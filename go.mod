@@ -1,4 +1,4 @@
-module gin-project
+module github.com/espitman/jbm-hr-backend
 
 go 1.24
 

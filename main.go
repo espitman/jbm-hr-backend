@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 
-	"gin-project/database"
-	"gin-project/handlers/albumhandler"
-	"gin-project/router"
-	"gin-project/services/albumservice"
+	"github.com/espitman/jbm-hr-backend/database"
+	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/router"
+	"github.com/espitman/jbm-hr-backend/services/albumservice"
 )
 
 func main() {
