@@ -44,13 +44,13 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/albumhandler.AlbumsResponse"
+                            "$ref": "#/definitions/dto.Response"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Creates a new album with the provided details",
+                "description": "Create a new album with the provided details",
                 "consumes": [
                     "application/json"
                 ],
@@ -63,12 +63,12 @@ const docTemplate = `{
                 "summary": "Create a new album",
                 "parameters": [
                     {
-                        "description": "Album details",
+                        "description": "Album creation details",
                         "name": "album",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/contract.CreateAlbumInput"
+                            "$ref": "#/definitions/albumhandler.CreateAlbumRequest"
                         }
                     }
                 ],
@@ -82,13 +82,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/albumhandler.AlbumResponse"
+                            "$ref": "#/definitions/dto.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/albumhandler.AlbumResponse"
+                            "$ref": "#/definitions/dto.Response"
                         }
                     }
                 }
@@ -135,7 +135,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Updates an existing album with the provided details",
+                "description": "Update an album's details by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -145,7 +145,7 @@ const docTemplate = `{
                 "tags": [
                     "albums"
                 ],
-                "summary": "Update album",
+                "summary": "Update an existing album",
                 "parameters": [
                     {
                         "type": "integer",
@@ -155,12 +155,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Album details",
+                        "description": "Album update details",
                         "name": "album",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/contract.UpdateAlbumInput"
+                            "$ref": "#/definitions/albumhandler.UpdateAlbumRequest"
                         }
                     }
                 ],
@@ -174,13 +174,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/albumhandler.AlbumResponse"
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/albumhandler.AlbumResponse"
+                            "$ref": "#/definitions/dto.Response"
                         }
                     }
                 }
@@ -233,8 +239,11 @@ const docTemplate = `{
                 "data": {
                     "$ref": "#/definitions/contract.Album"
                 },
-                "response": {
-                    "$ref": "#/definitions/dto.Response"
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -247,8 +256,45 @@ const docTemplate = `{
                         "$ref": "#/definitions/contract.Album"
                     }
                 },
-                "response": {
-                    "$ref": "#/definitions/dto.Response"
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "albumhandler.CreateAlbumRequest": {
+            "type": "object",
+            "required": [
+                "caption",
+                "url"
+            ],
+            "properties": {
+                "caption": {
+                    "type": "string",
+                    "example": "Album caption"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                }
+            }
+        },
+        "albumhandler.UpdateAlbumRequest": {
+            "type": "object",
+            "required": [
+                "caption",
+                "url"
+            ],
+            "properties": {
+                "caption": {
+                    "type": "string",
+                    "example": "Updated album caption"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "https://example.com/updated-image.jpg"
                 }
             }
         },
@@ -266,46 +312,15 @@ const docTemplate = `{
                 }
             }
         },
-        "contract.CreateAlbumInput": {
-            "type": "object",
-            "required": [
-                "caption",
-                "url"
-            ],
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "contract.UpdateAlbumInput": {
-            "type": "object",
-            "required": [
-                "caption",
-                "url"
-            ],
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.Response": {
             "type": "object",
             "properties": {
+                "data": {},
                 "message": {
-                    "type": "string",
-                    "example": "Operation completed successfully"
+                    "type": "string"
                 },
                 "success": {
-                    "type": "boolean",
-                    "example": true
+                    "type": "boolean"
                 }
             }
         }
