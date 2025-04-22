@@ -4,7 +4,7 @@ import (
 	"gin-project/models/albummodel"
 )
 
-// AlbumService handles album data operations
+// AlbumService handles album-related business logic
 type AlbumService struct {
 	albums []albummodel.Album
 }
@@ -26,14 +26,4 @@ func New() *AlbumService {
 // GetAllAlbums returns all albums
 func (s *AlbumService) GetAllAlbums() []albummodel.Album {
 	return s.albums
-}
-
-// GetAlbumByID returns an album by its ID
-func (s *AlbumService) GetAlbumByID(id int) *albummodel.Album {
-	for _, album := range s.albums {
-		if album.ID == id {
-			return &album
-		}
-	}
-	return nil
 }
