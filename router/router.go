@@ -4,12 +4,14 @@ import (
 	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/middleware"
 
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 // Router holds the gin engine and handlers
 type Router struct {
-	engine       *gin.Engine
+	*gin.Engine
 	albumHandler *albumhandler.AlbumHandler
 }
 
@@ -19,7 +21,7 @@ func NewRouter(albumHandler *albumhandler.AlbumHandler) *Router {
 	engine.Use(middleware.Logger())
 
 	return &Router{
-		engine:       engine,
+		Engine:       engine,
 		albumHandler: albumHandler,
 	}
 }
@@ -30,7 +32,7 @@ func (r *Router) SetupRoutes() {
 	r.registerBaseRoutes()
 
 	// Create API v1 group
-	apiV1 := r.engine.Group("/api/v1")
+	apiV1 := r.Group("/api/v1")
 
 	// Register routes
 	r.registerAlbumRoutes(apiV1)
@@ -38,5 +40,10 @@ func (r *Router) SetupRoutes() {
 
 // GetEngine returns the gin engine
 func (r *Router) GetEngine() *gin.Engine {
-	return r.engine
+	return r.Engine
+}
+
+// ServeHTTP implements the http.Handler interface
+func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	r.Engine.ServeHTTP(w, req)
 }

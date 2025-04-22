@@ -4,52 +4,44 @@ import (
 	"context"
 
 	"github.com/espitman/jbm-hr-backend/ent"
-	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/repository/album"
 )
 
 // AlbumService handles album-related business logic
 type AlbumService struct {
-	client *ent.Client
+	repository album.Repository
 }
 
-// New creates a new AlbumService instance with mock data
-func New(client *ent.Client) *AlbumService {
+// New creates a new AlbumService instance with the provided repository
+func New(repository album.Repository) *AlbumService {
 	return &AlbumService{
-		client: client,
+		repository: repository,
 	}
 }
 
 // GetAllAlbums returns all albums
 func (s *AlbumService) GetAllAlbums(ctx context.Context) ([]*ent.Album, error) {
-	return s.client.Album.Query().All(ctx)
+	return s.repository.GetAll(ctx)
 }
 
 // CreateAlbum creates a new album
 func (s *AlbumService) CreateAlbum(ctx context.Context, url, caption string) (*ent.Album, error) {
-	return s.client.Album.
-		Create().
-		SetURL(url).
-		SetCaption(caption).
-		Save(ctx)
+	return s.repository.Create(ctx, url, caption)
 }
 
 // GetAlbumByID returns an album by its ID
 func (s *AlbumService) GetAlbumByID(ctx context.Context, id int) (*ent.Album, error) {
-	return s.client.Album.Query().Where(album.ID(id)).Only(ctx)
+	return s.repository.GetByID(ctx, id)
 }
 
 // UpdateAlbum updates an existing album
 func (s *AlbumService) UpdateAlbum(ctx context.Context, id int, url, caption string) (*ent.Album, error) {
-	return s.client.Album.
-		UpdateOneID(id).
-		SetURL(url).
-		SetCaption(caption).
-		Save(ctx)
+	return s.repository.Update(ctx, id, url, caption)
 }
 
 // DeleteAlbum deletes an album by its ID
 func (s *AlbumService) DeleteAlbum(ctx context.Context, id int) error {
-	return s.client.Album.DeleteOneID(id).Exec(ctx)
+	return s.repository.Delete(ctx, id)
 }
 
 // Add your album-related methods here that use the Ent client
