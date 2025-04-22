@@ -18,7 +18,7 @@ func main() {
 	defer database.CloseDB()
 
 	// Initialize services
-	albumService := albumservice.New(client)
+	albumService := albumservice.New()
 
 	// Initialize handlers with services
 	albumHandler := albumhandler.New(albumService)

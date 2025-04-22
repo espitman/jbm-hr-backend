@@ -3,22 +3,14 @@ package main
 import (
 	"log"
 
-	"gin-project/database"
 	"gin-project/handlers/albumhandler"
 	"gin-project/router"
 	"gin-project/services/albumservice"
 )
 
 func main() {
-	// Initialize database
-	client, err := database.InitDB()
-	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
-	}
-	defer database.CloseDB()
-
 	// Initialize services
-	albumService := albumservice.New(client)
+	albumService := albumservice.New()
 
 	// Initialize handlers with services
 	albumHandler := albumhandler.New(albumService)

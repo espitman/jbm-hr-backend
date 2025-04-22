@@ -36,6 +36,20 @@ func (r *Router) SetupRoutes() {
 	r.registerAlbumRoutes(apiV1)
 }
 
+// registerBaseRoutes registers all base routes
+func (r *Router) registerBaseRoutes() {
+	r.engine.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Welcome to Gin API",
+		})
+	})
+}
+
+// registerAlbumRoutes registers all album-related routes
+func (r *Router) registerAlbumRoutes(group *gin.RouterGroup) {
+	group.GET("/album", r.albumHandler.GetAlbums)
+}
+
 // GetEngine returns the gin engine
 func (r *Router) GetEngine() *gin.Engine {
 	return r.engine
