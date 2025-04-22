@@ -4,12 +4,8 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/contract.Album'
-      message:
-        example: Album created successfully
-        type: string
-      success:
-        example: true
-        type: boolean
+      response:
+        $ref: '#/definitions/dto.Response'
     type: object
   albumhandler.AlbumsResponse:
     properties:
@@ -17,12 +13,8 @@ definitions:
         items:
           $ref: '#/definitions/contract.Album'
         type: array
-      message:
-        example: Albums retrieved successfully
-        type: string
-      success:
-        example: true
-        type: boolean
+      response:
+        $ref: '#/definitions/dto.Response'
     type: object
   contract.Album:
     properties:
@@ -52,6 +44,15 @@ definitions:
     required:
     - caption
     - url
+    type: object
+  dto.Response:
+    properties:
+      message:
+        example: Operation completed successfully
+        type: string
+      success:
+        example: true
+        type: boolean
     type: object
 host: localhost:8080
 info:

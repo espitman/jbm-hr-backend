@@ -233,13 +233,8 @@ const docTemplate = `{
                 "data": {
                     "$ref": "#/definitions/contract.Album"
                 },
-                "message": {
-                    "type": "string",
-                    "example": "Album created successfully"
-                },
-                "success": {
-                    "type": "boolean",
-                    "example": true
+                "response": {
+                    "$ref": "#/definitions/dto.Response"
                 }
             }
         },
@@ -252,13 +247,8 @@ const docTemplate = `{
                         "$ref": "#/definitions/contract.Album"
                     }
                 },
-                "message": {
-                    "type": "string",
-                    "example": "Albums retrieved successfully"
-                },
-                "success": {
-                    "type": "boolean",
-                    "example": true
+                "response": {
+                    "$ref": "#/definitions/dto.Response"
                 }
             }
         },
@@ -303,6 +293,19 @@ const docTemplate = `{
                 },
                 "url": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.Response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Operation completed successfully"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         }

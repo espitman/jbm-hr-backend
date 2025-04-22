@@ -3,6 +3,8 @@ package router
 import (
 	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/middleware"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"net/http"
 
@@ -36,6 +38,9 @@ func (r *Router) SetupRoutes() {
 
 	// Register routes
 	r.registerAlbumRoutes(apiV1)
+
+	// Add Swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 // GetEngine returns the gin engine

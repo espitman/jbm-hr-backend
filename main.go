@@ -11,8 +11,6 @@ import (
 	"github.com/espitman/jbm-hr-backend/repository/album"
 	"github.com/espitman/jbm-hr-backend/router"
 	"github.com/espitman/jbm-hr-backend/services/albumservice"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title           JBM HR Backend API
@@ -55,9 +53,6 @@ func main() {
 	// Initialize router
 	r := router.NewRouter(albumHandler)
 	r.SetupRoutes()
-
-	// Add Swagger
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Start server
 	log.Println("Server starting on port 8080...")
