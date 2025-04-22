@@ -21,7 +21,13 @@ func New(service *albumservice.AlbumService) *AlbumHandler {
 	}
 }
 
-// GetAllAlbums handles GET /api/v1/albums
+// @Summary     Get all albums
+// @Description Retrieves a list of all albums
+// @Tags        albums
+// @Produce     json
+// @Success     200 {object} AlbumsResponse
+// @Failure     500 {object} AlbumsResponse
+// @Router      /albums [get]
 func (h *AlbumHandler) GetAllAlbums(c *gin.Context) {
 	albums, err := h.service.GetAllAlbums(c.Request.Context())
 	if err != nil {
@@ -37,7 +43,16 @@ func (h *AlbumHandler) GetAllAlbums(c *gin.Context) {
 	})
 }
 
-// CreateAlbum handles POST /api/v1/albums
+// @Summary     Create a new album
+// @Description Creates a new album with the provided details
+// @Tags        albums
+// @Accept      json
+// @Produce     json
+// @Param       album body contract.CreateAlbumInput true "Album details"
+// @Success     201 {object} AlbumResponse
+// @Failure     400 {object} AlbumResponse
+// @Failure     500 {object} AlbumResponse
+// @Router      /albums [post]
 func (h *AlbumHandler) CreateAlbum(c *gin.Context) {
 	var req contract.CreateAlbumInput
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -63,7 +78,15 @@ func (h *AlbumHandler) CreateAlbum(c *gin.Context) {
 	})
 }
 
-// GetAlbumByID handles GET /api/v1/albums/:id
+// @Summary     Get album by ID
+// @Description Retrieves an album by its ID
+// @Tags        albums
+// @Produce     json
+// @Param       id  path     int  true  "Album ID"
+// @Success     200 {object} AlbumResponse
+// @Failure     400 {object} AlbumResponse
+// @Failure     500 {object} AlbumResponse
+// @Router      /albums/{id} [get]
 func (h *AlbumHandler) GetAlbumByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -88,7 +111,17 @@ func (h *AlbumHandler) GetAlbumByID(c *gin.Context) {
 	})
 }
 
-// UpdateAlbum handles PUT /api/v1/albums/:id
+// @Summary     Update album
+// @Description Updates an existing album with the provided details
+// @Tags        albums
+// @Accept      json
+// @Produce     json
+// @Param       id   path     int                    true "Album ID"
+// @Param       album body    contract.UpdateAlbumInput true "Album details"
+// @Success     200  {object} AlbumResponse
+// @Failure     400  {object} AlbumResponse
+// @Failure     500  {object} AlbumResponse
+// @Router      /albums/{id} [put]
 func (h *AlbumHandler) UpdateAlbum(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -123,7 +156,15 @@ func (h *AlbumHandler) UpdateAlbum(c *gin.Context) {
 	})
 }
 
-// DeleteAlbum handles DELETE /api/v1/albums/:id
+// @Summary     Delete album
+// @Description Deletes an album by its ID
+// @Tags        albums
+// @Produce     json
+// @Param       id  path     int  true  "Album ID"
+// @Success     200 {object} AlbumResponse
+// @Failure     400 {object} AlbumResponse
+// @Failure     500 {object} AlbumResponse
+// @Router      /albums/{id} [delete]
 func (h *AlbumHandler) DeleteAlbum(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

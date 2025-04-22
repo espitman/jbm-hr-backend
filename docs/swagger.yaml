@@ -1,0 +1,203 @@
+basePath: /api/v1
+definitions:
+  albumhandler.AlbumResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.Album'
+      message:
+        example: Album created successfully
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  albumhandler.AlbumsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/contract.Album'
+        type: array
+      message:
+        example: Albums retrieved successfully
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  contract.Album:
+    properties:
+      caption:
+        type: string
+      id:
+        type: integer
+      url:
+        type: string
+    type: object
+  contract.CreateAlbumInput:
+    properties:
+      caption:
+        type: string
+      url:
+        type: string
+    required:
+    - caption
+    - url
+    type: object
+  contract.UpdateAlbumInput:
+    properties:
+      caption:
+        type: string
+      url:
+        type: string
+    required:
+    - caption
+    - url
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is the backend API for JBM HR system.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: JBM HR Backend API
+  version: "1.0"
+paths:
+  /albums:
+    get:
+      description: Retrieves a list of all albums
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumsResponse'
+      summary: Get all albums
+      tags:
+      - albums
+    post:
+      consumes:
+      - application/json
+      description: Creates a new album with the provided details
+      parameters:
+      - description: Album details
+        in: body
+        name: album
+        required: true
+        schema:
+          $ref: '#/definitions/contract.CreateAlbumInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+      summary: Create a new album
+      tags:
+      - albums
+  /albums/{id}:
+    delete:
+      description: Deletes an album by its ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+      summary: Delete album
+      tags:
+      - albums
+    get:
+      description: Retrieves an album by its ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+      summary: Get album by ID
+      tags:
+      - albums
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing album with the provided details
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Album details
+        in: body
+        name: album
+        required: true
+        schema:
+          $ref: '#/definitions/contract.UpdateAlbumInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+      summary: Update album
+      tags:
+      - albums
+swagger: "2.0"
