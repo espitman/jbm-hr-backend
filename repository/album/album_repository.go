@@ -15,10 +15,10 @@ type Repository interface {
 	GetByID(ctx context.Context, id int) (*contract.Album, error)
 
 	// Create creates a new album
-	Create(ctx context.Context, req *contract.CreateAlbumRequest) (*contract.Album, error)
+	Create(ctx context.Context, req *contract.CreateAlbumInput) (*contract.Album, error)
 
 	// Update updates an existing album
-	Update(ctx context.Context, id int, req *contract.UpdateAlbumRequest) (*contract.Album, error)
+	Update(ctx context.Context, id int, req *contract.UpdateAlbumInput) (*contract.Album, error)
 
 	// Delete deletes an album by its ID
 	Delete(ctx context.Context, id int) error

@@ -56,7 +56,7 @@ func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.Album, e
 }
 
 // Create creates a new album
-func (r *EntRepository) Create(ctx context.Context, req *contract.CreateAlbumRequest) (*contract.Album, error) {
+func (r *EntRepository) Create(ctx context.Context, req *contract.CreateAlbumInput) (*contract.Album, error) {
 	entAlbum, err := r.client.Album.
 		Create().
 		SetURL(req.URL).
@@ -69,7 +69,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateAlbumReq
 }
 
 // Update updates an existing album
-func (r *EntRepository) Update(ctx context.Context, id int, req *contract.UpdateAlbumRequest) (*contract.Album, error) {
+func (r *EntRepository) Update(ctx context.Context, id int, req *contract.UpdateAlbumInput) (*contract.Album, error) {
 	entAlbum, err := r.client.Album.
 		UpdateOneID(id).
 		SetURL(req.URL).

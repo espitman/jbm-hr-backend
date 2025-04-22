@@ -20,91 +20,28 @@ func New(repository albumRepo.Repository) *AlbumService {
 }
 
 // GetAllAlbums returns all albums
-func (s *AlbumService) GetAllAlbums(ctx context.Context) (*contract.AlbumsResponse, error) {
-	albums, err := s.repository.GetAll(ctx)
-	if err != nil {
-		return &contract.AlbumsResponse{
-			Success: false,
-			Message: "Failed to get albums",
-		}, err
-	}
-
-	// Convert []*contract.Album to []contract.Album
-	albumSlice := make([]contract.Album, len(albums))
-	for i, a := range albums {
-		albumSlice[i] = *a
-	}
-
-	return &contract.AlbumsResponse{
-		Success: true,
-		Data:    albumSlice,
-	}, nil
+func (s *AlbumService) GetAllAlbums(ctx context.Context) ([]*contract.Album, error) {
+	return s.repository.GetAll(ctx)
 }
 
 // CreateAlbum creates a new album
-func (s *AlbumService) CreateAlbum(ctx context.Context, req *contract.CreateAlbumRequest) (*contract.AlbumResponse, error) {
-	a, err := s.repository.Create(ctx, req)
-	if err != nil {
-		return &contract.AlbumResponse{
-			Success: false,
-			Message: "Failed to create album",
-		}, err
-	}
-
-	return &contract.AlbumResponse{
-		Success: true,
-		Message: "Album created successfully",
-		Data:    a,
-	}, nil
+func (s *AlbumService) CreateAlbum(ctx context.Context, req *contract.CreateAlbumInput) (*contract.Album, error) {
+	return s.repository.Create(ctx, req)
 }
 
 // GetAlbumByID returns an album by its ID
-func (s *AlbumService) GetAlbumByID(ctx context.Context, id int) (*contract.AlbumResponse, error) {
-	a, err := s.repository.GetByID(ctx, id)
-	if err != nil {
-		return &contract.AlbumResponse{
-			Success: false,
-			Message: "Failed to get album",
-		}, err
-	}
-
-	return &contract.AlbumResponse{
-		Success: true,
-		Data:    a,
-	}, nil
+func (s *AlbumService) GetAlbumByID(ctx context.Context, id int) (*contract.Album, error) {
+	return s.repository.GetByID(ctx, id)
 }
 
 // UpdateAlbum updates an existing album
-func (s *AlbumService) UpdateAlbum(ctx context.Context, id int, req *contract.UpdateAlbumRequest) (*contract.AlbumResponse, error) {
-	a, err := s.repository.Update(ctx, id, req)
-	if err != nil {
-		return &contract.AlbumResponse{
-			Success: false,
-			Message: "Failed to update album",
-		}, err
-	}
-
-	return &contract.AlbumResponse{
-		Success: true,
-		Message: "Album updated successfully",
-		Data:    a,
-	}, nil
+func (s *AlbumService) UpdateAlbum(ctx context.Context, id int, req *contract.UpdateAlbumInput) (*contract.Album, error) {
+	return s.repository.Update(ctx, id, req)
 }
 
 // DeleteAlbum deletes an album by its ID
-func (s *AlbumService) DeleteAlbum(ctx context.Context, id int) (*contract.AlbumResponse, error) {
-	err := s.repository.Delete(ctx, id)
-	if err != nil {
-		return &contract.AlbumResponse{
-			Success: false,
-			Message: "Failed to delete album",
-		}, err
-	}
-
-	return &contract.AlbumResponse{
-		Success: true,
-		Message: "Album deleted successfully",
-	}, nil
+func (s *AlbumService) DeleteAlbum(ctx context.Context, id int) error {
+	return s.repository.Delete(ctx, id)
 }
 
 // Add your album-related methods here that use the Ent client
