@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	"github.com/espitman/jbm-hr-backend/database"
+	"github.com/espitman/jbm-hr-backend/database/repository/album"
 	_ "github.com/espitman/jbm-hr-backend/docs"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
-	"github.com/espitman/jbm-hr-backend/repository/album"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 )
 

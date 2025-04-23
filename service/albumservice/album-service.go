@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/espitman/jbm-hr-backend/contract"
-	albumRepo "github.com/espitman/jbm-hr-backend/repository/album"
+	albumRepo "github.com/espitman/jbm-hr-backend/database/repository/album"
 )
 
 // AlbumService handles album-related business logic
