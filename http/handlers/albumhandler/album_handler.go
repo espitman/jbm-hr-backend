@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/espitman/jbm-hr-backend/contract"
-	"github.com/espitman/jbm-hr-backend/handlers/dto"
-	"github.com/espitman/jbm-hr-backend/services/albumservice"
+	"github.com/espitman/jbm-hr-backend/http/dto"
+	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/labstack/echo/v4"
 )
 

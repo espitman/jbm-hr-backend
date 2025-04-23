@@ -2,7 +2,7 @@ package albumhandler
 
 import (
 	"github.com/espitman/jbm-hr-backend/contract"
-	"github.com/espitman/jbm-hr-backend/handlers/dto"
+	"github.com/espitman/jbm-hr-backend/http/dto"
 )
 
 // AlbumResponse represents the response structure for album operations

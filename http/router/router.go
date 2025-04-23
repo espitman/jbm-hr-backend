@@ -3,8 +3,8 @@ package router
 import (
 	"net/http"
 
-	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
-	customMiddleware "github.com/espitman/jbm-hr-backend/middleware"
+	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"

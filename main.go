@@ -6,11 +6,11 @@ import (
 	"net/http"
 
 	"github.com/espitman/jbm-hr-backend/database"
-	_ "github.com/espitman/jbm-hr-backend/docs" // This will be generated
-	"github.com/espitman/jbm-hr-backend/handlers/albumhandler"
+	_ "github.com/espitman/jbm-hr-backend/docs"
+	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/repository/album"
-	"github.com/espitman/jbm-hr-backend/router"
-	"github.com/espitman/jbm-hr-backend/services/albumservice"
+	"github.com/espitman/jbm-hr-backend/service/albumservice"
 )
 
 // @title           JBM HR Backend API
