@@ -11,6 +11,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
+	"github.com/espitman/jbm-hr-backend/utils/config"
 )
 
 // @title           JBM HR Backend API
@@ -29,6 +30,12 @@ import (
 // @BasePath  /api/v1
 
 func main() {
+	// Load environment variables
+	config.LoadEnv()
+
+	// Get port from environment variables
+	port := config.GetConfig("PORT", "8080")
+
 	// Initialize database connection
 	client, err := database.NewClient()
 	if err != nil {
@@ -55,8 +62,8 @@ func main() {
 	r.SetupRoutes()
 
 	// Start server
-	log.Println("Server starting on port 8080...")
-	if err := r.Start(":8080"); err != nil && err != http.ErrServerClosed {
+	log.Printf("Server starting on port %s...", port)
+	if err := r.Start(":" + port); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("failed starting server: %v", err)
 	}
 }
