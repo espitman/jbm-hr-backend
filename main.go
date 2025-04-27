@@ -9,6 +9,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
 	"github.com/espitman/jbm-hr-backend/database/repository/otp"
 	"github.com/espitman/jbm-hr-backend/database/repository/user"
+	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
@@ -52,7 +53,13 @@ func main() {
 	defer client.Close()
 
 	// Run database migrations
-	if err := client.Schema.Create(context.Background()); err != nil {
+
+	err = client.Schema.Create(
+		context.Background(),
+		migrate.WithDropIndex(true),
+		migrate.WithDropColumn(true),
+	)
+	if err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
