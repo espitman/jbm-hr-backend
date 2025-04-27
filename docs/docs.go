@@ -403,7 +403,7 @@ const docTemplate = `{
         },
         "/api/v1/users/verify-otp": {
             "post": {
-                "description": "Verify OTP and return JWT token if valid",
+                "description": "Verify OTP and return JWT token and user data if valid",
                 "consumes": [
                     "application/json"
                 ],
@@ -637,6 +637,9 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/userhandler.VerifyOTPUserData"
                 }
             }
         },
@@ -666,6 +669,32 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "userhandler.VerifyOTPUserData": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
                 }
             }
         }

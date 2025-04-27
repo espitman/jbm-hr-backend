@@ -119,6 +119,8 @@ definitions:
     properties:
       token:
         type: string
+      user:
+        $ref: '#/definitions/userhandler.VerifyOTPUserData'
     type: object
   userhandler.VerifyOTPRequest:
     properties:
@@ -138,6 +140,23 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  userhandler.VerifyOTPUserData:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
     type: object
 info:
   contact:
@@ -399,7 +418,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Verify OTP and return JWT token if valid
+      description: Verify OTP and return JWT token and user data if valid
       parameters:
       - description: Verify OTP
         in: body

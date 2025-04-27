@@ -59,7 +59,7 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 
 // VerifyOTP handles the OTP verification
 // @Summary Verify OTP
-// @Description Verify OTP and return JWT token if valid
+// @Description Verify OTP and return JWT token and user data if valid
 // @Tags users
 // @Accept json
 // @Produce json
@@ -80,7 +80,7 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
-	token, err := h.userService.VerifyOTP(c.Request().Context(), req.Email, req.OTP)
+	token, user, err := h.userService.VerifyOTP(c.Request().Context(), req.Email, req.OTP)
 	if err != nil {
 		if err == contract.ErrUserNotFound {
 			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
@@ -95,6 +95,15 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 	response := VerifyOTPResponse{}
 	response.Data = VerifyOTPData{
 		Token: token,
+		User: VerifyOTPUserData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+		},
 	}
 
 	return dto.SuccessJSON(c, response)

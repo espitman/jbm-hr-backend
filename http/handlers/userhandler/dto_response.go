@@ -9,9 +9,21 @@ type RequestOTPResponse struct {
 	dto.Response
 }
 
+// VerifyOTPUserData represents the user data structure for OTP verification response
+type VerifyOTPUserData struct {
+	ID        int    `json:"id"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Role      string `json:"role"`
+	Avatar    string `json:"avatar,omitempty"`
+}
+
 // VerifyOTPData represents the data structure for OTP verification response
 type VerifyOTPData struct {
-	Token string `json:"token,omitempty"`
+	Token string            `json:"token,omitempty"`
+	User  VerifyOTPUserData `json:"user,omitempty"`
 }
 
 // VerifyOTPResponse represents the response structure for OTP verification
