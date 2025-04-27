@@ -1,6 +1,9 @@
 package userhandler
 
 import (
+	"net/http"
+
+	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/http/dto"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/labstack/echo/v4"
@@ -25,6 +28,7 @@ func NewUserHandler(userService userservice.Service) *UserHandler {
 // @Param request body RequestOTPRequest true "Request OTP"
 // @Success 200 {object} RequestOTPResponse
 // @Failure 400 {object} dto.Response
+// @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /api/v1/users/request-otp [post]
 func (h *UserHandler) RequestOTP(c echo.Context) error {
@@ -35,10 +39,13 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 
 	_, err := h.userService.RequestOTP(c.Request().Context(), req.Email)
 	if err != nil {
-		if err == userservice.ErrActiveOTPExists {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
+		}
+		if err == contract.ErrActiveOTPExists {
 			return dto.BadRequestJSON(c, err.Error())
 		}
-		return dto.ErrorJSON(c, 500, err.Error())
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
 	response := RequestOTPResponse{}
@@ -55,6 +62,7 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 // @Success 200 {object} VerifyOTPResponse
 // @Failure 400 {object} dto.Response
 // @Failure 401 {object} dto.Response
+// @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /api/v1/users/verify-otp [post]
 func (h *UserHandler) VerifyOTP(c echo.Context) error {
@@ -63,11 +71,25 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
-	// TODO: Implement actual OTP verification
-	// For now, just return a mock response
+	valid, err := h.userService.VerifyOTP(c.Request().Context(), req.Email, req.OTP)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
+		}
+		if err == contract.ErrOTPNotFound || err == contract.ErrOTPInvalid ||
+			err == contract.ErrOTPExpired || err == contract.ErrOTPAlreadyUsed {
+			return dto.BadRequestJSON(c, err.Error())
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	if !valid {
+		return dto.ErrorJSON(c, http.StatusUnauthorized, "Invalid OTP")
+	}
+
 	response := VerifyOTPResponse{}
 	response.Data = VerifyOTPData{
-		Token: "mock-jwt-token",
+		Token: "mock-jwt-token", // TODO: Generate actual JWT token
 	}
 
 	return dto.SuccessJSON(c, response)
