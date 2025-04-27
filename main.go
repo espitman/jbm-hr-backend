@@ -66,11 +66,12 @@ func main() {
 	userService := userservice.New(userRepo, otpRepo)
 
 	// Initialize handlers
-	albumHandler := albumhandler.New(albumService)
+	albumHandler := albumhandler.NewAlbumHandler(albumService)
+	albumAdminHandler := albumhandler.NewAlbumAdminHandler(albumService)
 	userHandler := userhandler.NewUserHandler(userService)
 
 	// Initialize router
-	r := router.NewRouter(albumHandler, userHandler)
+	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler)
 	r.SetupRoutes()
 
 	// Start server

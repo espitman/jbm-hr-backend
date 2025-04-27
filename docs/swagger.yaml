@@ -9,17 +9,6 @@ definitions:
       success:
         type: boolean
     type: object
-  albumhandler.AlbumsResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/contract.Album'
-        type: array
-      message:
-        type: string
-      success:
-        type: boolean
-    type: object
   albumhandler.CreateAlbumRequest:
     properties:
       caption:
@@ -153,6 +142,125 @@ info:
   title: JBM HR Backend API
   version: "1.01"
 paths:
+  /api/v1/admin/albums:
+    post:
+      consumes:
+      - application/json
+      description: Create a new album with the provided details (Admin only)
+      parameters:
+      - description: Album creation details
+        in: body
+        name: album
+        required: true
+        schema:
+          $ref: '#/definitions/albumhandler.CreateAlbumRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Create a new album
+      tags:
+      - admin - albums
+  /api/v1/admin/albums/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an album by ID (Admin only)
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete an album
+      tags:
+      - admin - albums
+    put:
+      consumes:
+      - application/json
+      description: Update an album with the provided details (Admin only)
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Album update details
+        in: body
+        name: album
+        required: true
+        schema:
+          $ref: '#/definitions/albumhandler.UpdateAlbumRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Update an album
+      tags:
+      - admin - albums
   /api/v1/admin/users/register:
     post:
       consumes:
@@ -193,131 +301,34 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get a list of all albums
+      description: Get all albums
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/albumhandler.AlbumsResponse'
+            items:
+              $ref: '#/definitions/albumhandler.AlbumResponse'
+            type: array
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.Response'
-      security:
-      - BearerAuth: []
       summary: Get all albums
       tags:
       - albums
-    post:
-      consumes:
-      - application/json
-      description: Create a new album with the provided details
-      parameters:
-      - description: Album creation details
-        in: body
-        name: album
-        required: true
-        schema:
-          $ref: '#/definitions/albumhandler.CreateAlbumRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.Response'
-      security:
-      - BearerAuth: []
-      summary: Create a new album
-      tags:
-      - albums
   /api/v1/albums/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete an album by ID
-      parameters:
-      - description: Album ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumResponse'
-      security:
-      - BearerAuth: []
-      summary: Delete an album
-      tags:
-      - albums
     get:
       consumes:
       - application/json
-      description: Get album details by ID
+      description: Get an album by its ID
       parameters:
       - description: Album ID
         in: path
         name: id
         required: true
         type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumResponse'
-      security:
-      - BearerAuth: []
-      summary: Get album by ID
-      tags:
-      - albums
-    put:
-      consumes:
-      - application/json
-      description: Update an album with the provided details
-      parameters:
-      - description: Album ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Album update details
-        in: body
-        name: album
-        required: true
-        schema:
-          $ref: '#/definitions/albumhandler.UpdateAlbumRequest'
       produces:
       - application/json
       responses:
@@ -337,9 +348,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.Response'
-      security:
-      - BearerAuth: []
-      summary: Update an album
+      summary: Get an album by ID
       tags:
       - albums
   /api/v1/users/request-otp:

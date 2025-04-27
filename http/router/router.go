@@ -15,21 +15,23 @@ import (
 // Router holds the echo instance and handlers
 type Router struct {
 	*echo.Echo
-	albumHandler *albumhandler.AlbumHandler
-	userHandler  *userhandler.UserHandler
+	albumHandler      *albumhandler.AlbumHandler
+	albumAdminHandler *albumhandler.AlbumAdminHandler
+	userHandler       *userhandler.UserHandler
 }
 
 // NewRouter creates a new router instance
-func NewRouter(albumHandler *albumhandler.AlbumHandler, userHandler *userhandler.UserHandler) *Router {
+func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
 	e.Use(echoMiddleware.CORS())
 
 	return &Router{
-		Echo:         e,
-		albumHandler: albumHandler,
-		userHandler:  userHandler,
+		Echo:              e,
+		albumHandler:      albumHandler,
+		albumAdminHandler: albumAdminHandler,
+		userHandler:       userHandler,
 	}
 }
 
@@ -43,10 +45,12 @@ func (r *Router) SetupRoutes() {
 
 	// Admin API v1 group with admin middleware
 	apiV1Admin := apiV1.Group("/admin")
+	apiV1Admin.Use(customMiddleware.JWT())
 	apiV1Admin.Use(customMiddleware.Admin())
 
 	// Register routes
 	r.registerAlbumRoutes(apiV1)
+	r.registerAlbumAdminRoutes(apiV1Admin)
 	r.registerUserRoutes(apiV1)
 	r.registerUserAdminRoutes(apiV1Admin)
 
