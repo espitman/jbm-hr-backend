@@ -6,16 +6,16 @@ import (
 	"net/http"
 
 	"github.com/espitman/jbm-hr-backend/database"
-	"github.com/espitman/jbm-hr-backend/database/repository/album"
-	"github.com/espitman/jbm-hr-backend/database/repository/otp"
-	"github.com/espitman/jbm-hr-backend/database/repository/user"
-	_ "github.com/espitman/jbm-hr-backend/docs"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
+	"github.com/espitman/jbm-hr-backend/repository/album"
+	"github.com/espitman/jbm-hr-backend/repository/otp"
+	"github.com/espitman/jbm-hr-backend/repository/user"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
+	_ "github.com/swaggo/files"
 )
 
 // @title           JBM HR Backend API
@@ -30,7 +30,13 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @BasePath  /
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 
 func main() {
 	// Load environment variables

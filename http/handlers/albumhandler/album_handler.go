@@ -23,12 +23,14 @@ func New(service *albumservice.AlbumService) *AlbumHandler {
 
 // GetAllAlbums godoc
 // @Summary Get all albums
-// @Description Retrieves a list of all albums
+// @Description Get a list of all albums
 // @Tags albums
+// @Accept json
 // @Produce json
 // @Success 200 {object} AlbumsResponse
 // @Failure 500 {object} dto.Response
-// @Router /api/v1/albums [get]
+// @Security BearerAuth
+// @Router /albums [get]
 func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {
 	albums, err := h.service.GetAllAlbums(c.Request().Context())
 	if err != nil {
@@ -47,7 +49,8 @@ func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {
 // @Success 201 {object} AlbumResponse
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /api/v1/albums [post]
+// @Security BearerAuth
+// @Router /albums [post]
 func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 	var req CreateAlbumRequest
 	if err := c.Bind(&req); err != nil {
@@ -67,15 +70,18 @@ func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 	return dto.CreatedJSON(c, album)
 }
 
-// @Summary     Get album by ID
-// @Description Retrieves an album by its ID
-// @Tags        albums
-// @Produce     json
-// @Param       id  path     int  true  "Album ID"
-// @Success     200 {object} AlbumResponse
-// @Failure     400 {object} AlbumResponse
-// @Failure     500 {object} AlbumResponse
-// @Router      /api/v1/albums/{id} [get]
+// GetAlbumByID godoc
+// @Summary Get album by ID
+// @Description Get album details by ID
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path int true "Album ID"
+// @Success 200 {object} AlbumResponse
+// @Failure 400 {object} AlbumResponse
+// @Failure 500 {object} AlbumResponse
+// @Security BearerAuth
+// @Router /albums/{id} [get]
 func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -90,8 +96,8 @@ func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 }
 
 // UpdateAlbum godoc
-// @Summary Update an existing album
-// @Description Update an album's details by ID
+// @Summary Update an album
+// @Description Update an album with the provided details
 // @Tags albums
 // @Accept json
 // @Produce json
@@ -101,7 +107,8 @@ func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 // @Failure 400 {object} dto.Response
 // @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /api/v1/albums/{id} [put]
+// @Security BearerAuth
+// @Router /albums/{id} [put]
 func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -126,15 +133,18 @@ func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 	return dto.SuccessJSON(c, album)
 }
 
-// @Summary     Delete album
-// @Description Deletes an album by its ID
-// @Tags        albums
-// @Produce     json
-// @Param       id  path     int  true  "Album ID"
-// @Success     200 {object} AlbumResponse
-// @Failure     400 {object} AlbumResponse
-// @Failure     500 {object} AlbumResponse
-// @Router      /api/v1/albums/{id} [delete]
+// DeleteAlbum godoc
+// @Summary Delete an album
+// @Description Delete an album by ID
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path int true "Album ID"
+// @Success 200 {object} AlbumResponse
+// @Failure 400 {object} AlbumResponse
+// @Failure 500 {object} AlbumResponse
+// @Security BearerAuth
+// @Router /albums/{id} [delete]
 func (h *AlbumHandler) DeleteAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
