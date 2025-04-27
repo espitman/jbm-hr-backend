@@ -39,7 +39,7 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 // VerifyOTP handles the OTP verification
 // @Summary Verify OTP
 // @Description Verify OTP and return JWT token if valid
-// @Tags user
+// @Tags users
 // @Accept json
 // @Produce json
 // @Param request body VerifyOTPRequest true "Verify OTP"
