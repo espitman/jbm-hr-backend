@@ -80,7 +80,7 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
-	valid, err := h.userService.VerifyOTP(c.Request().Context(), req.Email, req.OTP)
+	token, err := h.userService.VerifyOTP(c.Request().Context(), req.Email, req.OTP)
 	if err != nil {
 		if err == contract.ErrUserNotFound {
 			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
@@ -92,13 +92,9 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	if !valid {
-		return dto.ErrorJSON(c, http.StatusUnauthorized, "Invalid OTP")
-	}
-
 	response := VerifyOTPResponse{}
 	response.Data = VerifyOTPData{
-		Token: "mock-jwt-token", // TODO: Generate actual JWT token
+		Token: token,
 	}
 
 	return dto.SuccessJSON(c, response)

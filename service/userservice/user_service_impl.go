@@ -75,42 +75,48 @@ func (s *service) RequestOTP(ctx context.Context, email string) (*contract.OTP, 
 	return otp, nil
 }
 
-// VerifyOTP verifies an OTP code for a user
-func (s *service) VerifyOTP(ctx context.Context, email string, code string) (bool, error) {
+// VerifyOTP verifies an OTP code for a user and returns a JWT token if valid
+func (s *service) VerifyOTP(ctx context.Context, email string, code string) (string, error) {
 	// Get OTP by code
 	otp, err := s.otpRepo.GetByCode(ctx, code)
 	if err != nil {
-		return false, contract.ErrOTPNotFound
+		return "", contract.ErrOTPNotFound
 	}
 
 	// Get user by email
 	user, err := s.userRepo.GetByEmail(ctx, email)
 	if err != nil {
-		return false, contract.ErrUserNotFound
+		return "", contract.ErrUserNotFound
 	}
 
 	// Verify user ID matches
 	if otp.UserID != user.ID {
-		return false, contract.ErrOTPInvalid
+		return "", contract.ErrOTPInvalid
 	}
 
 	// Check if OTP is expired
 	if otp.ExpiresAt.Before(time.Now()) {
-		return false, contract.ErrOTPExpired
+		return "", contract.ErrOTPExpired
 	}
 
 	// Check if OTP is already used
 	if otp.Used {
-		return false, contract.ErrOTPAlreadyUsed
+		return "", contract.ErrOTPAlreadyUsed
 	}
 
 	// Mark OTP as used
 	err = s.otpRepo.MarkAsUsed(ctx, otp.ID)
 	if err != nil {
-		return false, contract.ErrDatabaseQuery
+		return "", contract.ErrDatabaseQuery
 	}
 
-	return true, nil
+	// Generate JWT token
+	token, err := utils.GenerateToken(user)
+	if err != nil {
+		return "", fmt.Errorf("failed to generate token: %w", err)
+	}
+
+	return token, nil
 }
 
 // RegisterUser registers a new user in the system
