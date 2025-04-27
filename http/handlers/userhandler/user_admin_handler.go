@@ -48,8 +48,7 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 	}
 
 	// Prepare response
-	response := RegisterUserResponse{}
-	response.Data = RegisterUserData{
+	return dto.CreatedJSON(c, RegisterUserData{
 		ID:        user.ID,
 		Email:     user.Email,
 		Phone:     user.Phone,
@@ -57,7 +56,5 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 		LastName:  user.LastName,
 		Role:      user.Role,
 		Avatar:    user.Avatar,
-	}
-
-	return dto.CreatedJSON(c, response)
+	})
 }

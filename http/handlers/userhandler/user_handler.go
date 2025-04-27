@@ -53,8 +53,7 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	response := RequestOTPResponse{}
-	return dto.SuccessJSON(c, response)
+	return dto.SuccessJSON(c, interface{}(nil))
 }
 
 // VerifyOTP handles the OTP verification
@@ -92,8 +91,7 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	response := VerifyOTPResponse{}
-	response.Data = VerifyOTPData{
+	return dto.SuccessJSON(c, VerifyOTPData{
 		Token: token,
 		User: VerifyOTPUserData{
 			ID:        user.ID,
@@ -104,9 +102,7 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 			Role:      user.Role,
 			Avatar:    user.Avatar,
 		},
-	}
-
-	return dto.SuccessJSON(c, response)
+	})
 }
 
 // GetMe handles the request to get the current user's information
@@ -129,17 +125,13 @@ func (h *UserHandler) GetMe(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	response := GetMeResponse{
-		Data: GetMeData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-		},
-	}
-
-	return dto.SuccessJSON(c, response)
+	return dto.SuccessJSON(c, GetMeData{
+		ID:        user.ID,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Avatar:    user.Avatar,
+	})
 }
