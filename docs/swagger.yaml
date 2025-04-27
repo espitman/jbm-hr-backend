@@ -157,7 +157,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Register a new user in the system
+      description: Register a new user in the system (Admin only)
       parameters:
       - description: Register User
         in: body
@@ -176,10 +176,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
       summary: Register a new user
       tags:
       - admin - users

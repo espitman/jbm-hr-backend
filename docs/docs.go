@@ -26,7 +26,12 @@ const docTemplate = `{
     "paths": {
         "/api/v1/admin/users/register": {
             "post": {
-                "description": "Register a new user in the system",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register a new user in the system (Admin only)",
                 "consumes": [
                     "application/json"
                 ],
@@ -57,6 +62,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/dto.Response"
                         }
