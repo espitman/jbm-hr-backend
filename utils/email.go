@@ -4,15 +4,34 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/smtp"
+	"strconv"
+
+	"github.com/espitman/jbm-hr-backend/utils/config"
 )
 
-const (
-	smtpHost     = "smtp.c1.liara.email"
-	smtpPort     = 465
-	smtpUsername = "sharp_aryabhata_4kbvvi"
-	smtpPassword = "f38a7571-046b-4ab3-8d7e-da3c2d3aa3c2"
-	senderEmail  = "life@jabama.org"
+var (
+	smtpHost     string
+	smtpPort     int
+	smtpUsername string
+	smtpPassword string
+	senderEmail  string
 )
+
+func init() {
+	// Load SMTP configuration from environment variables using config package
+	smtpHost = config.GetConfig("SMTP_HOST", "smtp.c1.liara.email")
+
+	portStr := config.GetConfig("SMTP_PORT", "465")
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		port = 465 // default port
+	}
+	smtpPort = port
+
+	smtpUsername = config.GetConfig("SMTP_USERNAME", "sharp_aryabhata_4kbvvi")
+	smtpPassword = config.GetConfig("SMTP_PASSWORD", "f38a7571-046b-4ab3-8d7e-da3c2d3aa3c2")
+	senderEmail = config.GetConfig("SMTP_SENDER_EMAIL", "life@jabama.org")
+}
 
 // SendEmail sends an email using SMTP
 func SendEmail(to, subject, body string) error {
