@@ -140,6 +140,18 @@ func (s *service) RegisterUser(ctx context.Context, input *contract.RegisterUser
 	return user, nil
 }
 
+// GetUserByID retrieves a user by their ID
+func (s *service) GetUserByID(ctx context.Context, id int) (*contract.User, error) {
+	user, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, errors.New("user not found")
+	}
+	return user, nil
+}
+
 // Helper functions
 func generateOTP() (string, error) {
 	// Generate a 6-digit OTP

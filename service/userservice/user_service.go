@@ -16,4 +16,7 @@ type Service interface {
 
 	// RegisterUser registers a new user in the system
 	RegisterUser(ctx context.Context, input *contract.RegisterUserInput) (*contract.User, error)
+
+	// GetUserByID retrieves a user by their ID
+	GetUserByID(ctx context.Context, id int) (*contract.User, error)
 }

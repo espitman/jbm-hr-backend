@@ -17,8 +17,7 @@ func (r *Router) registerUserRoutes(group *echo.Group) {
 		protected := users.Group("")
 		protected.Use(middleware.JWT())
 		{
-			// Add protected user routes here
-			// Example: protected.GET("/profile", r.userHandler.GetProfile)
+			protected.GET("/me", r.userHandler.GetMe)
 		}
 	}
 }

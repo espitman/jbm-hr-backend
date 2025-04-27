@@ -108,3 +108,38 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 
 	return dto.SuccessJSON(c, response)
 }
+
+// GetMe handles the request to get the current user's information
+// @Summary Get current user data
+// @Description Get the current user's data from the JWT token
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} GetMeResponse
+// @Failure 401 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/users/me [get]
+func (h *UserHandler) GetMe(c echo.Context) error {
+	// Get user claims from context (set by JWT middleware)
+	claims := c.Get("user").(*utils.Claims)
+
+	user, err := h.userService.GetUserByID(c.Request().Context(), claims.UserID)
+	if err != nil {
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	response := GetMeResponse{
+		Data: GetMeData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+		},
+	}
+
+	return dto.SuccessJSON(c, response)
+}
