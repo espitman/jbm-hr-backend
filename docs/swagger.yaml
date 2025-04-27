@@ -1,4 +1,4 @@
-basePath: /api/v1
+basePath: /
 definitions:
   albumhandler.AlbumResponse:
     properties:
@@ -99,7 +99,6 @@ definitions:
       success:
         type: boolean
     type: object
-host: localhost:8080
 info:
   contact:
     email: s.heidari@jabama.com
@@ -113,7 +112,7 @@ info:
   title: JBM HR Backend API
   version: "1.01"
 paths:
-  /albums:
+  /api/v1/albums:
     get:
       description: Retrieves a list of all albums
       produces:
@@ -159,7 +158,7 @@ paths:
       summary: Create a new album
       tags:
       - albums
-  /albums/{id}:
+  /api/v1/albums/{id}:
     delete:
       description: Deletes an album by its ID
       parameters:
@@ -250,7 +249,7 @@ paths:
       summary: Update an existing album
       tags:
       - albums
-  /api/v1/user/request-otp:
+  /api/v1/users/request-otp:
     post:
       consumes:
       - application/json
@@ -280,7 +279,7 @@ paths:
       summary: Request OTP
       tags:
       - user
-  /api/v1/user/verify-otp:
+  /api/v1/users/verify-otp:
     post:
       consumes:
       - application/json

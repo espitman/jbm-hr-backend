@@ -23,7 +23,7 @@ func NewUserHandler() *UserHandler {
 // @Success 200 {object} RequestOTPResponse
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /api/v1/user/request-otp [post]
+// @Router /api/v1/users/request-otp [post]
 func (h *UserHandler) RequestOTP(c echo.Context) error {
 	var req RequestOTPRequest
 	if err := c.Bind(&req); err != nil {
@@ -47,7 +47,7 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 // @Failure 400 {object} dto.Response
 // @Failure 401 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /api/v1/user/verify-otp [post]
+// @Router /api/v1/users/verify-otp [post]
 func (h *UserHandler) VerifyOTP(c echo.Context) error {
 	var req VerifyOTPRequest
 	if err := c.Bind(&req); err != nil {

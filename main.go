@@ -9,6 +9,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
 	_ "github.com/espitman/jbm-hr-backend/docs"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
@@ -26,8 +27,7 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
-// @BasePath  /api/v1
+// @BasePath  /
 
 func main() {
 	// Load environment variables
@@ -54,11 +54,12 @@ func main() {
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
 
-	// Initialize handler
+	// Initialize handlers
 	albumHandler := albumhandler.New(albumService)
+	userHandler := userhandler.NewUserHandler()
 
 	// Initialize router
-	r := router.NewRouter(albumHandler)
+	r := router.NewRouter(albumHandler, userHandler)
 	r.SetupRoutes()
 
 	// Start server

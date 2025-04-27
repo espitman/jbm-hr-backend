@@ -15,10 +15,9 @@
         },
         "version": "1.01"
     },
-    "host": "localhost:8080",
-    "basePath": "/api/v1",
+    "basePath": "/",
     "paths": {
-        "/albums": {
+        "/api/v1/albums": {
             "get": {
                 "description": "Retrieves a list of all albums",
                 "produces": [
@@ -88,7 +87,7 @@
                 }
             }
         },
-        "/albums/{id}": {
+        "/api/v1/albums/{id}": {
             "get": {
                 "description": "Retrieves an album by its ID",
                 "produces": [
@@ -225,7 +224,7 @@
                 }
             }
         },
-        "/api/v1/user/request-otp": {
+        "/api/v1/users/request-otp": {
             "post": {
                 "description": "Send OTP to user's email",
                 "consumes": [
@@ -271,7 +270,7 @@
                 }
             }
         },
-        "/api/v1/user/verify-otp": {
+        "/api/v1/users/verify-otp": {
             "post": {
                 "description": "Verify OTP and return JWT token if valid",
                 "consumes": [

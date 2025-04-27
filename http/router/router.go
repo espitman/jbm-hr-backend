@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
@@ -14,10 +15,11 @@ import (
 type Router struct {
 	*echo.Echo
 	albumHandler *albumhandler.AlbumHandler
+	userHandler  *userhandler.UserHandler
 }
 
 // NewRouter creates a new router instance
-func NewRouter(albumHandler *albumhandler.AlbumHandler) *Router {
+func NewRouter(albumHandler *albumhandler.AlbumHandler, userHandler *userhandler.UserHandler) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
@@ -26,6 +28,7 @@ func NewRouter(albumHandler *albumhandler.AlbumHandler) *Router {
 	return &Router{
 		Echo:         e,
 		albumHandler: albumHandler,
+		userHandler:  userHandler,
 	}
 }
 
@@ -39,6 +42,7 @@ func (r *Router) SetupRoutes() {
 
 	// Register routes
 	r.registerAlbumRoutes(apiV1)
+	r.registerUserRoutes(apiV1)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)

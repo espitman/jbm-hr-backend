@@ -6,6 +6,7 @@ import (
 
 // registerAlbumRoutes registers all album-related routes
 func (r *Router) registerAlbumRoutes(group *echo.Group) {
+
 	albums := group.Group("/albums")
 	{
 		albums.GET("", r.albumHandler.GetAllAlbums)

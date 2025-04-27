@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/albums": {
+        "/api/v1/albums": {
             "get": {
                 "description": "Retrieves a list of all albums",
                 "produces": [
@@ -94,7 +94,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/albums/{id}": {
+        "/api/v1/albums/{id}": {
             "get": {
                 "description": "Retrieves an album by its ID",
                 "produces": [
@@ -231,7 +231,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/request-otp": {
+        "/api/v1/users/request-otp": {
             "post": {
                 "description": "Send OTP to user's email",
                 "consumes": [
@@ -277,7 +277,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user/verify-otp": {
+        "/api/v1/users/verify-otp": {
             "post": {
                 "description": "Verify OTP and return JWT token if valid",
                 "consumes": [
@@ -487,8 +487,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.01",
-	Host:             "localhost:8080",
-	BasePath:         "/api/v1",
+	Host:             "",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "JBM HR Backend API",
 	Description:      "This is the backend API for JBM HR system.",
