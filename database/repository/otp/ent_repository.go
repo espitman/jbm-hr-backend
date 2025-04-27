@@ -15,7 +15,7 @@ type repository struct {
 }
 
 // New creates a new OTP repository
-func New(client *ent.Client) Repository {
+func NewEntRepository(client *ent.Client) Repository {
 	return &repository{
 		client: client,
 	}
