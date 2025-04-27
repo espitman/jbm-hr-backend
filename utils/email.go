@@ -11,6 +11,7 @@ const (
 	smtpPort     = 465
 	smtpUsername = "sharp_aryabhata_4kbvvi"
 	smtpPassword = "f38a7571-046b-4ab3-8d7e-da3c2d3aa3c2"
+	senderEmail  = "life@jabama.org"
 )
 
 // SendEmail sends an email using SMTP
@@ -44,7 +45,7 @@ func SendEmail(to, subject, body string) error {
 	}
 
 	// Set sender
-	if err := client.Mail(smtpUsername); err != nil {
+	if err := client.Mail(senderEmail); err != nil {
 		return fmt.Errorf("failed to set sender: %w", err)
 	}
 
@@ -60,7 +61,7 @@ func SendEmail(to, subject, body string) error {
 		"MIME-Version: 1.0\r\n"+
 		"Content-Type: text/html; charset=UTF-8\r\n"+
 		"\r\n"+
-		"%s\r\n", smtpUsername, to, subject, body)
+		"%s\r\n", senderEmail, to, subject, body)
 
 	// Send message
 	w, err := client.Data()
