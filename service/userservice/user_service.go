@@ -13,4 +13,7 @@ type Service interface {
 
 	// VerifyOTP verifies an OTP code for a user
 	VerifyOTP(ctx context.Context, email string, code string) (bool, error)
+
+	// RegisterUser registers a new user in the system
+	RegisterUser(ctx context.Context, input *contract.RegisterUserInput) (*contract.User, error)
 }

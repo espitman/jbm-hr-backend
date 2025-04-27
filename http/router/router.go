@@ -40,9 +40,13 @@ func (r *Router) SetupRoutes() {
 	// Create API v1 group
 	apiV1 := r.Group("/api/v1")
 
+	// Admin API v1 group
+	apiV1Admin := apiV1.Group("/admin")
+
 	// Register routes
 	r.registerAlbumRoutes(apiV1)
 	r.registerUserRoutes(apiV1)
+	r.registerUserAdminRoutes(apiV1Admin)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)

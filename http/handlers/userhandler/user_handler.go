@@ -19,7 +19,7 @@ func NewUserHandler(userService userservice.Service) *UserHandler {
 // RequestOTP handles the OTP request by email
 // @Summary Request OTP
 // @Description Send OTP to user's email
-// @Tags user
+// @Tags users
 // @Accept json
 // @Produce json
 // @Param request body RequestOTPRequest true "Request OTP"

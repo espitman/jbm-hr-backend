@@ -24,3 +24,11 @@ type UpdateUserInput struct {
 	Role   string `json:"role" validate:"required,oneof=admin employee"`
 	Avatar string `json:"avatar,omitempty"`
 }
+
+// RegisterUserInput represents the input for registering a new user
+type RegisterUserInput struct {
+	Email  string `json:"email" validate:"required,email"`
+	Phone  string `json:"phone" validate:"required"`
+	Role   string `json:"role" validate:"required,oneof=admin employee"`
+	Avatar string `json:"avatar,omitempty"`
+}

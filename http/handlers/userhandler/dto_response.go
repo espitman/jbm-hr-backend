@@ -25,3 +25,18 @@ type VerifyOTPResponse struct {
 	dto.Response
 	Data VerifyOTPData `json:"data,omitempty"`
 }
+
+// RegisterUserData represents the data structure for user registration response
+type RegisterUserData struct {
+	ID     int    `json:"id"`
+	Email  string `json:"email"`
+	Phone  string `json:"phone"`
+	Role   string `json:"role"`
+	Avatar string `json:"avatar,omitempty"`
+}
+
+// RegisterUserResponse represents the response structure for user registration
+type RegisterUserResponse struct {
+	dto.Response
+	Data RegisterUserData `json:"data,omitempty"`
+}

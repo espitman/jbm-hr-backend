@@ -61,6 +61,51 @@ definitions:
       success:
         type: boolean
     type: object
+  userhandler.RegisterUserData:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      phone:
+        type: string
+      role:
+        type: string
+    type: object
+  userhandler.RegisterUserRequest:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      role:
+        enum:
+        - admin
+        - employee
+        type: string
+    required:
+    - email
+    - phone
+    - role
+    type: object
+  userhandler.RegisterUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/userhandler.RegisterUserData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  userhandler.RequestOTPData:
+    properties:
+      otp:
+        type: string
+    type: object
   userhandler.RequestOTPRequest:
     properties:
       email:
@@ -71,11 +116,16 @@ definitions:
   userhandler.RequestOTPResponse:
     properties:
       data:
-        type: object
+        $ref: '#/definitions/userhandler.RequestOTPData'
       message:
         type: string
       success:
         type: boolean
+    type: object
+  userhandler.VerifyOTPData:
+    properties:
+      token:
+        type: string
     type: object
   userhandler.VerifyOTPRequest:
     properties:
@@ -90,10 +140,7 @@ definitions:
   userhandler.VerifyOTPResponse:
     properties:
       data:
-        properties:
-          token:
-            type: string
-        type: object
+        $ref: '#/definitions/userhandler.VerifyOTPData'
       message:
         type: string
       success:
@@ -112,6 +159,36 @@ info:
   title: JBM HR Backend API
   version: "1.01"
 paths:
+  /api/v1/admin/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user in the system
+      parameters:
+      - description: Register User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/userhandler.RegisterUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Register a new user
+      tags:
+      - admin - users
   /api/v1/albums:
     get:
       description: Retrieves a list of all albums
@@ -278,7 +355,7 @@ paths:
             $ref: '#/definitions/dto.Response'
       summary: Request OTP
       tags:
-      - user
+      - users
   /api/v1/users/verify-otp:
     post:
       consumes:
@@ -312,5 +389,5 @@ paths:
             $ref: '#/definitions/dto.Response'
       summary: Verify OTP
       tags:
-      - user
+      - users
 swagger: "2.0"

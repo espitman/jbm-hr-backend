@@ -24,6 +24,52 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/admin/users/register": {
+            "post": {
+                "description": "Register a new user in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin - users"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "Register User",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userhandler.RegisterUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/userhandler.RegisterUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/albums": {
             "get": {
                 "description": "Retrieves a list of all albums",
@@ -241,7 +287,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Request OTP",
                 "parameters": [
@@ -287,7 +333,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Verify OTP",
                 "parameters": [
@@ -422,6 +468,74 @@ const docTemplate = `{
                 }
             }
         },
+        "userhandler.RegisterUserData": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "userhandler.RegisterUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "phone",
+                "role"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "admin",
+                        "employee"
+                    ]
+                }
+            }
+        },
+        "userhandler.RegisterUserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/userhandler.RegisterUserData"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "userhandler.RequestOTPData": {
+            "type": "object",
+            "properties": {
+                "otp": {
+                    "type": "string"
+                }
+            }
+        },
         "userhandler.RequestOTPRequest": {
             "type": "object",
             "required": [
@@ -437,13 +551,21 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "type": "object"
+                    "$ref": "#/definitions/userhandler.RequestOTPData"
                 },
                 "message": {
                     "type": "string"
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "userhandler.VerifyOTPData": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
                 }
             }
         },
@@ -466,12 +588,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "type": "object",
-                    "properties": {
-                        "token": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/definitions/userhandler.VerifyOTPData"
                 },
                 "message": {
                     "type": "string"

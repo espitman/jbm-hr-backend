@@ -115,3 +115,22 @@ func (s *service) VerifyOTP(ctx context.Context, email string, code string) (boo
 
 	return true, nil
 }
+
+// RegisterUser registers a new user in the system
+func (s *service) RegisterUser(ctx context.Context, input *contract.RegisterUserInput) (*contract.User, error) {
+	// Create a CreateUserInput from the RegisterUserInput
+	createInput := &contract.CreateUserInput{
+		Email:  input.Email,
+		Phone:  input.Phone,
+		Role:   input.Role,
+		Avatar: input.Avatar,
+	}
+
+	// Create the user using the repository
+	user, err := s.userRepo.Create(ctx, createInput)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
