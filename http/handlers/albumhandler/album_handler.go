@@ -11,11 +11,11 @@ import (
 
 // AlbumHandler handles HTTP requests for albums
 type AlbumHandler struct {
-	service *albumservice.AlbumService
+	service albumservice.Service
 }
 
 // New creates a new AlbumHandler
-func New(service *albumservice.AlbumService) *AlbumHandler {
+func New(service albumservice.Service) *AlbumHandler {
 	return &AlbumHandler{
 		service: service,
 	}
