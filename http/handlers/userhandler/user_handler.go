@@ -2,15 +2,18 @@ package userhandler
 
 import (
 	"github.com/espitman/jbm-hr-backend/http/dto"
+	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/labstack/echo/v4"
 )
 
 type UserHandler struct {
-	// Add dependencies here later
+	userService userservice.Service
 }
 
-func NewUserHandler() *UserHandler {
-	return &UserHandler{}
+func NewUserHandler(userService userservice.Service) *UserHandler {
+	return &UserHandler{
+		userService: userService,
+	}
 }
 
 // RequestOTP handles the OTP request by email
@@ -30,9 +33,15 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
-	// TODO: Implement actual OTP generation and email sending
-	// For now, just return a mock response
+	otp, err := h.userService.RequestOTP(c.Request().Context(), req.Email)
+	if err != nil {
+		return dto.ErrorJSON(c, 500, err.Error())
+	}
+
 	response := RequestOTPResponse{}
+	response.Data = RequestOTPData{
+		OTP: otp.Code,
+	}
 	return dto.SuccessJSON(c, response)
 }
 
@@ -57,7 +66,9 @@ func (h *UserHandler) VerifyOTP(c echo.Context) error {
 	// TODO: Implement actual OTP verification
 	// For now, just return a mock response
 	response := VerifyOTPResponse{}
-	response.Data.Token = "mock-jwt-token"
+	response.Data = VerifyOTPData{
+		Token: "mock-jwt-token",
+	}
 
 	return dto.SuccessJSON(c, response)
 }

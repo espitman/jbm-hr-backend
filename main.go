@@ -7,11 +7,14 @@ import (
 
 	"github.com/espitman/jbm-hr-backend/database"
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
+	"github.com/espitman/jbm-hr-backend/database/repository/otp"
+	"github.com/espitman/jbm-hr-backend/database/repository/user"
 	_ "github.com/espitman/jbm-hr-backend/docs"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
+	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
 )
 
@@ -50,13 +53,16 @@ func main() {
 
 	// Initialize repository
 	albumRepo := album.NewEntRepository(client)
+	userRepo := user.NewEntRepository(client)
+	otpRepo := otp.NewEntRepository(client)
 
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
+	userService := userservice.New(userRepo, otpRepo)
 
 	// Initialize handlers
 	albumHandler := albumhandler.New(albumService)
-	userHandler := userhandler.NewUserHandler()
+	userHandler := userhandler.NewUserHandler(userService)
 
 	// Initialize router
 	r := router.NewRouter(albumHandler, userHandler)
