@@ -154,26 +154,6 @@ info:
   version: "1.01"
 paths:
   /albums:
-    get:
-      consumes:
-      - application/json
-      description: Get a list of all albums
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/albumhandler.AlbumsResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.Response'
-      security:
-      - BearerAuth: []
-      summary: Get all albums
-      tags:
-      - albums
     post:
       consumes:
       - application/json
@@ -236,6 +216,58 @@ paths:
       summary: Delete an album
       tags:
       - albums
+  /api/v1/admin/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user in the system
+      parameters:
+      - description: Register User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/userhandler.RegisterUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Register a new user
+      tags:
+      - admin - users
+  /api/v1/albums:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all albums
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/albumhandler.AlbumsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get all albums
+      tags:
+      - albums
+  /api/v1/albums/{id}:
     get:
       consumes:
       - application/json
@@ -306,36 +338,6 @@ paths:
       summary: Update an album
       tags:
       - albums
-  /api/v1/admin/users/register:
-    post:
-      consumes:
-      - application/json
-      description: Register a new user in the system
-      parameters:
-      - description: Register User
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/userhandler.RegisterUserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/userhandler.RegisterUserResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.Response'
-      summary: Register a new user
-      tags:
-      - admin - users
   /api/v1/users/request-otp:
     post:
       consumes:

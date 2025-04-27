@@ -30,7 +30,7 @@ func New(service *albumservice.AlbumService) *AlbumHandler {
 // @Success 200 {object} AlbumsResponse
 // @Failure 500 {object} dto.Response
 // @Security BearerAuth
-// @Router /albums [get]
+// @Router /api/v1/albums [get]
 func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {
 	albums, err := h.service.GetAllAlbums(c.Request().Context())
 	if err != nil {
@@ -81,7 +81,7 @@ func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 // @Failure 400 {object} AlbumResponse
 // @Failure 500 {object} AlbumResponse
 // @Security BearerAuth
-// @Router /albums/{id} [get]
+// @Router /api/v1/albums/{id} [get]
 func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -108,7 +108,7 @@ func (h *AlbumHandler) GetAlbumByID(c echo.Context) error {
 // @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Security BearerAuth
-// @Router /albums/{id} [put]
+// @Router /api/v1/albums/{id} [put]
 func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
