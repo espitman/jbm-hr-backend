@@ -101,11 +101,6 @@ definitions:
       success:
         type: boolean
     type: object
-  userhandler.RequestOTPData:
-    properties:
-      otp:
-        type: string
-    type: object
   userhandler.RequestOTPRequest:
     properties:
       email:
@@ -115,8 +110,7 @@ definitions:
     type: object
   userhandler.RequestOTPResponse:
     properties:
-      data:
-        $ref: '#/definitions/userhandler.RequestOTPData'
+      data: {}
       message:
         type: string
       success:

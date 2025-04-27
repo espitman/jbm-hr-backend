@@ -521,14 +521,6 @@
                 }
             }
         },
-        "userhandler.RequestOTPData": {
-            "type": "object",
-            "properties": {
-                "otp": {
-                    "type": "string"
-                }
-            }
-        },
         "userhandler.RequestOTPRequest": {
             "type": "object",
             "required": [
@@ -543,9 +535,7 @@
         "userhandler.RequestOTPResponse": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/userhandler.RequestOTPData"
-                },
+                "data": {},
                 "message": {
                     "type": "string"
                 },

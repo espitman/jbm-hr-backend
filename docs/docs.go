@@ -528,14 +528,6 @@ const docTemplate = `{
                 }
             }
         },
-        "userhandler.RequestOTPData": {
-            "type": "object",
-            "properties": {
-                "otp": {
-                    "type": "string"
-                }
-            }
-        },
         "userhandler.RequestOTPRequest": {
             "type": "object",
             "required": [
@@ -550,9 +542,7 @@ const docTemplate = `{
         "userhandler.RequestOTPResponse": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/userhandler.RequestOTPData"
-                },
+                "data": {},
                 "message": {
                     "type": "string"
                 },

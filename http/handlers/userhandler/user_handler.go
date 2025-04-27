@@ -33,15 +33,15 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
-	otp, err := h.userService.RequestOTP(c.Request().Context(), req.Email)
+	_, err := h.userService.RequestOTP(c.Request().Context(), req.Email)
 	if err != nil {
+		if err == userservice.ErrActiveOTPExists {
+			return dto.BadRequestJSON(c, err.Error())
+		}
 		return dto.ErrorJSON(c, 500, err.Error())
 	}
 
 	response := RequestOTPResponse{}
-	response.Data = RequestOTPData{
-		OTP: otp.Code,
-	}
 	return dto.SuccessJSON(c, response)
 }
 
