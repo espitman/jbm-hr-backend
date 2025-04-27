@@ -537,8 +537,14 @@
                 "email": {
                     "type": "string"
                 },
+                "first_name": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
                 },
                 "phone": {
                     "type": "string"
@@ -552,6 +558,8 @@
             "type": "object",
             "required": [
                 "email",
+                "first_name",
+                "last_name",
                 "phone",
                 "role"
             ],
@@ -560,6 +568,12 @@
                     "type": "string"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
                     "type": "string"
                 },
                 "phone": {

@@ -22,11 +22,13 @@ type VerifyOTPResponse struct {
 
 // RegisterUserData represents the data structure for user registration response
 type RegisterUserData struct {
-	ID     int    `json:"id"`
-	Email  string `json:"email"`
-	Phone  string `json:"phone"`
-	Role   string `json:"role"`
-	Avatar string `json:"avatar,omitempty"`
+	ID        int    `json:"id"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Role      string `json:"role"`
+	Avatar    string `json:"avatar,omitempty"`
 }
 
 // RegisterUserResponse represents the response structure for user registration

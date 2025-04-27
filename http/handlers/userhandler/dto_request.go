@@ -13,8 +13,10 @@ type VerifyOTPRequest struct {
 
 // RegisterUserRequest represents the request structure for registering a user
 type RegisterUserRequest struct {
-	Email  string `json:"email" validate:"required,email"`
-	Phone  string `json:"phone" validate:"required"`
-	Role   string `json:"role" validate:"required,oneof=admin employee"`
-	Avatar string `json:"avatar,omitempty"`
+	Email     string `json:"email" validate:"required,email"`
+	Phone     string `json:"phone" validate:"required"`
+	FirstName string `json:"first_name" validate:"required"`
+	LastName  string `json:"last_name" validate:"required"`
+	Role      string `json:"role" validate:"required,oneof=admin employee"`
+	Avatar    string `json:"avatar,omitempty"`
 }

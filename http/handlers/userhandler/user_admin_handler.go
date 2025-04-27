@@ -1,7 +1,6 @@
 package userhandler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/espitman/jbm-hr-backend/contract"
@@ -30,19 +29,19 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		return dto.BadRequestJSON(c, "Invalid request format")
 	}
-	fmt.Println("AAAAAAAA")
 
 	if err := utils.ValidateStruct(req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
 	}
-	fmt.Println("BBBBBBB")
 
 	// Register user
 	user, err := h.userService.RegisterUser(c.Request().Context(), &contract.RegisterUserInput{
-		Email:  req.Email,
-		Phone:  req.Phone,
-		Role:   req.Role,
-		Avatar: req.Avatar,
+		Email:     req.Email,
+		Phone:     req.Phone,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Role:      req.Role,
+		Avatar:    req.Avatar,
 	})
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
@@ -51,11 +50,13 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 	// Prepare response
 	response := RegisterUserResponse{}
 	response.Data = RegisterUserData{
-		ID:     user.ID,
-		Email:  user.Email,
-		Phone:  user.Phone,
-		Role:   user.Role,
-		Avatar: user.Avatar,
+		ID:        user.ID,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Avatar:    user.Avatar,
 	}
 
 	return dto.CreatedJSON(c, response)

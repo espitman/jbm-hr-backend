@@ -544,8 +544,14 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "first_name": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
                 },
                 "phone": {
                     "type": "string"
@@ -559,6 +565,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "email",
+                "first_name",
+                "last_name",
                 "phone",
                 "role"
             ],
@@ -567,6 +575,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
                     "type": "string"
                 },
                 "phone": {
