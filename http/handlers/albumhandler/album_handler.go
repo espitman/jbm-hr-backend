@@ -50,7 +50,7 @@ func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Security BearerAuth
-// @Router /albums [post]
+// @Router /api/v1/albums [post]
 func (h *AlbumHandler) CreateAlbum(c echo.Context) error {
 	var req CreateAlbumRequest
 	if err := c.Bind(&req); err != nil {
@@ -144,7 +144,7 @@ func (h *AlbumHandler) UpdateAlbum(c echo.Context) error {
 // @Failure 400 {object} AlbumResponse
 // @Failure 500 {object} AlbumResponse
 // @Security BearerAuth
-// @Router /albums/{id} [delete]
+// @Router /api/v1/albums/{id} [delete]
 func (h *AlbumHandler) DeleteAlbum(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
