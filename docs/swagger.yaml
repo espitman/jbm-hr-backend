@@ -1,4 +1,4 @@
-basePath: /
+basePath: /api/v1
 definitions:
   albumhandler.AlbumResponse:
     properties:
@@ -140,6 +140,7 @@ definitions:
       success:
         type: boolean
     type: object
+host: localhost:8080
 info:
   contact:
     email: s.heidari@jabama.com
@@ -153,39 +154,11 @@ info:
   title: JBM HR Backend API
   version: "1.01"
 paths:
-  /api/v1/admin/users/register:
-    post:
+  /albums:
+    get:
       consumes:
       - application/json
-      description: Register a new user in the system
-      parameters:
-      - description: Register User
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/userhandler.RegisterUserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/userhandler.RegisterUserResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.Response'
-      summary: Register a new user
-      tags:
-      - admin - users
-  /api/v1/albums:
-    get:
-      description: Retrieves a list of all albums
+      description: Get a list of all albums
       produces:
       - application/json
       responses:
@@ -197,6 +170,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
       summary: Get all albums
       tags:
       - albums
@@ -226,12 +201,16 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
       summary: Create a new album
       tags:
       - albums
-  /api/v1/albums/{id}:
+  /albums/{id}:
     delete:
-      description: Deletes an album by its ID
+      consumes:
+      - application/json
+      description: Delete an album by ID
       parameters:
       - description: Album ID
         in: path
@@ -253,11 +232,15 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/albumhandler.AlbumResponse'
-      summary: Delete album
+      security:
+      - BearerAuth: []
+      summary: Delete an album
       tags:
       - albums
     get:
-      description: Retrieves an album by its ID
+      consumes:
+      - application/json
+      description: Get album details by ID
       parameters:
       - description: Album ID
         in: path
@@ -279,13 +262,15 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/albumhandler.AlbumResponse'
+      security:
+      - BearerAuth: []
       summary: Get album by ID
       tags:
       - albums
     put:
       consumes:
       - application/json
-      description: Update an album's details by ID
+      description: Update an album with the provided details
       parameters:
       - description: Album ID
         in: path
@@ -317,9 +302,41 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.Response'
-      summary: Update an existing album
+      security:
+      - BearerAuth: []
+      summary: Update an album
       tags:
       - albums
+  /api/v1/admin/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user in the system
+      parameters:
+      - description: Register User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/userhandler.RegisterUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Register a new user
+      tags:
+      - admin - users
   /api/v1/users/request-otp:
     post:
       consumes:
@@ -341,6 +358,10 @@ paths:
             $ref: '#/definitions/userhandler.RequestOTPResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/dto.Response'
         "500":
@@ -377,6 +398,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -384,4 +409,10 @@ paths:
       summary: Verify OTP
       tags:
       - users
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
