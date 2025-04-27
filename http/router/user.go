@@ -27,11 +27,14 @@ func (r *Router) registerUserRoutes(group *echo.Group) {
 func (r *Router) registerUserAdminRoutes(group *echo.Group) {
 	users := group.Group("/users")
 	{
-		// All admin routes require JWT
-		users.Use(middleware.JWT())
+		// Register endpoint is public (no JWT required)
+		users.POST("/register", r.userHandler.RegisterUser)
+
+		// Other admin routes require JWT
+		adminProtected := users.Group("")
+		adminProtected.Use(middleware.JWT())
 		{
-			users.POST("/register", r.userHandler.RegisterUser)
-			// Add other admin routes here
+			// Add other admin routes here that require JWT
 		}
 	}
 }
