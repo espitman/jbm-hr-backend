@@ -41,8 +41,9 @@ func (r *Router) SetupRoutes() {
 	// Create API v1 group
 	apiV1 := r.Group("/api/v1")
 
-	// Admin API v1 group
+	// Admin API v1 group with admin middleware
 	apiV1Admin := apiV1.Group("/admin")
+	apiV1Admin.Use(customMiddleware.Admin())
 
 	// Register routes
 	r.registerAlbumRoutes(apiV1)

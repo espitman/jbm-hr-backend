@@ -23,18 +23,6 @@ import (
 // @Security BearerAuth
 // @Router /api/v1/admin/users/register [post]
 func (h *UserHandler) RegisterUser(c echo.Context) error {
-	// Get the user from the context (set by JWT middleware)
-	userClaims, ok := c.Get("user").(map[string]interface{})
-	if !ok {
-		return dto.ErrorJSON(c, http.StatusUnauthorized, "User information not found")
-	}
-
-	// Check if the user has admin role
-	role, ok := userClaims["role"].(string)
-	if !ok || role != "admin" {
-		return dto.ErrorJSON(c, http.StatusForbidden, "Only admin users can register new users")
-	}
-
 	var req RegisterUserRequest
 	if err := c.Bind(&req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
