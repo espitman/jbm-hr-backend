@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 
+	_ "github.com/espitman/jbm-hr-backend/docs" // This is important for Swagger
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
