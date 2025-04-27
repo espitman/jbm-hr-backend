@@ -47,15 +47,9 @@ func generateOTP() (string, error) {
 }
 
 // RequestOTP generates and sends a new OTP for a user
-func (s *service) RequestOTP(ctx context.Context, userID int) (*contract.OTP, error) {
-	// Check if user exists
-	_, err := s.userRepo.GetByID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *service) RequestOTP(ctx context.Context, email string) (*contract.OTP, error) {
 	// Check for existing active OTPs
-	activeOTPs, err := s.otpRepo.GetActiveByUserID(ctx, userID)
+	activeOTPs, err := s.otpRepo.GetActiveByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +67,7 @@ func (s *service) RequestOTP(ctx context.Context, userID int) (*contract.OTP, er
 	expiresAt := time.Now().Add(5 * time.Minute)
 
 	// Create OTP
-	otp, err := s.otpRepo.Create(ctx, userID, code, expiresAt)
+	otp, err := s.otpRepo.Create(ctx, email, code, expiresAt)
 	if err != nil {
 		return nil, err
 	}
@@ -85,20 +79,26 @@ func (s *service) RequestOTP(ctx context.Context, userID int) (*contract.OTP, er
 }
 
 // VerifyOTP verifies an OTP code for a user
-func (s *service) VerifyOTP(ctx context.Context, userID int, code string) (bool, error) {
+func (s *service) VerifyOTP(ctx context.Context, email string, code string) (bool, error) {
 	// Get OTP by code
 	otp, err := s.otpRepo.GetByCode(ctx, code)
 	if err != nil {
 		return false, ErrOTPNotFound
 	}
 
+	// Get user by email
+	user, err := s.userRepo.GetByEmail(ctx, email)
+	if err != nil {
+		return false, err
+	}
+
 	// Verify user ID matches
-	if otp.UserID != userID {
+	if otp.UserID != user.ID {
 		return false, ErrOTPInvalid
 	}
 
 	// Check if OTP is expired
-	if time.Now().After(otp.ExpiresAt) {
+	if otp.ExpiresAt.Before(time.Now()) {
 		return false, ErrOTPExpired
 	}
 

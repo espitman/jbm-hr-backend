@@ -22,12 +22,21 @@ func NewEntRepository(client *ent.Client) Repository {
 }
 
 // Create creates a new OTP for a user
-func (r *repository) Create(ctx context.Context, userID int, code string, expiresAt time.Time) (*contract.OTP, error) {
+func (r *repository) Create(ctx context.Context, email string, code string, expiresAt time.Time) (*contract.OTP, error) {
+	// First find the user by email
+	user, err := r.client.User.
+		Query().
+		Where(user.Email(email)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	otp, err := r.client.OTP.
 		Create().
 		SetCode(code).
 		SetExpiresAt(expiresAt).
-		SetUserID(userID).
+		SetUserID(user.ID).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -39,7 +48,7 @@ func (r *repository) Create(ctx context.Context, userID int, code string, expire
 		Used:      otp.Used,
 		CreatedAt: otp.CreatedAt,
 		UsedAt:    otp.UsedAt,
-		UserID:    userID,
+		UserID:    user.ID,
 	}, nil
 }
 
@@ -68,12 +77,21 @@ func (r *repository) GetByCode(ctx context.Context, code string) (*contract.OTP,
 	}, nil
 }
 
-// GetActiveByUserID retrieves active (unused and not expired) OTPs for a user
-func (r *repository) GetActiveByUserID(ctx context.Context, userID int) ([]*contract.OTP, error) {
+// GetActiveByEmail retrieves active (unused and not expired) OTPs for a user
+func (r *repository) GetActiveByEmail(ctx context.Context, email string) ([]*contract.OTP, error) {
+	// First find the newUser by email
+	newUser, err := r.client.User.
+		Query().
+		Where(user.Email(email)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	otps, err := r.client.OTP.
 		Query().
 		Where(
-			otp.HasUserWith(user.ID(userID)),
+			otp.HasUserWith(user.ID(newUser.ID)),
 			otp.Used(false),
 			otp.ExpiresAtGT(time.Now()),
 		).
@@ -90,7 +108,7 @@ func (r *repository) GetActiveByUserID(ctx context.Context, userID int) ([]*cont
 			Used:      otp.Used,
 			CreatedAt: otp.CreatedAt,
 			UsedAt:    otp.UsedAt,
-			UserID:    userID,
+			UserID:    newUser.ID,
 		}
 	}
 	return result, nil

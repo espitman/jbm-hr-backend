@@ -10,13 +10,13 @@ import (
 // Repository defines the interface for OTP data access
 type Repository interface {
 	// Create creates a new OTP for a user
-	Create(ctx context.Context, userID int, code string, expiresAt time.Time) (*contract.OTP, error)
+	Create(ctx context.Context, email string, code string, expiresAt time.Time) (*contract.OTP, error)
 
 	// GetByCode retrieves an OTP by its code
 	GetByCode(ctx context.Context, code string) (*contract.OTP, error)
 
-	// GetActiveByUserID retrieves active (unused and not expired) OTPs for a user
-	GetActiveByUserID(ctx context.Context, userID int) ([]*contract.OTP, error)
+	// GetActiveByEmail retrieves active (unused and not expired) OTPs for a user
+	GetActiveByEmail(ctx context.Context, email string) ([]*contract.OTP, error)
 
 	// MarkAsUsed marks an OTP as used
 	MarkAsUsed(ctx context.Context, id int) error
