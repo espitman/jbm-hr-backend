@@ -20,6 +20,10 @@ func (User) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("phone").
 			NotEmpty(),
+		field.String("first_name").
+			NotEmpty(),
+		field.String("last_name").
+			NotEmpty(),
 		field.Enum("role").
 			Values("admin", "employee").
 			Default("employee"),

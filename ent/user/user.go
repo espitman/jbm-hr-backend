@@ -18,6 +18,10 @@ const (
 	FieldEmail = "email"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
+	// FieldFirstName holds the string denoting the first_name field in the database.
+	FieldFirstName = "first_name"
+	// FieldLastName holds the string denoting the last_name field in the database.
+	FieldLastName = "last_name"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
 	// FieldAvatar holds the string denoting the avatar field in the database.
@@ -40,6 +44,8 @@ var Columns = []string{
 	FieldID,
 	FieldEmail,
 	FieldPhone,
+	FieldFirstName,
+	FieldLastName,
 	FieldRole,
 	FieldAvatar,
 }
@@ -59,6 +65,10 @@ var (
 	EmailValidator func(string) error
 	// PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
 	PhoneValidator func(string) error
+	// FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
+	FirstNameValidator func(string) error
+	// LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
+	LastNameValidator func(string) error
 )
 
 // Role defines the type for the "role" enum field.
@@ -103,6 +113,16 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 // ByPhone orders the results by the phone field.
 func ByPhone(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPhone, opts...).ToFunc()
+}
+
+// ByFirstName orders the results by the first_name field.
+func ByFirstName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstName, opts...).ToFunc()
+}
+
+// ByLastName orders the results by the last_name field.
+func ByLastName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastName, opts...).ToFunc()
 }
 
 // ByRole orders the results by the role field.
