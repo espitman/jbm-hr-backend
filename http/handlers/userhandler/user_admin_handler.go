@@ -1,6 +1,7 @@
 package userhandler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/espitman/jbm-hr-backend/contract"
@@ -24,14 +25,19 @@ import (
 // @Router /api/v1/admin/users/register [post]
 func (h *UserHandler) RegisterUser(c echo.Context) error {
 	var req RegisterUserRequest
+
+	// Bind and validate request
 	if err := c.Bind(&req); err != nil {
-		return dto.BadRequestJSON(c, err.Error())
+		return dto.BadRequestJSON(c, "Invalid request format")
 	}
+	fmt.Println("AAAAAAAA")
 
 	if err := utils.ValidateStruct(req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
 	}
+	fmt.Println("BBBBBBB")
 
+	// Register user
 	user, err := h.userService.RegisterUser(c.Request().Context(), &contract.RegisterUserInput{
 		Email:  req.Email,
 		Phone:  req.Phone,
@@ -42,6 +48,7 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
+	// Prepare response
 	response := RegisterUserResponse{}
 	response.Data = RegisterUserData{
 		ID:     user.ID,

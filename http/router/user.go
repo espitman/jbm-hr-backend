@@ -27,10 +27,9 @@ func (r *Router) registerUserRoutes(group *echo.Group) {
 func (r *Router) registerUserAdminRoutes(group *echo.Group) {
 	users := group.Group("/users")
 	{
-		// Register endpoint is public (no JWT required)
+		// Admin routes (protected by admin middleware)
 		users.POST("/register", r.userHandler.RegisterUser)
-
-		// Add other admin routes here that require admin role
+		// Add other admin routes here
 		// Example: users.GET("/all", r.userHandler.GetAllUsers)
 	}
 }

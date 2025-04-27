@@ -12,7 +12,10 @@ import (
 func Admin() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if err := JWT()(next)(c); err != nil {
+			// First, apply JWT middleware to ensure user is authenticated
+			if err := JWT()(func(c echo.Context) error {
+				return nil
+			})(c); err != nil {
 				return err
 			}
 
