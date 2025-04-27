@@ -29,7 +29,7 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		ID:     entUser.ID,
 		Email:  entUser.Email,
 		Phone:  entUser.Phone,
-		Role:   entUser.Role,
+		Role:   string(entUser.Role),
 		Avatar: entUser.Avatar,
 	}
 }
@@ -72,7 +72,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateUserInpu
 		Create().
 		SetEmail(req.Email).
 		SetPhone(req.Phone).
-		SetRole(req.Role).
+		SetRole(entUser.Role(req.Role)).
 		SetAvatar(req.Avatar).
 		Save(ctx)
 	if err != nil {
@@ -87,7 +87,7 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 		UpdateOneID(id).
 		SetEmail(req.Email).
 		SetPhone(req.Phone).
-		SetRole(req.Role).
+		SetRole(entUser.Role(req.Role)).
 		SetAvatar(req.Avatar).
 		Save(ctx)
 	if err != nil {
