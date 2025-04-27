@@ -5,6 +5,7 @@ package ent
 import (
 	"github.com/espitman/jbm-hr-backend/ent/album"
 	"github.com/espitman/jbm-hr-backend/ent/schema"
+	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -17,4 +18,14 @@ func init() {
 	albumDescURL := albumFields[0].Descriptor()
 	// album.URLValidator is a validator for the "url" field. It is called by the builders before save.
 	album.URLValidator = albumDescURL.Validators[0].(func(string) error)
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[0].Descriptor()
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	// userDescPhone is the schema descriptor for phone field.
+	userDescPhone := userFields[1].Descriptor()
+	// user.PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
+	user.PhoneValidator = userDescPhone.Validators[0].(func(string) error)
 }
