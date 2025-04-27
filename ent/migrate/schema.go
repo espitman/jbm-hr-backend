@@ -20,6 +20,30 @@ var (
 		Columns:    AlbumsColumns,
 		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
 	}
+	// OtPsColumns holds the columns for the "ot_ps" table.
+	OtPsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "code", Type: field.TypeString},
+		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "used", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "user_otps", Type: field.TypeInt},
+	}
+	// OtPsTable holds the schema information for the "ot_ps" table.
+	OtPsTable = &schema.Table{
+		Name:       "ot_ps",
+		Columns:    OtPsColumns,
+		PrimaryKey: []*schema.Column{OtPsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "ot_ps_users_otps",
+				Columns:    []*schema.Column{OtPsColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -37,9 +61,11 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AlbumsTable,
+		OtPsTable,
 		UsersTable,
 	}
 )
 
 func init() {
+	OtPsTable.ForeignKeys[0].RefTable = UsersTable
 }

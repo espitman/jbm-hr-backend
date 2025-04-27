@@ -3,7 +3,10 @@
 package ent
 
 import (
+	"time"
+
 	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/schema"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -18,6 +21,26 @@ func init() {
 	albumDescURL := albumFields[0].Descriptor()
 	// album.URLValidator is a validator for the "url" field. It is called by the builders before save.
 	album.URLValidator = albumDescURL.Validators[0].(func(string) error)
+	otpFields := schema.OTP{}.Fields()
+	_ = otpFields
+	// otpDescCode is the schema descriptor for code field.
+	otpDescCode := otpFields[0].Descriptor()
+	// otp.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	otp.CodeValidator = otpDescCode.Validators[0].(func(string) error)
+	// otpDescExpiresAt is the schema descriptor for expires_at field.
+	otpDescExpiresAt := otpFields[1].Descriptor()
+	// otp.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	otp.DefaultExpiresAt = otpDescExpiresAt.Default.(func() time.Time)
+	// otp.UpdateDefaultExpiresAt holds the default value on update for the expires_at field.
+	otp.UpdateDefaultExpiresAt = otpDescExpiresAt.UpdateDefault.(func() time.Time)
+	// otpDescUsed is the schema descriptor for used field.
+	otpDescUsed := otpFields[2].Descriptor()
+	// otp.DefaultUsed holds the default value on creation for the used field.
+	otp.DefaultUsed = otpDescUsed.Default.(bool)
+	// otpDescCreatedAt is the schema descriptor for created_at field.
+	otpDescCreatedAt := otpFields[3].Descriptor()
+	// otp.DefaultCreatedAt holds the default value on creation for the created_at field.
+	otp.DefaultCreatedAt = otpDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.
