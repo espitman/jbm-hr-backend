@@ -3,11 +3,14 @@ package userservice
 import (
 	"context"
 	"errors"
+	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/database/repository/otp"
 	"github.com/espitman/jbm-hr-backend/database/repository/user"
+	"github.com/espitman/jbm-hr-backend/utils"
 )
 
 var (
@@ -61,6 +64,12 @@ func (s *service) RequestOTP(ctx context.Context, email string) (*contract.OTP, 
 	otp, err := s.otpRepo.Create(ctx, email, code, expiresAt)
 	if err != nil {
 		return nil, contract.ErrDatabaseQuery
+	}
+
+	// Send OTP via email
+	if err := utils.SendOTPEmail(email, code); err != nil {
+		// Log the error but don't return it to the user
+		fmt.Printf("Failed to send OTP email: %v\n", err)
 	}
 
 	return otp, nil
@@ -125,6 +134,7 @@ func (s *service) RegisterUser(ctx context.Context, input *contract.RegisterUser
 
 // Helper functions
 func generateOTP() (string, error) {
-	// TODO: Implement proper OTP generation
-	return "123456", nil
+	// Generate a 6-digit OTP
+	otp := fmt.Sprintf("%06d", rand.Intn(1000000))
+	return otp, nil
 }
