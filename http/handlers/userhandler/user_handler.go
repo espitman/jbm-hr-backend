@@ -6,6 +6,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/http/dto"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
+	"github.com/espitman/jbm-hr-backend/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -34,6 +35,10 @@ func NewUserHandler(userService userservice.Service) *UserHandler {
 func (h *UserHandler) RequestOTP(c echo.Context) error {
 	var req RequestOTPRequest
 	if err := c.Bind(&req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	if err := utils.ValidateStruct(req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
@@ -68,6 +73,10 @@ func (h *UserHandler) RequestOTP(c echo.Context) error {
 func (h *UserHandler) VerifyOTP(c echo.Context) error {
 	var req VerifyOTPRequest
 	if err := c.Bind(&req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	if err := utils.ValidateStruct(req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 

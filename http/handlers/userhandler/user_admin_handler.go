@@ -5,6 +5,7 @@ import (
 
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/http/dto"
+	"github.com/espitman/jbm-hr-backend/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,6 +23,10 @@ import (
 func (h *UserHandler) RegisterUser(c echo.Context) error {
 	var req RegisterUserRequest
 	if err := c.Bind(&req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	if err := utils.ValidateStruct(req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
