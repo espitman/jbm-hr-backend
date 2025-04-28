@@ -3,7 +3,9 @@ definitions:
   albumhandler.AlbumResponse:
     properties:
       data:
-        $ref: '#/definitions/contract.Album'
+        items:
+          $ref: '#/definitions/contract.Album'
+        type: array
       message:
         type: string
       success:
@@ -363,9 +365,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/albumhandler.AlbumResponse'
-            type: array
+            $ref: '#/definitions/albumhandler.AlbumResponse'
         "500":
           description: Internal Server Error
           schema:

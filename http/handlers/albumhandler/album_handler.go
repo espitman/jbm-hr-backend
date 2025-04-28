@@ -26,7 +26,7 @@ func NewAlbumHandler(service albumservice.Service) *AlbumHandler {
 // @Tags albums
 // @Accept json
 // @Produce json
-// @Success 200 {array} AlbumResponse
+// @Success 200 {object} AlbumResponse
 // @Failure 500 {object} dto.Response
 // @Router /api/v1/albums [get]
 func (h *AlbumHandler) GetAllAlbums(c echo.Context) error {

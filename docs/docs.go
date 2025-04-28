@@ -284,10 +284,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/albumhandler.AlbumResponse"
-                            }
+                            "$ref": "#/definitions/albumhandler.AlbumResponse"
                         }
                     },
                     "500": {
@@ -505,7 +502,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/contract.Album"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/contract.Album"
+                    }
                 },
                 "message": {
                     "type": "string"
