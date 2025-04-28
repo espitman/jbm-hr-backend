@@ -1,1 +1,0 @@
-import{_ as t,c,o as s,E as o}from"./9eyD-TdY.js";const n={},r={class:"w-full md:w-[calc(100vw-16rem)] flex items-center justify-center bg-white"};function a(e,l){return s(),c("section",r,[o(e.$slots,"default")])}const f=t(n,[["render",a]]);export{f as S};

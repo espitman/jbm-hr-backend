@@ -1,0 +1,1 @@
+import{K as i,y as u,L as a}from"./DYX1uUzg.js";const o=i(t=>{const{isAuthenticated:e}=u();if(!e.value&&t.path!=="/login")return a("/login");if(e.value&&t.path==="/login")return a("/")});export{o as default};
