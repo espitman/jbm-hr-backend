@@ -9,16 +9,8 @@ type HRTeam struct {
 	Phone    string `json:"phone"`
 }
 
-// CreateHRTeamInput represents the request to create a new HR team member
-type CreateHRTeamInput struct {
-	FullName string `json:"full_name" binding:"required"`
-	Role     string `json:"role" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	Phone    string `json:"phone" binding:"required"`
-}
-
-// UpdateHRTeamInput represents the request to update an existing HR team member
-type UpdateHRTeamInput struct {
+// HRTeamInput represents the request to create or update an HR team member
+type HRTeamInput struct {
 	FullName string `json:"full_name" binding:"required"`
 	Role     string `json:"role" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
