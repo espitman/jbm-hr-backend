@@ -14,3 +14,14 @@ type UploadImageResponse struct {
 type UploadImageData struct {
 	Key string `json:"key"`
 }
+
+// UploadDocumentResponse represents the response structure for document upload
+type UploadDocumentResponse struct {
+	dto.Response
+	Data UploadDocumentData `json:"data,omitempty"`
+}
+
+// UploadDocumentData represents the data structure for document upload responses
+type UploadDocumentData struct {
+	Key string `json:"key"`
+}

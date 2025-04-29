@@ -225,6 +225,20 @@ definitions:
       success:
         type: boolean
     type: object
+  uploadhandler.UploadDocumentData:
+    properties:
+      key:
+        type: string
+    type: object
+  uploadhandler.UploadDocumentResponse:
+    properties:
+      data:
+        $ref: '#/definitions/uploadhandler.UploadDocumentData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   uploadhandler.UploadImageData:
     properties:
       key:
@@ -936,6 +950,35 @@ paths:
       summary: Get an HR team member
       tags:
       - hr-team
+  /api/v1/upload/document:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload a document file (PDF, DOC, DOCX) to S3 storage
+      parameters:
+      - description: Document file to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/uploadhandler.UploadDocumentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Upload a document
+      tags:
+      - upload
   /api/v1/upload/image:
     post:
       consumes:

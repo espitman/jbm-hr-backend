@@ -58,3 +58,42 @@ func (h *UploadHandler) UploadImage(c echo.Context) error {
 		Key: fileKey,
 	})
 }
+
+// UploadDocument handles document file uploads
+// @Summary Upload a document
+// @Description Upload a document file (PDF, DOC, DOCX) to S3 storage
+// @Tags upload
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "Document file to upload"
+// @Success 200 {object} UploadDocumentResponse
+// @Failure 400 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/upload/document [post]
+func (h *UploadHandler) UploadDocument(c echo.Context) error {
+	// Get the file from the request
+	file, err := c.FormFile("file")
+	if err != nil {
+		return dto.BadRequestJSON(c, "Failed to get file from request")
+	}
+
+	// Validate file type
+	ext := filepath.Ext(file.Filename)
+	if ext != ".pdf" && ext != ".doc" && ext != ".docx" {
+		return dto.BadRequestJSON(c, "Invalid file type. Only PDF, DOC, and DOCX files are allowed")
+	}
+
+	// Define the path for document uploads
+	path := "documents"
+
+	// Upload the file
+	fileKey, err := h.uploadService.UploadFile(c.Request().Context(), file, path)
+	if err != nil {
+		return dto.InternalServerErrorJSON(c, "Failed to upload file")
+	}
+
+	// Return the key of the uploaded file
+	return dto.SuccessJSON(c, UploadDocumentData{
+		Key: fileKey,
+	})
+}
