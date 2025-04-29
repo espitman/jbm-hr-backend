@@ -6,7 +6,6 @@ import (
 	"io"
 	"mime/multipart"
 	"path/filepath"
-	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
@@ -83,9 +82,7 @@ func (s *service) UploadFile(ctx context.Context, file *multipart.FileHeader) (s
 		return "", fmt.Errorf("failed to upload file: %v", err)
 	}
 
-	// Return the URL of the uploaded file
-	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), uniqueFilename)
-	return fileURL, nil
+	return uniqueFilename, nil
 }
 
 func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, filename string) (string, error) {
@@ -103,7 +100,5 @@ func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, fi
 		return "", fmt.Errorf("failed to upload file: %v", err)
 	}
 
-	// Return the URL of the uploaded file
-	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), uniqueFilename)
-	return fileURL, nil
+	return uniqueFilename, nil
 }
