@@ -14,7 +14,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
-	"github.com/espitman/jbm-hr-backend/http/handlers/fronthandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
@@ -85,12 +85,12 @@ func main() {
 	departmentHandler := departmenthandler.NewDepartmentHandler(departmentService)
 	departmentAdminHandler := departmenthandler.NewDepartmentAdminHandler(departmentService)
 
-	// Initialize front handler
-	frontendPath, _ := filepath.Abs("ui/web")
-	frontHandler := fronthandler.NewFrontHandler(frontendPath)
+	// Initialize UI handler
+	uiPath, _ := filepath.Abs("ui/web")
+	uiHandler := uihandler.NewUIHandler(uiPath)
 
 	// Initialize router
-	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, frontHandler)
+	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, uiHandler)
 	r.SetupRoutes()
 
 	// Start server

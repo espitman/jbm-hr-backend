@@ -6,7 +6,7 @@ import (
 	_ "github.com/espitman/jbm-hr-backend/docs" // This is important for Swagger
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
-	"github.com/espitman/jbm-hr-backend/http/handlers/fronthandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
 	"github.com/labstack/echo/v4"
@@ -20,13 +20,13 @@ type Router struct {
 	albumHandler           *albumhandler.AlbumHandler
 	albumAdminHandler      *albumhandler.AlbumAdminHandler
 	userHandler            *userhandler.UserHandler
-	frontHandler           *fronthandler.FrontHandler
+	uiHandler              *uihandler.UIHandler
 	departmentHandler      *departmenthandler.DepartmentHandler
 	departmentAdminHandler *departmenthandler.DepartmentAdminHandler
 }
 
 // NewRouter creates a new router instance
-func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler, frontHandler *fronthandler.FrontHandler) *Router {
+func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler, uiHandler *uihandler.UIHandler) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
@@ -37,7 +37,7 @@ func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *album
 		albumHandler:           albumHandler,
 		albumAdminHandler:      albumAdminHandler,
 		userHandler:            userHandler,
-		frontHandler:           frontHandler,
+		uiHandler:              uiHandler,
 		departmentHandler:      departmentHandler,
 		departmentAdminHandler: departmentAdminHandler,
 	}
@@ -45,8 +45,8 @@ func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *album
 
 // SetupRoutes sets up all the routes in the application
 func (r *Router) SetupRoutes() {
-	// Serve frontend static files first
-	r.GET("/*", r.frontHandler.ServeFrontend)
+	// Serve UI static files first
+	r.GET("/*", r.uiHandler.ServeUI)
 
 	// Create API v1 group
 	apiV1 := r.Group("/api/v1")
