@@ -67,8 +67,5 @@ func (h *HRTeamHandler) List(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, HRTeamListResponse{
-		Response: dto.Response{Success: true},
-		Data:     hrTeams,
-	})
+	return dto.SuccessJSON(c, hrTeams)
 }
