@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/espitman/jbm-hr-backend/utils/config"
+	"github.com/google/uuid"
 )
 
 type service struct {
@@ -68,13 +69,14 @@ func (s *service) UploadFile(ctx context.Context, file *multipart.FileHeader) (s
 	}
 	defer src.Close()
 
-	// Generate a unique filename
-	filename := filepath.Base(file.Filename)
+	// Generate a unique filename using UUID
+	ext := filepath.Ext(file.Filename)
+	uniqueFilename := uuid.New().String() + ext
 
 	// Upload the file to S3
 	_, err = s.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
-		Key:    aws.String(filename),
+		Key:    aws.String(uniqueFilename),
 		Body:   src,
 	})
 	if err != nil {
@@ -82,15 +84,19 @@ func (s *service) UploadFile(ctx context.Context, file *multipart.FileHeader) (s
 	}
 
 	// Return the URL of the uploaded file
-	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), filename)
+	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), uniqueFilename)
 	return fileURL, nil
 }
 
 func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, filename string) (string, error) {
+	// Generate a unique filename using UUID
+	ext := filepath.Ext(filename)
+	uniqueFilename := uuid.New().String() + ext
+
 	// Upload the file to S3
 	_, err := s.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
-		Key:    aws.String(filename),
+		Key:    aws.String(uniqueFilename),
 		Body:   reader,
 	})
 	if err != nil {
@@ -98,6 +104,6 @@ func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, fi
 	}
 
 	// Return the URL of the uploaded file
-	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), filename)
+	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), uniqueFilename)
 	return fileURL, nil
 }
