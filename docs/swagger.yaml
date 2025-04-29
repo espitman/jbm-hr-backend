@@ -225,6 +225,20 @@ definitions:
       success:
         type: boolean
     type: object
+  uploadhandler.UploadImageData:
+    properties:
+      url:
+        type: string
+    type: object
+  uploadhandler.UploadImageResponse:
+    properties:
+      data:
+        $ref: '#/definitions/uploadhandler.UploadImageData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   userhandler.GetMeData:
     properties:
       avatar:
@@ -939,21 +953,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/uploadhandler.UploadImageResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.Response'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.Response'
       summary: Upload an image
       tags:
       - upload
