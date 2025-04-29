@@ -6,6 +6,7 @@ import (
 	"io"
 	"mime/multipart"
 	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
@@ -14,13 +15,14 @@ import (
 	"github.com/espitman/jbm-hr-backend/utils/config"
 )
 
-type UploadService struct {
+type service struct {
 	s3Client *s3.Client
 	bucket   string
 	endpoint string
 }
 
-func NewUploadService() (*UploadService, error) {
+// New creates a new UploadService instance
+func New() (Service, error) {
 	// Get configuration from environment variables using config utility
 	endpoint := config.GetConfig("S3_ENDPOINT", "https://storage.c2.liara.space")
 	accessKey := config.GetConfig("S3_ACCESS_KEY", "icvivvt5uv1g2l7s")
@@ -52,14 +54,14 @@ func NewUploadService() (*UploadService, error) {
 	// Create S3 client
 	client := s3.NewFromConfig(cfg)
 
-	return &UploadService{
+	return &service{
 		s3Client: client,
 		bucket:   bucket,
 		endpoint: endpoint,
 	}, nil
 }
 
-func (s *UploadService) UploadFile(ctx context.Context, file *multipart.FileHeader) (string, error) {
+func (s *service) UploadFile(ctx context.Context, file *multipart.FileHeader) (string, error) {
 	src, err := file.Open()
 	if err != nil {
 		return "", fmt.Errorf("failed to open file: %v", err)
@@ -80,11 +82,11 @@ func (s *UploadService) UploadFile(ctx context.Context, file *multipart.FileHead
 	}
 
 	// Return the URL of the uploaded file
-	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, s.endpoint, filename)
+	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), filename)
 	return fileURL, nil
 }
 
-func (s *UploadService) UploadFileFromReader(ctx context.Context, reader io.Reader, filename string) (string, error) {
+func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, filename string) (string, error) {
 	// Upload the file to S3
 	_, err := s.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
@@ -96,6 +98,6 @@ func (s *UploadService) UploadFileFromReader(ctx context.Context, reader io.Read
 	}
 
 	// Return the URL of the uploaded file
-	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, s.endpoint, filename)
+	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, strings.TrimPrefix(s.endpoint, "https://"), filename)
 	return fileURL, nil
 }

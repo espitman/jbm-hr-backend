@@ -86,9 +86,9 @@ func main() {
 	hrTeamService := hrteamservice.New(hrTeamRepo)
 
 	// Initialize upload service
-	uploadService, err := uploadservice.NewUploadService()
+	uploadService, err := uploadservice.New()
 	if err != nil {
-		log.Fatalf("failed creating upload service: %v", err)
+		log.Fatalf("Failed to initialize upload service: %v", err)
 	}
 
 	// Initialize handlers
