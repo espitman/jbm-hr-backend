@@ -98,9 +98,3 @@ func (r *Router) GetEcho() *echo.Echo {
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r.Echo.ServeHTTP(w, req)
 }
-
-// registerUploadRoutes registers the upload routes
-func (r *Router) registerUploadRoutes(api *echo.Group) {
-	upload := api.Group("/upload")
-	upload.POST("/image", r.uploadHandler.UploadImage)
-}
