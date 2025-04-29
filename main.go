@@ -9,16 +9,19 @@ import (
 	"github.com/espitman/jbm-hr-backend/database"
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
 	"github.com/espitman/jbm-hr-backend/database/repository/department"
+	"github.com/espitman/jbm-hr-backend/database/repository/hrteam"
 	"github.com/espitman/jbm-hr-backend/database/repository/otp"
 	"github.com/espitman/jbm-hr-backend/database/repository/user"
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/espitman/jbm-hr-backend/service/departmentservice"
+	"github.com/espitman/jbm-hr-backend/service/hrteamservice"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
 	_ "github.com/swaggo/files"
@@ -72,11 +75,13 @@ func main() {
 	userRepo := user.NewEntRepository(client)
 	otpRepo := otp.NewEntRepository(client)
 	departmentRepo := department.NewEntRepository(client)
+	hrTeamRepo := hrteam.NewEntRepository(client)
 
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
 	userService := userservice.New(userRepo, otpRepo)
 	departmentService := departmentservice.New(departmentRepo)
+	hrTeamService := hrteamservice.New(hrTeamRepo)
 
 	// Initialize handlers
 	albumHandler := albumhandler.NewAlbumHandler(albumService)
@@ -84,13 +89,15 @@ func main() {
 	userHandler := userhandler.NewUserHandler(userService)
 	departmentHandler := departmenthandler.NewDepartmentHandler(departmentService)
 	departmentAdminHandler := departmenthandler.NewDepartmentAdminHandler(departmentService)
+	hrTeamHandler := hrteamhandler.NewHRTeamHandler(hrTeamService)
+	hrTeamAdminHandler := hrteamhandler.NewHRTeamAdminHandler(hrTeamService)
 
 	// Initialize UI handler
 	uiPath, _ := filepath.Abs("ui/web")
 	uiHandler := uihandler.NewUIHandler(uiPath)
 
 	// Initialize router
-	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, uiHandler)
+	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, hrTeamHandler, hrTeamAdminHandler, uiHandler)
 	r.SetupRoutes()
 
 	// Start server

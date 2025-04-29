@@ -61,6 +61,19 @@ definitions:
       title:
         type: string
     type: object
+  contract.HRTeam:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      phone:
+        type: string
+      role:
+        type: string
+    type: object
   departmenthandler.CreateDepartmentRequest:
     properties:
       color:
@@ -153,6 +166,60 @@ definitions:
   dto.Response:
     properties:
       data: {}
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  hrteamhandler.CreateHRTeamResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.HRTeam'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  hrteamhandler.GetHRTeamResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.HRTeam'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  hrteamhandler.HRTeamInput:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+    required:
+    - email
+    - fullName
+    - phone
+    - role
+    type: object
+  hrteamhandler.HRTeamListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/contract.HRTeam'
+        type: array
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  hrteamhandler.UpdateHRTeamResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.HRTeam'
       message:
         type: string
       success:
@@ -539,6 +606,121 @@ paths:
       summary: Update a department (admin only)
       tags:
       - admin - departments
+  /api/v1/admin/hr-team:
+    post:
+      consumes:
+      - application/json
+      description: Create a new HR team member in the system (admin only)
+      parameters:
+      - description: Create HR Team Member
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/hrteamhandler.HRTeamInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/hrteamhandler.CreateHRTeamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Create a new HR team member (admin only)
+      tags:
+      - admin - hr-team
+  /api/v1/admin/hr-team/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an HR team member by their ID (admin only)
+      parameters:
+      - description: HR Team Member ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete an HR team member (admin only)
+      tags:
+      - admin - hr-team
+    put:
+      consumes:
+      - application/json
+      description: Update an existing HR team member in the system (admin only)
+      parameters:
+      - description: HR Team Member ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update HR Team Member
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/hrteamhandler.HRTeamInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/hrteamhandler.UpdateHRTeamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Update an HR team member (admin only)
+      tags:
+      - admin - hr-team
   /api/v1/admin/users/register:
     post:
       consumes:
@@ -688,6 +870,58 @@ paths:
       summary: Get a department
       tags:
       - departments
+  /api/v1/hr-team:
+    get:
+      consumes:
+      - application/json
+      description: Get all HR team members
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/hrteamhandler.HRTeamListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: List HR team members
+      tags:
+      - hr-team
+  /api/v1/hr-team/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an HR team member by their ID
+      parameters:
+      - description: HR Team Member ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/hrteamhandler.GetHRTeamResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get an HR team member
+      tags:
+      - hr-team
   /api/v1/users/me:
     get:
       consumes:

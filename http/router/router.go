@@ -6,6 +6,7 @@ import (
 	_ "github.com/espitman/jbm-hr-backend/docs" // This is important for Swagger
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
@@ -23,10 +24,12 @@ type Router struct {
 	uiHandler              *uihandler.UIHandler
 	departmentHandler      *departmenthandler.DepartmentHandler
 	departmentAdminHandler *departmenthandler.DepartmentAdminHandler
+	hrTeamHandler          *hrteamhandler.HRTeamHandler
+	hrTeamAdminHandler     *hrteamhandler.HRTeamAdminHandler
 }
 
 // NewRouter creates a new router instance
-func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler, uiHandler *uihandler.UIHandler) *Router {
+func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler, hrTeamHandler *hrteamhandler.HRTeamHandler, hrTeamAdminHandler *hrteamhandler.HRTeamAdminHandler, uiHandler *uihandler.UIHandler) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
@@ -40,6 +43,8 @@ func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *album
 		uiHandler:              uiHandler,
 		departmentHandler:      departmentHandler,
 		departmentAdminHandler: departmentAdminHandler,
+		hrTeamHandler:          hrTeamHandler,
+		hrTeamAdminHandler:     hrTeamAdminHandler,
 	}
 }
 
@@ -63,6 +68,8 @@ func (r *Router) SetupRoutes() {
 	r.registerUserAdminRoutes(apiV1Admin)
 	r.registerDepartmentRoutes(apiV1)
 	r.registerDepartmentAdminRoutes(apiV1Admin)
+	r.registerHRTeamRoutes(apiV1)
+	r.registerHRTeamAdminRoutes(apiV1Admin)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)
