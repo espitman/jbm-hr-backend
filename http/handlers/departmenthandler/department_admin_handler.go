@@ -60,15 +60,7 @@ func (h *DepartmentAdminHandler) Create(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.CreatedJSON(c, DepartmentData{
-		ID:          department.ID,
-		Title:       department.Title,
-		Description: department.Description,
-		Image:       department.Image,
-		Icon:        department.Icon,
-		Color:       department.Color,
-		ShortName:   department.ShortName,
-	})
+	return dto.CreatedJSON(c, department)
 }
 
 // Update handles the update of an existing department (admin only)
@@ -118,15 +110,7 @@ func (h *DepartmentAdminHandler) Update(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, DepartmentData{
-		ID:          department.ID,
-		Title:       department.Title,
-		Description: department.Description,
-		Image:       department.Image,
-		Icon:        department.Icon,
-		Color:       department.Color,
-		ShortName:   department.ShortName,
-	})
+	return dto.SuccessJSON(c, department)
 }
 
 // Delete handles the deletion of a department (admin only)

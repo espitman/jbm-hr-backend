@@ -44,6 +44,23 @@ definitions:
       url:
         type: string
     type: object
+  contract.Department:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      short_name:
+        type: string
+      title:
+        type: string
+    type: object
   departmenthandler.CreateDepartmentRequest:
     properties:
       color:
@@ -69,33 +86,25 @@ definitions:
   departmenthandler.CreateDepartmentResponse:
     properties:
       data:
-        $ref: '#/definitions/departmenthandler.DepartmentData'
+        $ref: '#/definitions/contract.Department'
       message:
         type: string
       success:
         type: boolean
     type: object
-  departmenthandler.DepartmentData:
+  departmenthandler.DepartmentListData:
     properties:
-      color:
-        type: string
-      description:
-        type: string
-      icon:
-        type: string
-      id:
+      departments:
+        items:
+          $ref: '#/definitions/contract.Department'
+        type: array
+      total:
         type: integer
-      image:
-        type: string
-      short_name:
-        type: string
-      title:
-        type: string
     type: object
   departmenthandler.GetDepartmentResponse:
     properties:
       data:
-        $ref: '#/definitions/departmenthandler.DepartmentData'
+        $ref: '#/definitions/contract.Department'
       message:
         type: string
       success:
@@ -104,15 +113,11 @@ definitions:
   departmenthandler.ListDepartmentsResponse:
     properties:
       data:
-        items:
-          $ref: '#/definitions/departmenthandler.DepartmentData'
-        type: array
+        $ref: '#/definitions/departmenthandler.DepartmentListData'
       message:
         type: string
       success:
         type: boolean
-      total:
-        type: integer
     type: object
   departmenthandler.UpdateDepartmentRequest:
     properties:
@@ -139,7 +144,7 @@ definitions:
   departmenthandler.UpdateDepartmentResponse:
     properties:
       data:
-        $ref: '#/definitions/departmenthandler.DepartmentData'
+        $ref: '#/definitions/contract.Department'
       message:
         type: string
       success:

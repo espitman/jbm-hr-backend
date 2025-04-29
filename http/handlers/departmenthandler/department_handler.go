@@ -48,15 +48,7 @@ func (h *DepartmentHandler) Get(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, DepartmentData{
-		ID:          department.ID,
-		Title:       department.Title,
-		Description: department.Description,
-		Image:       department.Image,
-		Icon:        department.Icon,
-		Color:       department.Color,
-		ShortName:   department.ShortName,
-	})
+	return dto.SuccessJSON(c, department)
 }
 
 // List handles retrieving a paginated list of departments
@@ -87,24 +79,8 @@ func (h *DepartmentHandler) List(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	data := make([]DepartmentData, len(departments))
-	for i, department := range departments {
-		data[i] = DepartmentData{
-			ID:          department.ID,
-			Title:       department.Title,
-			Description: department.Description,
-			Image:       department.Image,
-			Icon:        department.Icon,
-			Color:       department.Color,
-			ShortName:   department.ShortName,
-		}
-	}
-
-	return dto.SuccessJSON(c, struct {
-		Data  []DepartmentData `json:"data"`
-		Total int              `json:"total"`
-	}{
-		Data:  data,
-		Total: total,
+	return dto.SuccessJSON(c, DepartmentListData{
+		Departments: departments,
+		Total:       total,
 	})
 }

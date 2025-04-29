@@ -840,6 +840,32 @@ const docTemplate = `{
                 }
             }
         },
+        "contract.Department": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "short_name": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "departmenthandler.CreateDepartmentRequest": {
             "type": "object",
             "required": [
@@ -875,7 +901,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/departmenthandler.DepartmentData"
+                    "$ref": "#/definitions/contract.Department"
                 },
                 "message": {
                     "type": "string"
@@ -885,29 +911,17 @@ const docTemplate = `{
                 }
             }
         },
-        "departmenthandler.DepartmentData": {
+        "departmenthandler.DepartmentListData": {
             "type": "object",
             "properties": {
-                "color": {
-                    "type": "string"
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/contract.Department"
+                    }
                 },
-                "description": {
-                    "type": "string"
-                },
-                "icon": {
-                    "type": "string"
-                },
-                "id": {
+                "total": {
                     "type": "integer"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "short_name": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
                 }
             }
         },
@@ -915,7 +929,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/departmenthandler.DepartmentData"
+                    "$ref": "#/definitions/contract.Department"
                 },
                 "message": {
                     "type": "string"
@@ -929,19 +943,13 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/departmenthandler.DepartmentData"
-                    }
+                    "$ref": "#/definitions/departmenthandler.DepartmentListData"
                 },
                 "message": {
                     "type": "string"
                 },
                 "success": {
                     "type": "boolean"
-                },
-                "total": {
-                    "type": "integer"
                 }
             }
         },
@@ -980,7 +988,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/departmenthandler.DepartmentData"
+                    "$ref": "#/definitions/contract.Department"
                 },
                 "message": {
                     "type": "string"
