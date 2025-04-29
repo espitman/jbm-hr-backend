@@ -1,4 +1,4 @@
-package upload
+package uploadhandler
 
 import (
 	"net/http"
@@ -8,17 +8,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// UploadHandler handles HTTP requests for file uploads
 type UploadHandler struct {
 	uploadService uploadservice.Service
 }
 
+// NewUploadHandler creates a new UploadHandler
 func NewUploadHandler(uploadService uploadservice.Service) *UploadHandler {
 	return &UploadHandler{
 		uploadService: uploadService,
 	}
 }
 
-// UploadImage godoc
+// UploadImage handles image file uploads
 // @Summary Upload an image
 // @Description Upload an image file to S3 storage
 // @Tags upload

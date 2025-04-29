@@ -8,7 +8,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
-	"github.com/espitman/jbm-hr-backend/http/handlers/upload"
+	"github.com/espitman/jbm-hr-backend/http/handlers/uploadhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
 	"github.com/labstack/echo/v4"
@@ -27,7 +27,7 @@ type Router struct {
 	departmentAdminHandler *departmenthandler.DepartmentAdminHandler
 	hrTeamHandler          *hrteamhandler.HRTeamHandler
 	hrTeamAdminHandler     *hrteamhandler.HRTeamAdminHandler
-	uploadHandler          *upload.UploadHandler
+	uploadHandler          *uploadhandler.UploadHandler
 }
 
 // NewRouter creates a new router instance
@@ -40,7 +40,7 @@ func NewRouter(
 	hrTeamHandler *hrteamhandler.HRTeamHandler,
 	hrTeamAdminHandler *hrteamhandler.HRTeamAdminHandler,
 	uiHandler *uihandler.UIHandler,
-	uploadHandler *upload.UploadHandler,
+	uploadHandler *uploadhandler.UploadHandler,
 ) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
