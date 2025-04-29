@@ -1,1 +1,0 @@
-import{H as i,q as u,I as a}from"./BZ1QhyW1.js";const o=i(t=>{const{isAuthenticated:e}=u();if(!e.value&&t.path!=="/login")return a("/login");if(e.value&&t.path==="/login")return a("/")});export{o as default};
