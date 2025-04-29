@@ -12,5 +12,5 @@ type UploadImageResponse struct {
 
 // UploadImageData represents the data structure for image upload responses
 type UploadImageData struct {
-	URL string `json:"url"`
+	Key string `json:"key"`
 }
