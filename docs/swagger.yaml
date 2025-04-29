@@ -227,7 +227,7 @@ definitions:
     type: object
   uploadhandler.UploadImageData:
     properties:
-      url:
+      key:
         type: string
     type: object
   uploadhandler.UploadImageResponse:

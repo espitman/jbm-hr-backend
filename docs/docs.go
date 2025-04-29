@@ -1422,7 +1422,7 @@ const docTemplate = `{
         "uploadhandler.UploadImageData": {
             "type": "object",
             "properties": {
-                "url": {
+                "key": {
                     "type": "string"
                 }
             }

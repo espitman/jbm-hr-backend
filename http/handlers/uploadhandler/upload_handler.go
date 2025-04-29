@@ -45,13 +45,13 @@ func (h *UploadHandler) UploadImage(c echo.Context) error {
 	}
 
 	// Upload the file
-	fileURL, err := h.uploadService.UploadFile(c.Request().Context(), file)
+	fileKey, err := h.uploadService.UploadFile(c.Request().Context(), file)
 	if err != nil {
 		return dto.InternalServerErrorJSON(c, "Failed to upload file")
 	}
 
-	// Return the URL of the uploaded file
+	// Return the key of the uploaded file
 	return dto.SuccessJSON(c, UploadImageData{
-		URL: fileURL,
+		Key: fileKey,
 	})
 }
