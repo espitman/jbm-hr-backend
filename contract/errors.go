@@ -51,3 +51,8 @@ var (
 	ErrRequiredField    = errors.New("required field missing")
 	ErrInvalidFormat    = errors.New("invalid format")
 )
+
+// HR Team related errors
+var (
+	ErrHRTeamNotFound = errors.New("hr team member not found")
+)
