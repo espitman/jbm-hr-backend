@@ -7,13 +7,16 @@ import (
 
 	"github.com/espitman/jbm-hr-backend/database"
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
+	"github.com/espitman/jbm-hr-backend/database/repository/department"
 	"github.com/espitman/jbm-hr-backend/database/repository/otp"
 	"github.com/espitman/jbm-hr-backend/database/repository/user"
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
+	"github.com/espitman/jbm-hr-backend/service/departmentservice"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
 	_ "github.com/swaggo/files"
@@ -67,18 +70,22 @@ func main() {
 	albumRepo := album.NewEntRepository(client)
 	userRepo := user.NewEntRepository(client)
 	otpRepo := otp.NewEntRepository(client)
+	departmentRepo := department.NewEntRepository(client)
 
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
 	userService := userservice.New(userRepo, otpRepo)
+	departmentService := departmentservice.New(departmentRepo)
 
 	// Initialize handlers
 	albumHandler := albumhandler.NewAlbumHandler(albumService)
 	albumAdminHandler := albumhandler.NewAlbumAdminHandler(albumService)
 	userHandler := userhandler.NewUserHandler(userService)
+	departmentHandler := departmenthandler.NewDepartmentHandler(departmentService)
+	departmentAdminHandler := departmenthandler.NewDepartmentAdminHandler(departmentService)
 
 	// Initialize router
-	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler)
+	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler)
 	r.SetupRoutes()
 
 	// Start server

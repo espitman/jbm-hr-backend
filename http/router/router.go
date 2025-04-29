@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/espitman/jbm-hr-backend/docs" // This is important for Swagger
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/fronthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
@@ -17,14 +18,16 @@ import (
 // Router holds the echo instance and handlers
 type Router struct {
 	*echo.Echo
-	albumHandler      *albumhandler.AlbumHandler
-	albumAdminHandler *albumhandler.AlbumAdminHandler
-	userHandler       *userhandler.UserHandler
-	frontHandler      *fronthandler.FrontHandler
+	albumHandler           *albumhandler.AlbumHandler
+	albumAdminHandler      *albumhandler.AlbumAdminHandler
+	userHandler            *userhandler.UserHandler
+	frontHandler           *fronthandler.FrontHandler
+	departmentHandler      *departmenthandler.DepartmentHandler
+	departmentAdminHandler *departmenthandler.DepartmentAdminHandler
 }
 
 // NewRouter creates a new router instance
-func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler) *Router {
+func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
@@ -34,11 +37,13 @@ func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *album
 	frontendPath, _ := filepath.Abs("frontend")
 
 	return &Router{
-		Echo:              e,
-		albumHandler:      albumHandler,
-		albumAdminHandler: albumAdminHandler,
-		userHandler:       userHandler,
-		frontHandler:      fronthandler.NewFrontHandler(frontendPath),
+		Echo:                   e,
+		albumHandler:           albumHandler,
+		albumAdminHandler:      albumAdminHandler,
+		userHandler:            userHandler,
+		frontHandler:           fronthandler.NewFrontHandler(frontendPath),
+		departmentHandler:      departmentHandler,
+		departmentAdminHandler: departmentAdminHandler,
 	}
 }
 
@@ -60,6 +65,8 @@ func (r *Router) SetupRoutes() {
 	r.registerAlbumAdminRoutes(apiV1Admin)
 	r.registerUserRoutes(apiV1)
 	r.registerUserAdminRoutes(apiV1Admin)
+	r.registerDepartmentRoutes(apiV1)
+	r.registerDepartmentAdminRoutes(apiV1Admin)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)

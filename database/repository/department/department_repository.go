@@ -11,7 +11,7 @@ type Repository interface {
 	// GetAll retrieves all departments
 	GetAll(ctx context.Context) ([]*contract.Department, error)
 
-	// GetByID retrieves a department by its ID
+	// GetByID retrieves a department by their ID
 	GetByID(ctx context.Context, id int) (*contract.Department, error)
 
 	// Create creates a new department
@@ -20,6 +20,9 @@ type Repository interface {
 	// Update updates an existing department
 	Update(ctx context.Context, id int, req *contract.DepartmentInput) (*contract.Department, error)
 
-	// Delete deletes a department by its ID
+	// Delete deletes a department by their ID
 	Delete(ctx context.Context, id int) error
+
+	// List retrieves a paginated list of departments
+	List(ctx context.Context, page, limit int) ([]*contract.Department, int, error)
 }

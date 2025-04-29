@@ -8,48 +8,53 @@ import (
 )
 
 type service struct {
-	repo department.Repository
+	departmentRepo department.Repository
 }
 
-// New creates a new instance of the department service
-func New(repo department.Repository) Service {
+// New creates a new DepartmentService instance
+func New(departmentRepo department.Repository) Service {
 	return &service{
-		repo: repo,
+		departmentRepo: departmentRepo,
 	}
 }
 
-func (s *service) CreateDepartment(ctx context.Context, input *contract.DepartmentInput) (*contract.Department, error) {
-	return s.repo.Create(ctx, input)
+// Create creates a new department
+func (s *service) Create(ctx context.Context, input *contract.DepartmentInput) (*contract.Department, error) {
+	return s.departmentRepo.Create(ctx, input)
 }
 
-func (s *service) UpdateDepartment(ctx context.Context, id int, input *contract.DepartmentInput) (*contract.Department, error) {
-	return s.repo.Update(ctx, id, input)
-}
-
-func (s *service) GetDepartmentByID(ctx context.Context, id int) (*contract.Department, error) {
-	return s.repo.GetByID(ctx, id)
-}
-
-func (s *service) ListDepartments(ctx context.Context, offset, limit int) ([]*contract.Department, int, error) {
-	depts, err := s.repo.GetAll(ctx)
+// Update updates an existing department
+func (s *service) Update(ctx context.Context, id int, input *contract.DepartmentInput) (*contract.Department, error) {
+	// Check if department exists
+	_, err := s.departmentRepo.GetByID(ctx, id)
 	if err != nil {
-		return nil, 0, err
+		return nil, contract.ErrDepartmentNotFound
 	}
 
-	// Apply pagination
-	total := len(depts)
-	start := offset
-	end := offset + limit
-	if start >= total {
-		return []*contract.Department{}, total, nil
-	}
-	if end > total {
-		end = total
-	}
-
-	return depts[start:end], total, nil
+	return s.departmentRepo.Update(ctx, id, input)
 }
 
-func (s *service) DeleteDepartment(ctx context.Context, id int) error {
-	return s.repo.Delete(ctx, id)
+// GetByID retrieves a department by its ID
+func (s *service) GetByID(ctx context.Context, id int) (*contract.Department, error) {
+	department, err := s.departmentRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, contract.ErrDepartmentNotFound
+	}
+	return department, nil
+}
+
+// List retrieves a paginated list of departments
+func (s *service) List(ctx context.Context, page, limit int) ([]*contract.Department, int, error) {
+	return s.departmentRepo.List(ctx, page, limit)
+}
+
+// Delete deletes a department by its ID
+func (s *service) Delete(ctx context.Context, id int) error {
+	// Check if department exists
+	_, err := s.departmentRepo.GetByID(ctx, id)
+	if err != nil {
+		return contract.ErrDepartmentNotFound
+	}
+
+	return s.departmentRepo.Delete(ctx, id)
 }

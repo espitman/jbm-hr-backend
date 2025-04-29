@@ -21,47 +21,47 @@ func NewEntRepository(client *ent.Client) *EntRepository {
 }
 
 // convertToContractDepartment converts an ent.Department to a contract.Department
-func convertToContractDepartment(entDept *ent.Department) *contract.Department {
-	if entDept == nil {
+func convertToContractDepartment(entDepartment *ent.Department) *contract.Department {
+	if entDepartment == nil {
 		return nil
 	}
 	return &contract.Department{
-		ID:          entDept.ID,
-		Title:       entDept.Title,
-		Description: entDept.Description,
-		Image:       entDept.Image,
-		Icon:        entDept.Icon,
-		Color:       entDept.Color,
-		ShortName:   entDept.ShortName,
+		ID:          entDepartment.ID,
+		Title:       entDepartment.Title,
+		Description: entDepartment.Description,
+		Image:       entDepartment.Image,
+		Icon:        entDepartment.Icon,
+		Color:       entDepartment.Color,
+		ShortName:   entDepartment.ShortName,
 	}
 }
 
 // GetAll retrieves all departments
 func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.Department, error) {
-	entDepts, err := r.client.Department.Query().All(ctx)
+	entDepartments, err := r.client.Department.Query().All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	depts := make([]*contract.Department, len(entDepts))
-	for i, entDept := range entDepts {
-		depts[i] = convertToContractDepartment(entDept)
+	departments := make([]*contract.Department, len(entDepartments))
+	for i, entDepartment := range entDepartments {
+		departments[i] = convertToContractDepartment(entDepartment)
 	}
-	return depts, nil
+	return departments, nil
 }
 
-// GetByID retrieves a department by its ID
+// GetByID retrieves a department by their ID
 func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.Department, error) {
-	entDept, err := r.client.Department.Query().Where(entDepartment.ID(id)).Only(ctx)
+	entDepartment, err := r.client.Department.Query().Where(entDepartment.ID(id)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDepartment(entDept), nil
+	return convertToContractDepartment(entDepartment), nil
 }
 
 // Create creates a new department
 func (r *EntRepository) Create(ctx context.Context, req *contract.DepartmentInput) (*contract.Department, error) {
-	entDept, err := r.client.Department.
+	entDepartment, err := r.client.Department.
 		Create().
 		SetTitle(req.Title).
 		SetDescription(req.Description).
@@ -73,12 +73,12 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.DepartmentInpu
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDepartment(entDept), nil
+	return convertToContractDepartment(entDepartment), nil
 }
 
 // Update updates an existing department
 func (r *EntRepository) Update(ctx context.Context, id int, req *contract.DepartmentInput) (*contract.Department, error) {
-	entDept, err := r.client.Department.
+	entDepartment, err := r.client.Department.
 		UpdateOneID(id).
 		SetTitle(req.Title).
 		SetDescription(req.Description).
@@ -90,10 +90,39 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Depart
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDepartment(entDept), nil
+	return convertToContractDepartment(entDepartment), nil
 }
 
-// Delete deletes a department by its ID
+// Delete deletes a department by their ID
 func (r *EntRepository) Delete(ctx context.Context, id int) error {
 	return r.client.Department.DeleteOneID(id).Exec(ctx)
+}
+
+// List retrieves a paginated list of departments
+func (r *EntRepository) List(ctx context.Context, page, limit int) ([]*contract.Department, int, error) {
+	// Calculate offset
+	offset := (page - 1) * limit
+
+	// Get total count
+	total, err := r.client.Department.Query().Count(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated departments
+	entDepartments, err := r.client.Department.Query().
+		Offset(offset).
+		Limit(limit).
+		All(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Convert to contract departments
+	departments := make([]*contract.Department, len(entDepartments))
+	for i, entDepartment := range entDepartments {
+		departments[i] = convertToContractDepartment(entDepartment)
+	}
+
+	return departments, total, nil
 }

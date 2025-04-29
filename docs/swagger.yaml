@@ -44,6 +44,107 @@ definitions:
       url:
         type: string
     type: object
+  departmenthandler.CreateDepartmentRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      image:
+        type: string
+      short_name:
+        type: string
+      title:
+        type: string
+    required:
+    - color
+    - description
+    - icon
+    - image
+    - short_name
+    - title
+    type: object
+  departmenthandler.CreateDepartmentResponse:
+    properties:
+      data:
+        $ref: '#/definitions/departmenthandler.DepartmentData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  departmenthandler.DepartmentData:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      short_name:
+        type: string
+      title:
+        type: string
+    type: object
+  departmenthandler.GetDepartmentResponse:
+    properties:
+      data:
+        $ref: '#/definitions/departmenthandler.DepartmentData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  departmenthandler.ListDepartmentsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/departmenthandler.DepartmentData'
+        type: array
+      message:
+        type: string
+      success:
+        type: boolean
+      total:
+        type: integer
+    type: object
+  departmenthandler.UpdateDepartmentRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      image:
+        type: string
+      short_name:
+        type: string
+      title:
+        type: string
+    required:
+    - color
+    - description
+    - icon
+    - image
+    - short_name
+    - title
+    type: object
+  departmenthandler.UpdateDepartmentResponse:
+    properties:
+      data:
+        $ref: '#/definitions/departmenthandler.DepartmentData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   dto.Response:
     properties:
       data: {}
@@ -318,6 +419,121 @@ paths:
       summary: Update an album
       tags:
       - admin - albums
+  /api/v1/admin/departments:
+    post:
+      consumes:
+      - application/json
+      description: Create a new department in the system (admin only)
+      parameters:
+      - description: Create Department
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/departmenthandler.CreateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/departmenthandler.CreateDepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Create a new department (admin only)
+      tags:
+      - admin - departments
+  /api/v1/admin/departments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a department by its ID (admin only)
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete a department (admin only)
+      tags:
+      - admin - departments
+    put:
+      consumes:
+      - application/json
+      description: Update an existing department in the system (admin only)
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Department
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/departmenthandler.UpdateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/departmenthandler.UpdateDepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Update a department (admin only)
+      tags:
+      - admin - departments
   /api/v1/admin/users/register:
     post:
       consumes:
@@ -406,6 +622,67 @@ paths:
       summary: Get an album by ID
       tags:
       - albums
+  /api/v1/departments:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of departments
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/departmenthandler.ListDepartmentsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: List departments
+      tags:
+      - departments
+  /api/v1/departments/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a department by its ID
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/departmenthandler.GetDepartmentResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get a department
+      tags:
+      - departments
   /api/v1/users/me:
     get:
       consumes:
