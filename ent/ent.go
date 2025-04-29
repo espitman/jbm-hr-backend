@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/espitman/jbm-hr-backend/ent/album"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -78,6 +79,7 @@ func checkColumn(table, column string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			album.Table:      album.ValidColumn,
 			department.Table: department.ValidColumn,
+			hrteam.Table:     hrteam.ValidColumn,
 			otp.Table:        otp.ValidColumn,
 			user.Table:       user.ValidColumn,
 		})

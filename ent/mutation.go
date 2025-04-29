@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/espitman/jbm-hr-backend/ent/album"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
 	"github.com/espitman/jbm-hr-backend/ent/user"
@@ -29,6 +30,7 @@ const (
 	// Node types.
 	TypeAlbum      = "Album"
 	TypeDepartment = "Department"
+	TypeHRTeam     = "HRTeam"
 	TypeOTP        = "OTP"
 	TypeUser       = "User"
 )
@@ -1029,6 +1031,494 @@ func (m *DepartmentMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *DepartmentMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Department edge %s", name)
+}
+
+// HRTeamMutation represents an operation that mutates the HRTeam nodes in the graph.
+type HRTeamMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	full_name     *string
+	role          *string
+	email         *string
+	phone         *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*HRTeam, error)
+	predicates    []predicate.HRTeam
+}
+
+var _ ent.Mutation = (*HRTeamMutation)(nil)
+
+// hrteamOption allows management of the mutation configuration using functional options.
+type hrteamOption func(*HRTeamMutation)
+
+// newHRTeamMutation creates new mutation for the HRTeam entity.
+func newHRTeamMutation(c config, op Op, opts ...hrteamOption) *HRTeamMutation {
+	m := &HRTeamMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeHRTeam,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withHRTeamID sets the ID field of the mutation.
+func withHRTeamID(id int) hrteamOption {
+	return func(m *HRTeamMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *HRTeam
+		)
+		m.oldValue = func(ctx context.Context) (*HRTeam, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().HRTeam.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withHRTeam sets the old HRTeam of the mutation.
+func withHRTeam(node *HRTeam) hrteamOption {
+	return func(m *HRTeamMutation) {
+		m.oldValue = func(context.Context) (*HRTeam, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m HRTeamMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m HRTeamMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *HRTeamMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *HRTeamMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().HRTeam.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetFullName sets the "full_name" field.
+func (m *HRTeamMutation) SetFullName(s string) {
+	m.full_name = &s
+}
+
+// FullName returns the value of the "full_name" field in the mutation.
+func (m *HRTeamMutation) FullName() (r string, exists bool) {
+	v := m.full_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFullName returns the old "full_name" field's value of the HRTeam entity.
+// If the HRTeam object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HRTeamMutation) OldFullName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFullName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFullName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFullName: %w", err)
+	}
+	return oldValue.FullName, nil
+}
+
+// ResetFullName resets all changes to the "full_name" field.
+func (m *HRTeamMutation) ResetFullName() {
+	m.full_name = nil
+}
+
+// SetRole sets the "role" field.
+func (m *HRTeamMutation) SetRole(s string) {
+	m.role = &s
+}
+
+// Role returns the value of the "role" field in the mutation.
+func (m *HRTeamMutation) Role() (r string, exists bool) {
+	v := m.role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRole returns the old "role" field's value of the HRTeam entity.
+// If the HRTeam object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HRTeamMutation) OldRole(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRole is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRole requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRole: %w", err)
+	}
+	return oldValue.Role, nil
+}
+
+// ResetRole resets all changes to the "role" field.
+func (m *HRTeamMutation) ResetRole() {
+	m.role = nil
+}
+
+// SetEmail sets the "email" field.
+func (m *HRTeamMutation) SetEmail(s string) {
+	m.email = &s
+}
+
+// Email returns the value of the "email" field in the mutation.
+func (m *HRTeamMutation) Email() (r string, exists bool) {
+	v := m.email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmail returns the old "email" field's value of the HRTeam entity.
+// If the HRTeam object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HRTeamMutation) OldEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmail: %w", err)
+	}
+	return oldValue.Email, nil
+}
+
+// ResetEmail resets all changes to the "email" field.
+func (m *HRTeamMutation) ResetEmail() {
+	m.email = nil
+}
+
+// SetPhone sets the "phone" field.
+func (m *HRTeamMutation) SetPhone(s string) {
+	m.phone = &s
+}
+
+// Phone returns the value of the "phone" field in the mutation.
+func (m *HRTeamMutation) Phone() (r string, exists bool) {
+	v := m.phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhone returns the old "phone" field's value of the HRTeam entity.
+// If the HRTeam object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HRTeamMutation) OldPhone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhone: %w", err)
+	}
+	return oldValue.Phone, nil
+}
+
+// ResetPhone resets all changes to the "phone" field.
+func (m *HRTeamMutation) ResetPhone() {
+	m.phone = nil
+}
+
+// Where appends a list predicates to the HRTeamMutation builder.
+func (m *HRTeamMutation) Where(ps ...predicate.HRTeam) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the HRTeamMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *HRTeamMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.HRTeam, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *HRTeamMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *HRTeamMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (HRTeam).
+func (m *HRTeamMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *HRTeamMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.full_name != nil {
+		fields = append(fields, hrteam.FieldFullName)
+	}
+	if m.role != nil {
+		fields = append(fields, hrteam.FieldRole)
+	}
+	if m.email != nil {
+		fields = append(fields, hrteam.FieldEmail)
+	}
+	if m.phone != nil {
+		fields = append(fields, hrteam.FieldPhone)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *HRTeamMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case hrteam.FieldFullName:
+		return m.FullName()
+	case hrteam.FieldRole:
+		return m.Role()
+	case hrteam.FieldEmail:
+		return m.Email()
+	case hrteam.FieldPhone:
+		return m.Phone()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *HRTeamMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case hrteam.FieldFullName:
+		return m.OldFullName(ctx)
+	case hrteam.FieldRole:
+		return m.OldRole(ctx)
+	case hrteam.FieldEmail:
+		return m.OldEmail(ctx)
+	case hrteam.FieldPhone:
+		return m.OldPhone(ctx)
+	}
+	return nil, fmt.Errorf("unknown HRTeam field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *HRTeamMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case hrteam.FieldFullName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFullName(v)
+		return nil
+	case hrteam.FieldRole:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRole(v)
+		return nil
+	case hrteam.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
+		return nil
+	case hrteam.FieldPhone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhone(v)
+		return nil
+	}
+	return fmt.Errorf("unknown HRTeam field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *HRTeamMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *HRTeamMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *HRTeamMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown HRTeam numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *HRTeamMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *HRTeamMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *HRTeamMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown HRTeam nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *HRTeamMutation) ResetField(name string) error {
+	switch name {
+	case hrteam.FieldFullName:
+		m.ResetFullName()
+		return nil
+	case hrteam.FieldRole:
+		m.ResetRole()
+		return nil
+	case hrteam.FieldEmail:
+		m.ResetEmail()
+		return nil
+	case hrteam.FieldPhone:
+		m.ResetPhone()
+		return nil
+	}
+	return fmt.Errorf("unknown HRTeam field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *HRTeamMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *HRTeamMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *HRTeamMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *HRTeamMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *HRTeamMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *HRTeamMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *HRTeamMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown HRTeam unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *HRTeamMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown HRTeam edge %s", name)
 }
 
 // OTPMutation represents an operation that mutates the OTP nodes in the graph.

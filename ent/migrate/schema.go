@@ -36,6 +36,20 @@ var (
 		Columns:    DepartmentsColumns,
 		PrimaryKey: []*schema.Column{DepartmentsColumns[0]},
 	}
+	// HrTeamsColumns holds the columns for the "hr_teams" table.
+	HrTeamsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "full_name", Type: field.TypeString},
+		{Name: "role", Type: field.TypeString},
+		{Name: "email", Type: field.TypeString},
+		{Name: "phone", Type: field.TypeString},
+	}
+	// HrTeamsTable holds the schema information for the "hr_teams" table.
+	HrTeamsTable = &schema.Table{
+		Name:       "hr_teams",
+		Columns:    HrTeamsColumns,
+		PrimaryKey: []*schema.Column{HrTeamsColumns[0]},
+	}
 	// OtPsColumns holds the columns for the "ot_ps" table.
 	OtPsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -80,6 +94,7 @@ var (
 	Tables = []*schema.Table{
 		AlbumsTable,
 		DepartmentsTable,
+		HrTeamsTable,
 		OtPsTable,
 		UsersTable,
 	}

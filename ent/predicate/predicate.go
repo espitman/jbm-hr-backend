@@ -12,6 +12,9 @@ type Album func(*sql.Selector)
 // Department is the predicate function for department builders.
 type Department func(*sql.Selector)
 
+// HRTeam is the predicate function for hrteam builders.
+type HRTeam func(*sql.Selector)
+
 // OTP is the predicate function for otp builders.
 type OTP func(*sql.Selector)
 

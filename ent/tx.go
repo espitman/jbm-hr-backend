@@ -16,6 +16,8 @@ type Tx struct {
 	Album *AlbumClient
 	// Department is the client for interacting with the Department builders.
 	Department *DepartmentClient
+	// HRTeam is the client for interacting with the HRTeam builders.
+	HRTeam *HRTeamClient
 	// OTP is the client for interacting with the OTP builders.
 	OTP *OTPClient
 	// User is the client for interacting with the User builders.
@@ -153,6 +155,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
 	tx.Department = NewDepartmentClient(tx.config)
+	tx.HRTeam = NewHRTeamClient(tx.config)
 	tx.OTP = NewOTPClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

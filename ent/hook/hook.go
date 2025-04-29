@@ -33,6 +33,18 @@ func (f DepartmentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DepartmentMutation", m)
 }
 
+// The HRTeamFunc type is an adapter to allow the use of ordinary
+// function as HRTeam mutator.
+type HRTeamFunc func(context.Context, *ent.HRTeamMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f HRTeamFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.HRTeamMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.HRTeamMutation", m)
+}
+
 // The OTPFunc type is an adapter to allow the use of ordinary
 // function as OTP mutator.
 type OTPFunc func(context.Context, *ent.OTPMutation) (ent.Value, error)

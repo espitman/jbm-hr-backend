@@ -7,6 +7,7 @@ import (
 
 	"github.com/espitman/jbm-hr-backend/ent/album"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/schema"
 	"github.com/espitman/jbm-hr-backend/ent/user"
@@ -48,6 +49,24 @@ func init() {
 	departmentDescShortName := departmentFields[5].Descriptor()
 	// department.ShortNameValidator is a validator for the "shortName" field. It is called by the builders before save.
 	department.ShortNameValidator = departmentDescShortName.Validators[0].(func(string) error)
+	hrteamFields := schema.HRTeam{}.Fields()
+	_ = hrteamFields
+	// hrteamDescFullName is the schema descriptor for full_name field.
+	hrteamDescFullName := hrteamFields[0].Descriptor()
+	// hrteam.FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
+	hrteam.FullNameValidator = hrteamDescFullName.Validators[0].(func(string) error)
+	// hrteamDescRole is the schema descriptor for role field.
+	hrteamDescRole := hrteamFields[1].Descriptor()
+	// hrteam.RoleValidator is a validator for the "role" field. It is called by the builders before save.
+	hrteam.RoleValidator = hrteamDescRole.Validators[0].(func(string) error)
+	// hrteamDescEmail is the schema descriptor for email field.
+	hrteamDescEmail := hrteamFields[2].Descriptor()
+	// hrteam.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	hrteam.EmailValidator = hrteamDescEmail.Validators[0].(func(string) error)
+	// hrteamDescPhone is the schema descriptor for phone field.
+	hrteamDescPhone := hrteamFields[3].Descriptor()
+	// hrteam.PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
+	hrteam.PhoneValidator = hrteamDescPhone.Validators[0].(func(string) error)
 	otpFields := schema.OTP{}.Fields()
 	_ = otpFields
 	// otpDescCode is the schema descriptor for code field.

@@ -17,6 +17,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/espitman/jbm-hr-backend/ent/album"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -30,6 +31,8 @@ type Client struct {
 	Album *AlbumClient
 	// Department is the client for interacting with the Department builders.
 	Department *DepartmentClient
+	// HRTeam is the client for interacting with the HRTeam builders.
+	HRTeam *HRTeamClient
 	// OTP is the client for interacting with the OTP builders.
 	OTP *OTPClient
 	// User is the client for interacting with the User builders.
@@ -47,6 +50,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Album = NewAlbumClient(c.config)
 	c.Department = NewDepartmentClient(c.config)
+	c.HRTeam = NewHRTeamClient(c.config)
 	c.OTP = NewOTPClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -143,6 +147,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:     cfg,
 		Album:      NewAlbumClient(cfg),
 		Department: NewDepartmentClient(cfg),
+		HRTeam:     NewHRTeamClient(cfg),
 		OTP:        NewOTPClient(cfg),
 		User:       NewUserClient(cfg),
 	}, nil
@@ -166,6 +171,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:     cfg,
 		Album:      NewAlbumClient(cfg),
 		Department: NewDepartmentClient(cfg),
+		HRTeam:     NewHRTeamClient(cfg),
 		OTP:        NewOTPClient(cfg),
 		User:       NewUserClient(cfg),
 	}, nil
@@ -198,6 +204,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Album.Use(hooks...)
 	c.Department.Use(hooks...)
+	c.HRTeam.Use(hooks...)
 	c.OTP.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -207,6 +214,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Album.Intercept(interceptors...)
 	c.Department.Intercept(interceptors...)
+	c.HRTeam.Intercept(interceptors...)
 	c.OTP.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
@@ -218,6 +226,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Album.mutate(ctx, m)
 	case *DepartmentMutation:
 		return c.Department.mutate(ctx, m)
+	case *HRTeamMutation:
+		return c.HRTeam.mutate(ctx, m)
 	case *OTPMutation:
 		return c.OTP.mutate(ctx, m)
 	case *UserMutation:
@@ -490,6 +500,139 @@ func (c *DepartmentClient) mutate(ctx context.Context, m *DepartmentMutation) (V
 		return (&DepartmentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Department mutation op: %q", m.Op())
+	}
+}
+
+// HRTeamClient is a client for the HRTeam schema.
+type HRTeamClient struct {
+	config
+}
+
+// NewHRTeamClient returns a client for the HRTeam from the given config.
+func NewHRTeamClient(c config) *HRTeamClient {
+	return &HRTeamClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `hrteam.Hooks(f(g(h())))`.
+func (c *HRTeamClient) Use(hooks ...Hook) {
+	c.hooks.HRTeam = append(c.hooks.HRTeam, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `hrteam.Intercept(f(g(h())))`.
+func (c *HRTeamClient) Intercept(interceptors ...Interceptor) {
+	c.inters.HRTeam = append(c.inters.HRTeam, interceptors...)
+}
+
+// Create returns a builder for creating a HRTeam entity.
+func (c *HRTeamClient) Create() *HRTeamCreate {
+	mutation := newHRTeamMutation(c.config, OpCreate)
+	return &HRTeamCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of HRTeam entities.
+func (c *HRTeamClient) CreateBulk(builders ...*HRTeamCreate) *HRTeamCreateBulk {
+	return &HRTeamCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *HRTeamClient) MapCreateBulk(slice any, setFunc func(*HRTeamCreate, int)) *HRTeamCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &HRTeamCreateBulk{err: fmt.Errorf("calling to HRTeamClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*HRTeamCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &HRTeamCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for HRTeam.
+func (c *HRTeamClient) Update() *HRTeamUpdate {
+	mutation := newHRTeamMutation(c.config, OpUpdate)
+	return &HRTeamUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *HRTeamClient) UpdateOne(ht *HRTeam) *HRTeamUpdateOne {
+	mutation := newHRTeamMutation(c.config, OpUpdateOne, withHRTeam(ht))
+	return &HRTeamUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *HRTeamClient) UpdateOneID(id int) *HRTeamUpdateOne {
+	mutation := newHRTeamMutation(c.config, OpUpdateOne, withHRTeamID(id))
+	return &HRTeamUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for HRTeam.
+func (c *HRTeamClient) Delete() *HRTeamDelete {
+	mutation := newHRTeamMutation(c.config, OpDelete)
+	return &HRTeamDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *HRTeamClient) DeleteOne(ht *HRTeam) *HRTeamDeleteOne {
+	return c.DeleteOneID(ht.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *HRTeamClient) DeleteOneID(id int) *HRTeamDeleteOne {
+	builder := c.Delete().Where(hrteam.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &HRTeamDeleteOne{builder}
+}
+
+// Query returns a query builder for HRTeam.
+func (c *HRTeamClient) Query() *HRTeamQuery {
+	return &HRTeamQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeHRTeam},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a HRTeam entity by its id.
+func (c *HRTeamClient) Get(ctx context.Context, id int) (*HRTeam, error) {
+	return c.Query().Where(hrteam.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *HRTeamClient) GetX(ctx context.Context, id int) *HRTeam {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *HRTeamClient) Hooks() []Hook {
+	return c.hooks.HRTeam
+}
+
+// Interceptors returns the client interceptors.
+func (c *HRTeamClient) Interceptors() []Interceptor {
+	return c.inters.HRTeam
+}
+
+func (c *HRTeamClient) mutate(ctx context.Context, m *HRTeamMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&HRTeamCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&HRTeamUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&HRTeamUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&HRTeamDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown HRTeam mutation op: %q", m.Op())
 	}
 }
 
@@ -794,9 +937,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, Department, OTP, User []ent.Hook
+		Album, Department, HRTeam, OTP, User []ent.Hook
 	}
 	inters struct {
-		Album, Department, OTP, User []ent.Interceptor
+		Album, Department, HRTeam, OTP, User []ent.Interceptor
 	}
 )
