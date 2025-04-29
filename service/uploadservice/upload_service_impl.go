@@ -61,7 +61,7 @@ func New() (Service, error) {
 	}, nil
 }
 
-func (s *service) UploadFile(ctx context.Context, file *multipart.FileHeader) (string, error) {
+func (s *service) UploadFile(ctx context.Context, file *multipart.FileHeader, path string) (string, error) {
 	src, err := file.Open()
 	if err != nil {
 		return "", fmt.Errorf("failed to open file: %v", err)
@@ -72,33 +72,39 @@ func (s *service) UploadFile(ctx context.Context, file *multipart.FileHeader) (s
 	ext := filepath.Ext(file.Filename)
 	uniqueFilename := uuid.New().String() + ext
 
+	// Combine path and filename
+	fullPath := filepath.Join(path, uniqueFilename)
+
 	// Upload the file to S3
 	_, err = s.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
-		Key:    aws.String(uniqueFilename),
+		Key:    aws.String(fullPath),
 		Body:   src,
 	})
 	if err != nil {
 		return "", fmt.Errorf("failed to upload file: %v", err)
 	}
 
-	return uniqueFilename, nil
+	return fullPath, nil
 }
 
-func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, filename string) (string, error) {
+func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, filename string, path string) (string, error) {
 	// Generate a unique filename using UUID
 	ext := filepath.Ext(filename)
 	uniqueFilename := uuid.New().String() + ext
 
+	// Combine path and filename
+	fullPath := filepath.Join(path, uniqueFilename)
+
 	// Upload the file to S3
 	_, err := s.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
-		Key:    aws.String(uniqueFilename),
+		Key:    aws.String(fullPath),
 		Body:   reader,
 	})
 	if err != nil {
 		return "", fmt.Errorf("failed to upload file: %v", err)
 	}
 
-	return uniqueFilename, nil
+	return fullPath, nil
 }

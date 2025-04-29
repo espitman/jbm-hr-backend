@@ -44,8 +44,11 @@ func (h *UploadHandler) UploadImage(c echo.Context) error {
 		return dto.BadRequestJSON(c, "Invalid file type. Only jpg, jpeg, png, and gif files are allowed")
 	}
 
+	// Define the path for image uploads
+	path := "images"
+
 	// Upload the file
-	fileKey, err := h.uploadService.UploadFile(c.Request().Context(), file)
+	fileKey, err := h.uploadService.UploadFile(c.Request().Context(), file, path)
 	if err != nil {
 		return dto.InternalServerErrorJSON(c, "Failed to upload file")
 	}
