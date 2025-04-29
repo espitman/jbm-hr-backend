@@ -6,6 +6,7 @@ import (
 	"io"
 	"mime/multipart"
 	"path/filepath"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
@@ -107,4 +108,22 @@ func (s *service) UploadFileFromReader(ctx context.Context, reader io.Reader, fi
 	}
 
 	return fullPath, nil
+}
+
+// GetPresignedURL generates a pre-signed URL for a given file key
+func (s *service) GetPresignedURL(ctx context.Context, fileKey string) (string, error) {
+	// Create a pre-signed URL request
+	presignedClient := s3.NewPresignClient(s.s3Client)
+
+	// Create the request
+	request, err := presignedClient.PresignGetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(s.bucket),
+		Key:    aws.String(fileKey),
+	}, s3.WithPresignExpires(time.Hour*1))
+
+	if err != nil {
+		return "", fmt.Errorf("failed to generate pre-signed URL: %v", err)
+	}
+
+	return request.URL, nil
 }

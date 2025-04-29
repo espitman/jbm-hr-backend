@@ -97,3 +97,33 @@ func (h *UploadHandler) UploadDocument(c echo.Context) error {
 		Key: fileKey,
 	})
 }
+
+// GetPresignedURL generates a pre-signed URL for a given file key
+// @Summary Get a pre-signed URL for a file
+// @Description Generate a pre-signed URL for accessing a file in S3 storage
+// @Tags upload
+// @Accept json
+// @Produce json
+// @Param key path string true "File key"
+// @Success 200 {object} PresignedURLResponse
+// @Failure 400 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/upload/presigned/{key} [get]
+func (h *UploadHandler) GetPresignedURL(c echo.Context) error {
+	// Get the file key from the path parameter
+	fileKey := c.Param("key")
+	if fileKey == "" {
+		return dto.BadRequestJSON(c, "File key is required")
+	}
+
+	// Generate the pre-signed URL
+	presignedURL, err := h.uploadService.GetPresignedURL(c.Request().Context(), fileKey)
+	if err != nil {
+		return dto.InternalServerErrorJSON(c, "Failed to generate pre-signed URL")
+	}
+
+	// Return the pre-signed URL
+	return dto.SuccessJSON(c, PresignedURLData{
+		URL: presignedURL,
+	})
+}

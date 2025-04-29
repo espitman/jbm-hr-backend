@@ -15,6 +15,9 @@ func (r *Router) registerUploadRoutes(group *echo.Group) {
 			// Upload routes
 			upload.POST("/image", r.uploadHandler.UploadImage)
 			upload.POST("/document", r.uploadHandler.UploadDocument)
+
+			// Pre-signed URL route
+			upload.GET("/presigned/:key", r.uploadHandler.GetPresignedURL)
 		}
 	}
 }

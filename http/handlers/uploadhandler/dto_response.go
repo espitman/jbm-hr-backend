@@ -25,3 +25,14 @@ type UploadDocumentResponse struct {
 type UploadDocumentData struct {
 	Key string `json:"key"`
 }
+
+// PresignedURLResponse represents the response structure for pre-signed URL
+type PresignedURLResponse struct {
+	dto.Response
+	Data PresignedURLData `json:"data,omitempty"`
+}
+
+// PresignedURLData represents the data structure for pre-signed URL responses
+type PresignedURLData struct {
+	URL string `json:"url"`
+}

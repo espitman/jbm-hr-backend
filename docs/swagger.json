@@ -967,6 +967,50 @@
                 }
             }
         },
+        "/api/v1/upload/presigned/{key}": {
+            "get": {
+                "description": "Generate a pre-signed URL for accessing a file in S3 storage",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "upload"
+                ],
+                "summary": "Get a pre-signed URL for a file",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "File key",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/uploadhandler.PresignedURLResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/users/me": {
             "get": {
                 "security": [
@@ -1447,6 +1491,28 @@
             "properties": {
                 "data": {
                     "$ref": "#/definitions/contract.HRTeam"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "uploadhandler.PresignedURLData": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "uploadhandler.PresignedURLResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/uploadhandler.PresignedURLData"
                 },
                 "message": {
                     "type": "string"
