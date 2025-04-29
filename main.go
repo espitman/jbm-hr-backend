@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/espitman/jbm-hr-backend/database"
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
@@ -13,6 +14,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/fronthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
@@ -56,7 +58,6 @@ func main() {
 	defer client.Close()
 
 	// Run database migrations
-
 	err = client.Schema.Create(
 		context.Background(),
 		migrate.WithDropIndex(true),
@@ -84,8 +85,12 @@ func main() {
 	departmentHandler := departmenthandler.NewDepartmentHandler(departmentService)
 	departmentAdminHandler := departmenthandler.NewDepartmentAdminHandler(departmentService)
 
+	// Initialize front handler
+	frontendPath, _ := filepath.Abs("ui/web")
+	frontHandler := fronthandler.NewFrontHandler(frontendPath)
+
 	// Initialize router
-	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler)
+	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, frontHandler)
 	r.SetupRoutes()
 
 	// Start server

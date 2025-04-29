@@ -2,7 +2,6 @@ package router
 
 import (
 	"net/http"
-	"path/filepath"
 
 	_ "github.com/espitman/jbm-hr-backend/docs" // This is important for Swagger
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
@@ -27,21 +26,18 @@ type Router struct {
 }
 
 // NewRouter creates a new router instance
-func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler) *Router {
+func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler, frontHandler *fronthandler.FrontHandler) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
 	e.Use(echoMiddleware.CORS())
-
-	// Get the absolute path to the frontend directory
-	frontendPath, _ := filepath.Abs("frontend")
 
 	return &Router{
 		Echo:                   e,
 		albumHandler:           albumHandler,
 		albumAdminHandler:      albumAdminHandler,
 		userHandler:            userHandler,
-		frontHandler:           fronthandler.NewFrontHandler(frontendPath),
+		frontHandler:           frontHandler,
 		departmentHandler:      departmentHandler,
 		departmentAdminHandler: departmentAdminHandler,
 	}
