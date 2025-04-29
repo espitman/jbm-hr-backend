@@ -1,0 +1,101 @@
+package uploadservice
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"path/filepath"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/espitman/jbm-hr-backend/utils/config"
+)
+
+type UploadService struct {
+	s3Client *s3.Client
+	bucket   string
+	endpoint string
+}
+
+func NewUploadService() (*UploadService, error) {
+	// Get configuration from environment variables using config utility
+	endpoint := config.GetConfig("S3_ENDPOINT", "https://storage.c2.liara.space")
+	accessKey := config.GetConfig("S3_ACCESS_KEY", "icvivvt5uv1g2l7s")
+	secretKey := config.GetConfig("S3_SECRET_KEY", "2049dea6-0bf7-4204-8109-bd474c5df834")
+	bucket := config.GetConfig("S3_BUCKET", "your-bucket-name")
+	region := config.GetConfig("S3_REGION", "us-east-1")
+
+	// Create custom endpoint resolver
+	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+		return aws.Endpoint{
+			URL: endpoint,
+		}, nil
+	})
+
+	// Load AWS configuration
+	cfg, err := awsconfig.LoadDefaultConfig(context.TODO(),
+		awsconfig.WithEndpointResolverWithOptions(customResolver),
+		awsconfig.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
+			accessKey,
+			secretKey,
+			"",
+		)),
+		awsconfig.WithRegion(region),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("unable to load SDK config: %v", err)
+	}
+
+	// Create S3 client
+	client := s3.NewFromConfig(cfg)
+
+	return &UploadService{
+		s3Client: client,
+		bucket:   bucket,
+		endpoint: endpoint,
+	}, nil
+}
+
+func (s *UploadService) UploadFile(ctx context.Context, file *multipart.FileHeader) (string, error) {
+	src, err := file.Open()
+	if err != nil {
+		return "", fmt.Errorf("failed to open file: %v", err)
+	}
+	defer src.Close()
+
+	// Generate a unique filename
+	filename := filepath.Base(file.Filename)
+
+	// Upload the file to S3
+	_, err = s.s3Client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket: aws.String(s.bucket),
+		Key:    aws.String(filename),
+		Body:   src,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to upload file: %v", err)
+	}
+
+	// Return the URL of the uploaded file
+	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, s.endpoint, filename)
+	return fileURL, nil
+}
+
+func (s *UploadService) UploadFileFromReader(ctx context.Context, reader io.Reader, filename string) (string, error) {
+	// Upload the file to S3
+	_, err := s.s3Client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket: aws.String(s.bucket),
+		Key:    aws.String(filename),
+		Body:   reader,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to upload file: %v", err)
+	}
+
+	// Return the URL of the uploaded file
+	fileURL := fmt.Sprintf("https://%s.%s/%s", s.bucket, s.endpoint, filename)
+	return fileURL, nil
+}

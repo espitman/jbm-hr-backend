@@ -17,11 +17,13 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/upload"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/espitman/jbm-hr-backend/service/departmentservice"
 	"github.com/espitman/jbm-hr-backend/service/hrteamservice"
+	"github.com/espitman/jbm-hr-backend/service/uploadservice"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
 	_ "github.com/swaggo/files"
@@ -83,6 +85,12 @@ func main() {
 	departmentService := departmentservice.New(departmentRepo)
 	hrTeamService := hrteamservice.New(hrTeamRepo)
 
+	// Initialize upload service
+	uploadService, err := uploadservice.NewUploadService()
+	if err != nil {
+		log.Fatalf("failed creating upload service: %v", err)
+	}
+
 	// Initialize handlers
 	albumHandler := albumhandler.NewAlbumHandler(albumService)
 	albumAdminHandler := albumhandler.NewAlbumAdminHandler(albumService)
@@ -91,13 +99,14 @@ func main() {
 	departmentAdminHandler := departmenthandler.NewDepartmentAdminHandler(departmentService)
 	hrTeamHandler := hrteamhandler.NewHRTeamHandler(hrTeamService)
 	hrTeamAdminHandler := hrteamhandler.NewHRTeamAdminHandler(hrTeamService)
+	uploadHandler := upload.NewUploadHandler(uploadService)
 
 	// Initialize UI handler
 	uiPath, _ := filepath.Abs("ui/web")
 	uiHandler := uihandler.NewUIHandler(uiPath)
 
 	// Initialize router
-	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, hrTeamHandler, hrTeamAdminHandler, uiHandler)
+	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, hrTeamHandler, hrTeamAdminHandler, uiHandler, uploadHandler)
 	r.SetupRoutes()
 
 	// Start server

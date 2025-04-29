@@ -8,6 +8,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/upload"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	customMiddleware "github.com/espitman/jbm-hr-backend/http/middleware"
 	"github.com/labstack/echo/v4"
@@ -26,10 +27,21 @@ type Router struct {
 	departmentAdminHandler *departmenthandler.DepartmentAdminHandler
 	hrTeamHandler          *hrteamhandler.HRTeamHandler
 	hrTeamAdminHandler     *hrteamhandler.HRTeamAdminHandler
+	uploadHandler          *upload.UploadHandler
 }
 
 // NewRouter creates a new router instance
-func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *albumhandler.AlbumAdminHandler, userHandler *userhandler.UserHandler, departmentHandler *departmenthandler.DepartmentHandler, departmentAdminHandler *departmenthandler.DepartmentAdminHandler, hrTeamHandler *hrteamhandler.HRTeamHandler, hrTeamAdminHandler *hrteamhandler.HRTeamAdminHandler, uiHandler *uihandler.UIHandler) *Router {
+func NewRouter(
+	albumHandler *albumhandler.AlbumHandler,
+	albumAdminHandler *albumhandler.AlbumAdminHandler,
+	userHandler *userhandler.UserHandler,
+	departmentHandler *departmenthandler.DepartmentHandler,
+	departmentAdminHandler *departmenthandler.DepartmentAdminHandler,
+	hrTeamHandler *hrteamhandler.HRTeamHandler,
+	hrTeamAdminHandler *hrteamhandler.HRTeamAdminHandler,
+	uiHandler *uihandler.UIHandler,
+	uploadHandler *upload.UploadHandler,
+) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
@@ -45,6 +57,7 @@ func NewRouter(albumHandler *albumhandler.AlbumHandler, albumAdminHandler *album
 		departmentAdminHandler: departmentAdminHandler,
 		hrTeamHandler:          hrTeamHandler,
 		hrTeamAdminHandler:     hrTeamAdminHandler,
+		uploadHandler:          uploadHandler,
 	}
 }
 
@@ -70,6 +83,7 @@ func (r *Router) SetupRoutes() {
 	r.registerDepartmentAdminRoutes(apiV1Admin)
 	r.registerHRTeamRoutes(apiV1)
 	r.registerHRTeamAdminRoutes(apiV1Admin)
+	r.registerUploadRoutes(apiV1)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -83,4 +97,10 @@ func (r *Router) GetEcho() *echo.Echo {
 // ServeHTTP implements the http.Handler interface
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r.Echo.ServeHTTP(w, req)
+}
+
+// registerUploadRoutes registers the upload routes
+func (r *Router) registerUploadRoutes(api *echo.Group) {
+	upload := api.Group("/upload")
+	upload.POST("/image", r.uploadHandler.UploadImage)
 }

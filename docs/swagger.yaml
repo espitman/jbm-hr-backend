@@ -922,6 +922,41 @@ paths:
       summary: Get an HR team member
       tags:
       - hr-team
+  /api/v1/upload/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an image file to S3 storage
+      parameters:
+      - description: Image file to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload an image
+      tags:
+      - upload
   /api/v1/users/me:
     get:
       consumes:
