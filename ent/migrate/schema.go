@@ -20,6 +20,22 @@ var (
 		Columns:    AlbumsColumns,
 		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
 	}
+	// DepartmentsColumns holds the columns for the "departments" table.
+	DepartmentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "title", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
+		{Name: "image", Type: field.TypeString},
+		{Name: "icon", Type: field.TypeString},
+		{Name: "color", Type: field.TypeString},
+		{Name: "short_name", Type: field.TypeString, Unique: true},
+	}
+	// DepartmentsTable holds the schema information for the "departments" table.
+	DepartmentsTable = &schema.Table{
+		Name:       "departments",
+		Columns:    DepartmentsColumns,
+		PrimaryKey: []*schema.Column{DepartmentsColumns[0]},
+	}
 	// OtPsColumns holds the columns for the "ot_ps" table.
 	OtPsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -63,6 +79,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AlbumsTable,
+		DepartmentsTable,
 		OtPsTable,
 		UsersTable,
 	}

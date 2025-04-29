@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/schema"
 	"github.com/espitman/jbm-hr-backend/ent/user"
@@ -21,6 +22,32 @@ func init() {
 	albumDescURL := albumFields[0].Descriptor()
 	// album.URLValidator is a validator for the "url" field. It is called by the builders before save.
 	album.URLValidator = albumDescURL.Validators[0].(func(string) error)
+	departmentFields := schema.Department{}.Fields()
+	_ = departmentFields
+	// departmentDescTitle is the schema descriptor for title field.
+	departmentDescTitle := departmentFields[0].Descriptor()
+	// department.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	department.TitleValidator = departmentDescTitle.Validators[0].(func(string) error)
+	// departmentDescDescription is the schema descriptor for description field.
+	departmentDescDescription := departmentFields[1].Descriptor()
+	// department.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	department.DescriptionValidator = departmentDescDescription.Validators[0].(func(string) error)
+	// departmentDescImage is the schema descriptor for image field.
+	departmentDescImage := departmentFields[2].Descriptor()
+	// department.ImageValidator is a validator for the "image" field. It is called by the builders before save.
+	department.ImageValidator = departmentDescImage.Validators[0].(func(string) error)
+	// departmentDescIcon is the schema descriptor for icon field.
+	departmentDescIcon := departmentFields[3].Descriptor()
+	// department.IconValidator is a validator for the "icon" field. It is called by the builders before save.
+	department.IconValidator = departmentDescIcon.Validators[0].(func(string) error)
+	// departmentDescColor is the schema descriptor for color field.
+	departmentDescColor := departmentFields[4].Descriptor()
+	// department.ColorValidator is a validator for the "color" field. It is called by the builders before save.
+	department.ColorValidator = departmentDescColor.Validators[0].(func(string) error)
+	// departmentDescShortName is the schema descriptor for shortName field.
+	departmentDescShortName := departmentFields[5].Descriptor()
+	// department.ShortNameValidator is a validator for the "shortName" field. It is called by the builders before save.
+	department.ShortNameValidator = departmentDescShortName.Validators[0].(func(string) error)
 	otpFields := schema.OTP{}.Fields()
 	_ = otpFields
 	// otpDescCode is the schema descriptor for code field.

@@ -9,6 +9,9 @@ import (
 // Album is the predicate function for album builders.
 type Album func(*sql.Selector)
 
+// Department is the predicate function for department builders.
+type Department func(*sql.Selector)
+
 // OTP is the predicate function for otp builders.
 type OTP func(*sql.Selector)
 
