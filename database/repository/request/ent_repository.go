@@ -26,12 +26,16 @@ func convertToContractRequest(entReq *ent.Request) *contract.Request {
 	if entReq == nil {
 		return nil
 	}
+	var description *string
+	if entReq.Description != "" {
+		description = &entReq.Description
+	}
 	return &contract.Request{
 		ID:          entReq.ID,
 		UserID:      entReq.UserID,
 		FullName:    entReq.FullName,
 		Kind:        string(entReq.Kind),
-		Description: entReq.Description,
+		Description: description,
 		Status:      string(entReq.Status),
 		CreatedAt:   entReq.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:   entReq.UpdatedAt.Format(time.RFC3339),
@@ -45,7 +49,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateRequestI
 		SetUserID(req.UserID).
 		SetFullName(req.FullName).
 		SetKind(entrequest.Kind(req.Kind)).
-		SetNillableDescription(&req.Description).
+		SetNillableDescription(req.Description).
 		SetStatus(entrequest.StatusPending).
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
@@ -61,7 +65,7 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 	entReq, err := r.client.Request.
 		UpdateOneID(id).
 		SetStatus(entrequest.Status(req.Status)).
-		SetNillableDescription(&req.Description).
+		SetNillableDescription(req.Description).
 		SetUpdatedAt(time.Now()).
 		Save(ctx)
 	if err != nil {

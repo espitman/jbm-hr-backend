@@ -7,6 +7,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/requesthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/resumehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uploadhandler"
@@ -31,6 +32,8 @@ type Router struct {
 	uploadHandler          *uploadhandler.UploadHandler
 	resumeHandler          *resumehandler.ResumeHandler
 	resumeAdminHandler     *resumehandler.ResumeAdminHandler
+	requestHandler         *requesthandler.Handler
+	requestAdminHandler    *requesthandler.AdminHandler
 }
 
 // NewRouter creates a new router instance
@@ -46,6 +49,8 @@ func NewRouter(
 	uploadHandler *uploadhandler.UploadHandler,
 	resumeHandler *resumehandler.ResumeHandler,
 	resumeAdminHandler *resumehandler.ResumeAdminHandler,
+	requestHandler *requesthandler.Handler,
+	requestAdminHandler *requesthandler.AdminHandler,
 ) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
@@ -65,6 +70,8 @@ func NewRouter(
 		uploadHandler:          uploadHandler,
 		resumeHandler:          resumeHandler,
 		resumeAdminHandler:     resumeAdminHandler,
+		requestHandler:         requestHandler,
+		requestAdminHandler:    requestAdminHandler,
 	}
 }
 
@@ -93,6 +100,8 @@ func (r *Router) SetupRoutes() {
 	r.registerUploadRoutes(apiV1)
 	r.registerResumeRoutes(apiV1)
 	r.registerResumeAdminRoutes(apiV1Admin)
+	r.registerRequestRoutes(apiV1)
+	r.registerRequestAdminRoutes(apiV1Admin)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)

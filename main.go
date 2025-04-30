@@ -11,12 +11,14 @@ import (
 	"github.com/espitman/jbm-hr-backend/database/repository/department"
 	"github.com/espitman/jbm-hr-backend/database/repository/hrteam"
 	"github.com/espitman/jbm-hr-backend/database/repository/otp"
+	"github.com/espitman/jbm-hr-backend/database/repository/request"
 	"github.com/espitman/jbm-hr-backend/database/repository/resume"
 	"github.com/espitman/jbm-hr-backend/database/repository/user"
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/requesthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/resumehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uploadhandler"
@@ -25,6 +27,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/espitman/jbm-hr-backend/service/departmentservice"
 	"github.com/espitman/jbm-hr-backend/service/hrteamservice"
+	"github.com/espitman/jbm-hr-backend/service/requestservice"
 	"github.com/espitman/jbm-hr-backend/service/resumeservice"
 	"github.com/espitman/jbm-hr-backend/service/uploadservice"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
@@ -82,6 +85,7 @@ func main() {
 	departmentRepo := department.NewEntRepository(client)
 	hrTeamRepo := hrteam.NewEntRepository(client)
 	resumeRepo := resume.NewRepository(client)
+	requestRepo := request.NewEntRepository(client)
 
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
@@ -89,6 +93,7 @@ func main() {
 	departmentService := departmentservice.New(departmentRepo)
 	hrTeamService := hrteamservice.New(hrTeamRepo)
 	resumeService := resumeservice.New(resumeRepo)
+	requestService := requestservice.New(requestRepo)
 
 	// Initialize upload service
 	uploadService, err := uploadservice.New()
@@ -107,6 +112,8 @@ func main() {
 	uploadHandler := uploadhandler.NewUploadHandler(uploadService)
 	resumeHandler := resumehandler.NewResumeHandler(resumeService)
 	resumeAdminHandler := resumehandler.NewResumeAdminHandler(resumeService)
+	requestHandler := requesthandler.NewHandler(requestService)
+	requestAdminHandler := requesthandler.NewAdminHandler(requestService)
 
 	// Initialize UI handler
 	uiPath, _ := filepath.Abs("ui/web")
@@ -125,6 +132,8 @@ func main() {
 		uploadHandler,
 		resumeHandler,
 		resumeAdminHandler,
+		requestHandler,
+		requestAdminHandler,
 	)
 	r.SetupRoutes()
 

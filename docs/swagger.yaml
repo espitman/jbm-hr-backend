@@ -74,6 +74,28 @@ definitions:
       role:
         type: string
     type: object
+  contract.Request:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      kind:
+        description: employment, payroll_stamped, salary_deduction, introduction_letter,
+          good_conduct_letter, confirmation_letter, embassy_letter
+        type: string
+      status:
+        description: pending, doing, done, rejected
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
   contract.Resume:
     properties:
       created_at:
@@ -241,6 +263,101 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/contract.HRTeam'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  requesthandler.CreateRequestRequest:
+    properties:
+      description:
+        type: string
+      full_name:
+        type: string
+      kind:
+        enum:
+        - employment
+        - payroll_stamped
+        - salary_deduction
+        - introduction_letter
+        - good_conduct_letter
+        - confirmation_letter
+        - embassy_letter
+        type: string
+    required:
+    - full_name
+    - kind
+    type: object
+  requesthandler.CreateRequestResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.Request'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  requesthandler.GetRequestResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.Request'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  requesthandler.GetRequestsRequest:
+    properties:
+      kind:
+        type: string
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
+      userID:
+        type: integer
+    required:
+    - page
+    - pageSize
+    type: object
+  requesthandler.ListRequestResponse:
+    properties:
+      data:
+        $ref: '#/definitions/requesthandler.RequestListData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  requesthandler.RequestListData:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/contract.Request'
+        type: array
+      total:
+        type: integer
+    type: object
+  requesthandler.UpdateRequestStatusRequest:
+    properties:
+      description:
+        type: string
+      status:
+        enum:
+        - pending
+        - doing
+        - done
+        - rejected
+        type: string
+    required:
+    - status
+    type: object
+  requesthandler.UpdateRequestStatusResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.Request'
       message:
         type: string
       success:
@@ -857,6 +974,108 @@ paths:
       summary: Update an HR team member (admin only)
       tags:
       - admin - hr-team
+  /api/v1/admin/requests:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of requests with optional filters
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requesthandler.GetRequestsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/requesthandler.ListRequestResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: List requests
+      tags:
+      - admin-requests
+  /api/v1/admin/requests/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a request by its ID
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/requesthandler.GetRequestResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Get a request by ID
+      tags:
+      - admin-requests
+  /api/v1/admin/requests/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update the status of a request
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requesthandler.UpdateRequestStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/requesthandler.UpdateRequestStatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Update request status
+      tags:
+      - admin-requests
   /api/v1/admin/resumes:
     get:
       consumes:
@@ -1164,6 +1383,36 @@ paths:
       summary: Get an HR team member
       tags:
       - hr-team
+  /api/v1/requests:
+    post:
+      consumes:
+      - application/json
+      description: Create a new request with the provided details
+      parameters:
+      - description: Request details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requesthandler.CreateRequestRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/requesthandler.CreateRequestResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Create a new request
+      tags:
+      - requests
   /api/v1/resumes:
     post:
       consumes:

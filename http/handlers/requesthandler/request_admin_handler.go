@@ -6,6 +6,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/http/dto"
 	"github.com/espitman/jbm-hr-backend/service/requestservice"
+	"github.com/espitman/jbm-hr-backend/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -30,7 +31,7 @@ func NewAdminHandler(requestService requestservice.Service) *AdminHandler {
 // @Failure 400 {object} dto.Response
 // @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /admin/requests/{id} [get]
+// @Router /api/v1/admin/requests/{id} [get]
 func (h *AdminHandler) GetRequest(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -58,7 +59,7 @@ func (h *AdminHandler) GetRequest(c echo.Context) error {
 // @Success 200 {object} ListRequestResponse
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /admin/requests [get]
+// @Router /api/v1/admin/requests [get]
 func (h *AdminHandler) GetRequests(c echo.Context) error {
 	var req GetRequestsRequest
 	if err := c.Bind(&req); err != nil {
@@ -92,7 +93,7 @@ func (h *AdminHandler) GetRequests(c echo.Context) error {
 // @Failure 400 {object} dto.Response
 // @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /admin/requests/{id}/status [put]
+// @Router /api/v1/admin/requests/{id}/status [put]
 func (h *AdminHandler) UpdateRequestStatus(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -104,7 +105,7 @@ func (h *AdminHandler) UpdateRequestStatus(c echo.Context) error {
 		return dto.BadRequestJSON(c, "invalid request body")
 	}
 
-	if err := c.Validate(&req); err != nil {
+	if err := utils.ValidateStruct(req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 

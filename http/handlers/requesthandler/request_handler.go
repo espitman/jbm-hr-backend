@@ -1,9 +1,12 @@
 package requesthandler
 
 import (
+	"net/http"
+
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/http/dto"
 	"github.com/espitman/jbm-hr-backend/service/requestservice"
+	"github.com/espitman/jbm-hr-backend/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,18 +30,24 @@ func NewHandler(requestService requestservice.Service) *Handler {
 // @Success 201 {object} CreateRequestResponse
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /requests [post]
+// @Router /api/v1/requests [post]
 func (h *Handler) CreateRequest(c echo.Context) error {
 	var req CreateRequestRequest
 	if err := c.Bind(&req); err != nil {
 		return dto.BadRequestJSON(c, "invalid request body")
 	}
 
-	if err := c.Validate(&req); err != nil {
+	if err := utils.ValidateStruct(req); err != nil {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
-	userID := c.Get("userID").(int)
+	// Get user ID from JWT claims
+	claims, ok := c.Get("user").(*utils.Claims)
+	if !ok {
+		return dto.ErrorJSON(c, http.StatusUnauthorized, "Invalid token claims")
+	}
+	userID := claims.UserID
+
 	request, err := h.requestService.CreateRequest(c.Request().Context(), &contract.CreateRequestInput{
 		UserID:      userID,
 		FullName:    req.FullName,

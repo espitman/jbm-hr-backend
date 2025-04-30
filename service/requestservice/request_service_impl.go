@@ -11,8 +11,8 @@ type service struct {
 	requestRepo request.Repository
 }
 
-// NewService creates a new request service
-func NewService(requestRepo request.Repository) Service {
+// New creates a new request service
+func New(requestRepo request.Repository) Service {
 	return &service{
 		requestRepo: requestRepo,
 	}
