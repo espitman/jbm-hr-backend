@@ -6,6 +6,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/http/dto"
 	"github.com/espitman/jbm-hr-backend/service/resumeservice"
+	"github.com/espitman/jbm-hr-backend/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -40,7 +41,11 @@ func (h *ResumeHandler) Create(c echo.Context) error {
 	}
 
 	// Get user ID from JWT claims
-	userID := c.Get("user_id").(int)
+	claims, ok := c.Get("user").(*utils.Claims)
+	if !ok {
+		return dto.ErrorJSON(c, http.StatusUnauthorized, "Invalid token claims")
+	}
+	userID := claims.UserID
 
 	// Convert request to service input
 	input := &contract.ResumeInput{
@@ -56,5 +61,5 @@ func (h *ResumeHandler) Create(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, CreateResumeResponse{Resume: *resume})
+	return dto.SuccessJSON(c, resume)
 }

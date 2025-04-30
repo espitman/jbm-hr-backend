@@ -25,7 +25,7 @@ func NewResumeAdminHandler(resumeService resumeservice.Service) *ResumeAdminHand
 // Get handles retrieving a resume by ID
 // @Summary Get a resume
 // @Description Get a resume by ID
-// @Tags resumes
+// @Tags admin - resumes
 // @Accept json
 // @Produce json
 // @Param id path int true "Resume ID"
@@ -50,13 +50,13 @@ func (h *ResumeAdminHandler) Get(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusNotFound, "resume not found")
 	}
 
-	return dto.SuccessJSON(c, GetResumeResponse{Resume: *resume})
+	return dto.SuccessJSON(c, resume)
 }
 
 // List handles retrieving all resumes
 // @Summary List resumes
 // @Description Get all resumes
-// @Tags resumes
+// @Tags admin - resumes
 // @Accept json
 // @Produce json
 // @Param page query int false "Page number"
@@ -76,7 +76,7 @@ func (h *ResumeAdminHandler) List(c echo.Context) error {
 		limit = 10
 	}
 
-	resumes, _, err := h.resumeService.List(c.Request().Context(), page, limit)
+	resumes, total, err := h.resumeService.List(c.Request().Context(), page, limit)
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
@@ -87,13 +87,16 @@ func (h *ResumeAdminHandler) List(c echo.Context) error {
 		convertedResumes[i] = *r
 	}
 
-	return dto.SuccessJSON(c, ListResumeResponse{Resumes: convertedResumes})
+	return dto.SuccessJSON(c, ResumeListData{
+		Items: convertedResumes,
+		Total: total,
+	})
 }
 
 // UpdateStatus handles updating a resume's status
 // @Summary Update resume status
 // @Description Update a resume's status
-// @Tags resumes
+// @Tags admin - resumes
 // @Accept json
 // @Produce json
 // @Param id path int true "Resume ID"
@@ -140,5 +143,5 @@ func (h *ResumeAdminHandler) UpdateStatus(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, UpdateStatusResponse{Resume: *updatedResume})
+	return dto.SuccessJSON(c, updatedResume)
 }

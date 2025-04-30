@@ -11,11 +11,13 @@ import (
 	"github.com/espitman/jbm-hr-backend/database/repository/department"
 	"github.com/espitman/jbm-hr-backend/database/repository/hrteam"
 	"github.com/espitman/jbm-hr-backend/database/repository/otp"
+	"github.com/espitman/jbm-hr-backend/database/repository/resume"
 	"github.com/espitman/jbm-hr-backend/database/repository/user"
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/resumehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uploadhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
@@ -23,6 +25,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/espitman/jbm-hr-backend/service/departmentservice"
 	"github.com/espitman/jbm-hr-backend/service/hrteamservice"
+	"github.com/espitman/jbm-hr-backend/service/resumeservice"
 	"github.com/espitman/jbm-hr-backend/service/uploadservice"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
@@ -78,12 +81,14 @@ func main() {
 	otpRepo := otp.NewEntRepository(client)
 	departmentRepo := department.NewEntRepository(client)
 	hrTeamRepo := hrteam.NewEntRepository(client)
+	resumeRepo := resume.NewRepository(client)
 
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
 	userService := userservice.New(userRepo, otpRepo)
 	departmentService := departmentservice.New(departmentRepo)
 	hrTeamService := hrteamservice.New(hrTeamRepo)
+	resumeService := resumeservice.New(resumeRepo)
 
 	// Initialize upload service
 	uploadService, err := uploadservice.New()
@@ -100,13 +105,27 @@ func main() {
 	hrTeamHandler := hrteamhandler.NewHRTeamHandler(hrTeamService)
 	hrTeamAdminHandler := hrteamhandler.NewHRTeamAdminHandler(hrTeamService)
 	uploadHandler := uploadhandler.NewUploadHandler(uploadService)
+	resumeHandler := resumehandler.NewResumeHandler(resumeService)
+	resumeAdminHandler := resumehandler.NewResumeAdminHandler(resumeService)
 
 	// Initialize UI handler
 	uiPath, _ := filepath.Abs("ui/web")
 	uiHandler := uihandler.NewUIHandler(uiPath)
 
 	// Initialize router
-	r := router.NewRouter(albumHandler, albumAdminHandler, userHandler, departmentHandler, departmentAdminHandler, hrTeamHandler, hrTeamAdminHandler, uiHandler, uploadHandler)
+	r := router.NewRouter(
+		albumHandler,
+		albumAdminHandler,
+		userHandler,
+		departmentHandler,
+		departmentAdminHandler,
+		hrTeamHandler,
+		hrTeamAdminHandler,
+		uiHandler,
+		uploadHandler,
+		resumeHandler,
+		resumeAdminHandler,
+	)
 	r.SetupRoutes()
 
 	// Start server
