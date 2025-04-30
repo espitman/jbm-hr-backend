@@ -19,6 +19,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
+	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -35,6 +36,8 @@ type Client struct {
 	HRTeam *HRTeamClient
 	// OTP is the client for interacting with the OTP builders.
 	OTP *OTPClient
+	// Resume is the client for interacting with the Resume builders.
+	Resume *ResumeClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -52,6 +55,7 @@ func (c *Client) init() {
 	c.Department = NewDepartmentClient(c.config)
 	c.HRTeam = NewHRTeamClient(c.config)
 	c.OTP = NewOTPClient(c.config)
+	c.Resume = NewResumeClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -149,6 +153,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Department: NewDepartmentClient(cfg),
 		HRTeam:     NewHRTeamClient(cfg),
 		OTP:        NewOTPClient(cfg),
+		Resume:     NewResumeClient(cfg),
 		User:       NewUserClient(cfg),
 	}, nil
 }
@@ -173,6 +178,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Department: NewDepartmentClient(cfg),
 		HRTeam:     NewHRTeamClient(cfg),
 		OTP:        NewOTPClient(cfg),
+		Resume:     NewResumeClient(cfg),
 		User:       NewUserClient(cfg),
 	}, nil
 }
@@ -202,21 +208,21 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Album.Use(hooks...)
-	c.Department.Use(hooks...)
-	c.HRTeam.Use(hooks...)
-	c.OTP.Use(hooks...)
-	c.User.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.Album, c.Department, c.HRTeam, c.OTP, c.Resume, c.User,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Album.Intercept(interceptors...)
-	c.Department.Intercept(interceptors...)
-	c.HRTeam.Intercept(interceptors...)
-	c.OTP.Intercept(interceptors...)
-	c.User.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.Album, c.Department, c.HRTeam, c.OTP, c.Resume, c.User,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -230,6 +236,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.HRTeam.mutate(ctx, m)
 	case *OTPMutation:
 		return c.OTP.mutate(ctx, m)
+	case *ResumeMutation:
+		return c.Resume.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
@@ -785,6 +793,155 @@ func (c *OTPClient) mutate(ctx context.Context, m *OTPMutation) (Value, error) {
 	}
 }
 
+// ResumeClient is a client for the Resume schema.
+type ResumeClient struct {
+	config
+}
+
+// NewResumeClient returns a client for the Resume from the given config.
+func NewResumeClient(c config) *ResumeClient {
+	return &ResumeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `resume.Hooks(f(g(h())))`.
+func (c *ResumeClient) Use(hooks ...Hook) {
+	c.hooks.Resume = append(c.hooks.Resume, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `resume.Intercept(f(g(h())))`.
+func (c *ResumeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Resume = append(c.inters.Resume, interceptors...)
+}
+
+// Create returns a builder for creating a Resume entity.
+func (c *ResumeClient) Create() *ResumeCreate {
+	mutation := newResumeMutation(c.config, OpCreate)
+	return &ResumeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Resume entities.
+func (c *ResumeClient) CreateBulk(builders ...*ResumeCreate) *ResumeCreateBulk {
+	return &ResumeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ResumeClient) MapCreateBulk(slice any, setFunc func(*ResumeCreate, int)) *ResumeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ResumeCreateBulk{err: fmt.Errorf("calling to ResumeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ResumeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ResumeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Resume.
+func (c *ResumeClient) Update() *ResumeUpdate {
+	mutation := newResumeMutation(c.config, OpUpdate)
+	return &ResumeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ResumeClient) UpdateOne(r *Resume) *ResumeUpdateOne {
+	mutation := newResumeMutation(c.config, OpUpdateOne, withResume(r))
+	return &ResumeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ResumeClient) UpdateOneID(id int) *ResumeUpdateOne {
+	mutation := newResumeMutation(c.config, OpUpdateOne, withResumeID(id))
+	return &ResumeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Resume.
+func (c *ResumeClient) Delete() *ResumeDelete {
+	mutation := newResumeMutation(c.config, OpDelete)
+	return &ResumeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ResumeClient) DeleteOne(r *Resume) *ResumeDeleteOne {
+	return c.DeleteOneID(r.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ResumeClient) DeleteOneID(id int) *ResumeDeleteOne {
+	builder := c.Delete().Where(resume.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ResumeDeleteOne{builder}
+}
+
+// Query returns a query builder for Resume.
+func (c *ResumeClient) Query() *ResumeQuery {
+	return &ResumeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeResume},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Resume entity by its id.
+func (c *ResumeClient) Get(ctx context.Context, id int) (*Resume, error) {
+	return c.Query().Where(resume.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ResumeClient) GetX(ctx context.Context, id int) *Resume {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Resume.
+func (c *ResumeClient) QueryUser(r *Resume) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resume.Table, resume.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, resume.UserTable, resume.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ResumeClient) Hooks() []Hook {
+	return c.hooks.Resume
+}
+
+// Interceptors returns the client interceptors.
+func (c *ResumeClient) Interceptors() []Interceptor {
+	return c.inters.Resume
+}
+
+func (c *ResumeClient) mutate(ctx context.Context, m *ResumeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ResumeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ResumeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ResumeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ResumeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Resume mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -909,6 +1066,22 @@ func (c *UserClient) QueryOtps(u *User) *OTPQuery {
 	return query
 }
 
+// QueryResumes queries the resumes edge of a User.
+func (c *UserClient) QueryResumes(u *User) *ResumeQuery {
+	query := (&ResumeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(resume.Table, resume.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ResumesTable, user.ResumesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -937,9 +1110,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, Department, HRTeam, OTP, User []ent.Hook
+		Album, Department, HRTeam, OTP, Resume, User []ent.Hook
 	}
 	inters struct {
-		Album, Department, HRTeam, OTP, User []ent.Interceptor
+		Album, Department, HRTeam, OTP, Resume, User []ent.Interceptor
 	}
 )

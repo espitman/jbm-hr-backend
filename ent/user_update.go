@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
+	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -133,6 +134,21 @@ func (uu *UserUpdate) AddOtps(o ...*OTP) *UserUpdate {
 	return uu.AddOtpIDs(ids...)
 }
 
+// AddResumeIDs adds the "resumes" edge to the Resume entity by IDs.
+func (uu *UserUpdate) AddResumeIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddResumeIDs(ids...)
+	return uu
+}
+
+// AddResumes adds the "resumes" edges to the Resume entity.
+func (uu *UserUpdate) AddResumes(r ...*Resume) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddResumeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -157,6 +173,27 @@ func (uu *UserUpdate) RemoveOtps(o ...*OTP) *UserUpdate {
 		ids[i] = o[i].ID
 	}
 	return uu.RemoveOtpIDs(ids...)
+}
+
+// ClearResumes clears all "resumes" edges to the Resume entity.
+func (uu *UserUpdate) ClearResumes() *UserUpdate {
+	uu.mutation.ClearResumes()
+	return uu
+}
+
+// RemoveResumeIDs removes the "resumes" edge to Resume entities by IDs.
+func (uu *UserUpdate) RemoveResumeIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveResumeIDs(ids...)
+	return uu
+}
+
+// RemoveResumes removes "resumes" edges to Resume entities.
+func (uu *UserUpdate) RemoveResumes(r ...*Resume) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveResumeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -294,6 +331,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.ResumesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResumesTable,
+			Columns: []string{user.ResumesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedResumesIDs(); len(nodes) > 0 && !uu.mutation.ResumesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResumesTable,
+			Columns: []string{user.ResumesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ResumesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResumesTable,
+			Columns: []string{user.ResumesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -419,6 +501,21 @@ func (uuo *UserUpdateOne) AddOtps(o ...*OTP) *UserUpdateOne {
 	return uuo.AddOtpIDs(ids...)
 }
 
+// AddResumeIDs adds the "resumes" edge to the Resume entity by IDs.
+func (uuo *UserUpdateOne) AddResumeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddResumeIDs(ids...)
+	return uuo
+}
+
+// AddResumes adds the "resumes" edges to the Resume entity.
+func (uuo *UserUpdateOne) AddResumes(r ...*Resume) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddResumeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -443,6 +540,27 @@ func (uuo *UserUpdateOne) RemoveOtps(o ...*OTP) *UserUpdateOne {
 		ids[i] = o[i].ID
 	}
 	return uuo.RemoveOtpIDs(ids...)
+}
+
+// ClearResumes clears all "resumes" edges to the Resume entity.
+func (uuo *UserUpdateOne) ClearResumes() *UserUpdateOne {
+	uuo.mutation.ClearResumes()
+	return uuo
+}
+
+// RemoveResumeIDs removes the "resumes" edge to Resume entities by IDs.
+func (uuo *UserUpdateOne) RemoveResumeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveResumeIDs(ids...)
+	return uuo
+}
+
+// RemoveResumes removes "resumes" edges to Resume entities.
+func (uuo *UserUpdateOne) RemoveResumes(r ...*Resume) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveResumeIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -603,6 +721,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ResumesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResumesTable,
+			Columns: []string{user.ResumesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedResumesIDs(); len(nodes) > 0 && !uuo.mutation.ResumesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResumesTable,
+			Columns: []string{user.ResumesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ResumesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResumesTable,
+			Columns: []string{user.ResumesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

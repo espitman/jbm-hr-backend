@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
+	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -85,6 +86,21 @@ func (uc *UserCreate) AddOtps(o ...*OTP) *UserCreate {
 		ids[i] = o[i].ID
 	}
 	return uc.AddOtpIDs(ids...)
+}
+
+// AddResumeIDs adds the "resumes" edge to the Resume entity by IDs.
+func (uc *UserCreate) AddResumeIDs(ids ...int) *UserCreate {
+	uc.mutation.AddResumeIDs(ids...)
+	return uc
+}
+
+// AddResumes adds the "resumes" edges to the Resume entity.
+func (uc *UserCreate) AddResumes(r ...*Resume) *UserCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddResumeIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -229,6 +245,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ResumesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResumesTable,
+			Columns: []string{user.ResumesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

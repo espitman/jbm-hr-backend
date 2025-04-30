@@ -20,6 +20,8 @@ type Tx struct {
 	HRTeam *HRTeamClient
 	// OTP is the client for interacting with the OTP builders.
 	OTP *OTPClient
+	// Resume is the client for interacting with the Resume builders.
+	Resume *ResumeClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -157,6 +159,7 @@ func (tx *Tx) init() {
 	tx.Department = NewDepartmentClient(tx.config)
 	tx.HRTeam = NewHRTeamClient(tx.config)
 	tx.OTP = NewOTPClient(tx.config)
+	tx.Resume = NewResumeClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

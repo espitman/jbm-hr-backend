@@ -16,6 +16,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
+	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -32,6 +33,7 @@ const (
 	TypeDepartment = "Department"
 	TypeHRTeam     = "HRTeam"
 	TypeOTP        = "OTP"
+	TypeResume     = "Resume"
 	TypeUser       = "User"
 )
 
@@ -2152,25 +2154,789 @@ func (m *OTPMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown OTP edge %s", name)
 }
 
+// ResumeMutation represents an operation that mutates the Resume nodes in the graph.
+type ResumeMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	introduced_name  *string
+	introduced_phone *string
+	position         *string
+	file             *string
+	status           *resume.Status
+	created_at       *time.Time
+	updated_at       *time.Time
+	clearedFields    map[string]struct{}
+	user             *int
+	cleareduser      bool
+	done             bool
+	oldValue         func(context.Context) (*Resume, error)
+	predicates       []predicate.Resume
+}
+
+var _ ent.Mutation = (*ResumeMutation)(nil)
+
+// resumeOption allows management of the mutation configuration using functional options.
+type resumeOption func(*ResumeMutation)
+
+// newResumeMutation creates new mutation for the Resume entity.
+func newResumeMutation(c config, op Op, opts ...resumeOption) *ResumeMutation {
+	m := &ResumeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeResume,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withResumeID sets the ID field of the mutation.
+func withResumeID(id int) resumeOption {
+	return func(m *ResumeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Resume
+		)
+		m.oldValue = func(ctx context.Context) (*Resume, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Resume.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withResume sets the old Resume of the mutation.
+func withResume(node *Resume) resumeOption {
+	return func(m *ResumeMutation) {
+		m.oldValue = func(context.Context) (*Resume, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ResumeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ResumeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ResumeMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ResumeMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Resume.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetIntroducedName sets the "introduced_name" field.
+func (m *ResumeMutation) SetIntroducedName(s string) {
+	m.introduced_name = &s
+}
+
+// IntroducedName returns the value of the "introduced_name" field in the mutation.
+func (m *ResumeMutation) IntroducedName() (r string, exists bool) {
+	v := m.introduced_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntroducedName returns the old "introduced_name" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldIntroducedName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIntroducedName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIntroducedName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntroducedName: %w", err)
+	}
+	return oldValue.IntroducedName, nil
+}
+
+// ResetIntroducedName resets all changes to the "introduced_name" field.
+func (m *ResumeMutation) ResetIntroducedName() {
+	m.introduced_name = nil
+}
+
+// SetIntroducedPhone sets the "introduced_phone" field.
+func (m *ResumeMutation) SetIntroducedPhone(s string) {
+	m.introduced_phone = &s
+}
+
+// IntroducedPhone returns the value of the "introduced_phone" field in the mutation.
+func (m *ResumeMutation) IntroducedPhone() (r string, exists bool) {
+	v := m.introduced_phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntroducedPhone returns the old "introduced_phone" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldIntroducedPhone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIntroducedPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIntroducedPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntroducedPhone: %w", err)
+	}
+	return oldValue.IntroducedPhone, nil
+}
+
+// ResetIntroducedPhone resets all changes to the "introduced_phone" field.
+func (m *ResumeMutation) ResetIntroducedPhone() {
+	m.introduced_phone = nil
+}
+
+// SetPosition sets the "position" field.
+func (m *ResumeMutation) SetPosition(s string) {
+	m.position = &s
+}
+
+// Position returns the value of the "position" field in the mutation.
+func (m *ResumeMutation) Position() (r string, exists bool) {
+	v := m.position
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPosition returns the old "position" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldPosition(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPosition is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPosition requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPosition: %w", err)
+	}
+	return oldValue.Position, nil
+}
+
+// ResetPosition resets all changes to the "position" field.
+func (m *ResumeMutation) ResetPosition() {
+	m.position = nil
+}
+
+// SetFile sets the "file" field.
+func (m *ResumeMutation) SetFile(s string) {
+	m.file = &s
+}
+
+// File returns the value of the "file" field in the mutation.
+func (m *ResumeMutation) File() (r string, exists bool) {
+	v := m.file
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFile returns the old "file" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldFile(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFile is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFile requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFile: %w", err)
+	}
+	return oldValue.File, nil
+}
+
+// ResetFile resets all changes to the "file" field.
+func (m *ResumeMutation) ResetFile() {
+	m.file = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *ResumeMutation) SetStatus(r resume.Status) {
+	m.status = &r
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ResumeMutation) Status() (r resume.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldStatus(ctx context.Context) (v resume.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ResumeMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ResumeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ResumeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ResumeMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ResumeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ResumeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ResumeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *ResumeMutation) SetUserID(i int) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *ResumeMutation) UserID() (r int, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the Resume entity.
+// If the Resume object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResumeMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *ResumeMutation) ResetUserID() {
+	m.user = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *ResumeMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[resume.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *ResumeMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *ResumeMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *ResumeMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Where appends a list predicates to the ResumeMutation builder.
+func (m *ResumeMutation) Where(ps ...predicate.Resume) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ResumeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ResumeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Resume, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ResumeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ResumeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Resume).
+func (m *ResumeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ResumeMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.introduced_name != nil {
+		fields = append(fields, resume.FieldIntroducedName)
+	}
+	if m.introduced_phone != nil {
+		fields = append(fields, resume.FieldIntroducedPhone)
+	}
+	if m.position != nil {
+		fields = append(fields, resume.FieldPosition)
+	}
+	if m.file != nil {
+		fields = append(fields, resume.FieldFile)
+	}
+	if m.status != nil {
+		fields = append(fields, resume.FieldStatus)
+	}
+	if m.created_at != nil {
+		fields = append(fields, resume.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, resume.FieldUpdatedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, resume.FieldUserID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ResumeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case resume.FieldIntroducedName:
+		return m.IntroducedName()
+	case resume.FieldIntroducedPhone:
+		return m.IntroducedPhone()
+	case resume.FieldPosition:
+		return m.Position()
+	case resume.FieldFile:
+		return m.File()
+	case resume.FieldStatus:
+		return m.Status()
+	case resume.FieldCreatedAt:
+		return m.CreatedAt()
+	case resume.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case resume.FieldUserID:
+		return m.UserID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ResumeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case resume.FieldIntroducedName:
+		return m.OldIntroducedName(ctx)
+	case resume.FieldIntroducedPhone:
+		return m.OldIntroducedPhone(ctx)
+	case resume.FieldPosition:
+		return m.OldPosition(ctx)
+	case resume.FieldFile:
+		return m.OldFile(ctx)
+	case resume.FieldStatus:
+		return m.OldStatus(ctx)
+	case resume.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case resume.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case resume.FieldUserID:
+		return m.OldUserID(ctx)
+	}
+	return nil, fmt.Errorf("unknown Resume field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ResumeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case resume.FieldIntroducedName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntroducedName(v)
+		return nil
+	case resume.FieldIntroducedPhone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntroducedPhone(v)
+		return nil
+	case resume.FieldPosition:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPosition(v)
+		return nil
+	case resume.FieldFile:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFile(v)
+		return nil
+	case resume.FieldStatus:
+		v, ok := value.(resume.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case resume.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case resume.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case resume.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Resume field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ResumeMutation) AddedFields() []string {
+	var fields []string
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ResumeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ResumeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Resume numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ResumeMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ResumeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ResumeMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Resume nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ResumeMutation) ResetField(name string) error {
+	switch name {
+	case resume.FieldIntroducedName:
+		m.ResetIntroducedName()
+		return nil
+	case resume.FieldIntroducedPhone:
+		m.ResetIntroducedPhone()
+		return nil
+	case resume.FieldPosition:
+		m.ResetPosition()
+		return nil
+	case resume.FieldFile:
+		m.ResetFile()
+		return nil
+	case resume.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case resume.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case resume.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case resume.FieldUserID:
+		m.ResetUserID()
+		return nil
+	}
+	return fmt.Errorf("unknown Resume field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ResumeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, resume.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ResumeMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case resume.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ResumeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ResumeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ResumeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, resume.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ResumeMutation) EdgeCleared(name string) bool {
+	switch name {
+	case resume.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ResumeMutation) ClearEdge(name string) error {
+	switch name {
+	case resume.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown Resume unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ResumeMutation) ResetEdge(name string) error {
+	switch name {
+	case resume.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown Resume edge %s", name)
+}
+
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	email         *string
-	phone         *string
-	first_name    *string
-	last_name     *string
-	role          *user.Role
-	avatar        *string
-	clearedFields map[string]struct{}
-	otps          map[int]struct{}
-	removedotps   map[int]struct{}
-	clearedotps   bool
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op             Op
+	typ            string
+	id             *int
+	email          *string
+	phone          *string
+	first_name     *string
+	last_name      *string
+	role           *user.Role
+	avatar         *string
+	clearedFields  map[string]struct{}
+	otps           map[int]struct{}
+	removedotps    map[int]struct{}
+	clearedotps    bool
+	resumes        map[int]struct{}
+	removedresumes map[int]struct{}
+	clearedresumes bool
+	done           bool
+	oldValue       func(context.Context) (*User, error)
+	predicates     []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -2554,6 +3320,60 @@ func (m *UserMutation) ResetOtps() {
 	m.removedotps = nil
 }
 
+// AddResumeIDs adds the "resumes" edge to the Resume entity by ids.
+func (m *UserMutation) AddResumeIDs(ids ...int) {
+	if m.resumes == nil {
+		m.resumes = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.resumes[ids[i]] = struct{}{}
+	}
+}
+
+// ClearResumes clears the "resumes" edge to the Resume entity.
+func (m *UserMutation) ClearResumes() {
+	m.clearedresumes = true
+}
+
+// ResumesCleared reports if the "resumes" edge to the Resume entity was cleared.
+func (m *UserMutation) ResumesCleared() bool {
+	return m.clearedresumes
+}
+
+// RemoveResumeIDs removes the "resumes" edge to the Resume entity by IDs.
+func (m *UserMutation) RemoveResumeIDs(ids ...int) {
+	if m.removedresumes == nil {
+		m.removedresumes = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.resumes, ids[i])
+		m.removedresumes[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedResumes returns the removed IDs of the "resumes" edge to the Resume entity.
+func (m *UserMutation) RemovedResumesIDs() (ids []int) {
+	for id := range m.removedresumes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResumesIDs returns the "resumes" edge IDs in the mutation.
+func (m *UserMutation) ResumesIDs() (ids []int) {
+	for id := range m.resumes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetResumes resets all changes to the "resumes" edge.
+func (m *UserMutation) ResetResumes() {
+	m.resumes = nil
+	m.clearedresumes = false
+	m.removedresumes = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -2781,9 +3601,12 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.otps != nil {
 		edges = append(edges, user.EdgeOtps)
+	}
+	if m.resumes != nil {
+		edges = append(edges, user.EdgeResumes)
 	}
 	return edges
 }
@@ -2798,15 +3621,24 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeResumes:
+		ids := make([]ent.Value, 0, len(m.resumes))
+		for id := range m.resumes {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedotps != nil {
 		edges = append(edges, user.EdgeOtps)
+	}
+	if m.removedresumes != nil {
+		edges = append(edges, user.EdgeResumes)
 	}
 	return edges
 }
@@ -2821,15 +3653,24 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeResumes:
+		ids := make([]ent.Value, 0, len(m.removedresumes))
+		for id := range m.removedresumes {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedotps {
 		edges = append(edges, user.EdgeOtps)
+	}
+	if m.clearedresumes {
+		edges = append(edges, user.EdgeResumes)
 	}
 	return edges
 }
@@ -2840,6 +3681,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgeOtps:
 		return m.clearedotps
+	case user.EdgeResumes:
+		return m.clearedresumes
 	}
 	return false
 }
@@ -2858,6 +3701,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 	switch name {
 	case user.EdgeOtps:
 		m.ResetOtps()
+		return nil
+	case user.EdgeResumes:
+		m.ResetResumes()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

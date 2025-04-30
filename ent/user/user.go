@@ -28,6 +28,8 @@ const (
 	FieldAvatar = "avatar"
 	// EdgeOtps holds the string denoting the otps edge name in mutations.
 	EdgeOtps = "otps"
+	// EdgeResumes holds the string denoting the resumes edge name in mutations.
+	EdgeResumes = "resumes"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OtpsTable is the table that holds the otps relation/edge.
@@ -37,6 +39,13 @@ const (
 	OtpsInverseTable = "ot_ps"
 	// OtpsColumn is the table column denoting the otps relation/edge.
 	OtpsColumn = "user_otps"
+	// ResumesTable is the table that holds the resumes relation/edge.
+	ResumesTable = "resumes"
+	// ResumesInverseTable is the table name for the Resume entity.
+	// It exists in this package in order to avoid circular dependency with the "resume" package.
+	ResumesInverseTable = "resumes"
+	// ResumesColumn is the table column denoting the resumes relation/edge.
+	ResumesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -148,10 +157,31 @@ func ByOtps(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOtpsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByResumesCount orders the results by resumes count.
+func ByResumesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newResumesStep(), opts...)
+	}
+}
+
+// ByResumes orders the results by resumes terms.
+func ByResumes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newResumesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOtpsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OtpsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, OtpsTable, OtpsColumn),
+	)
+}
+func newResumesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ResumesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ResumesTable, ResumesColumn),
 	)
 }

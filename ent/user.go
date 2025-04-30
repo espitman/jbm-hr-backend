@@ -38,9 +38,11 @@ type User struct {
 type UserEdges struct {
 	// Otps holds the value of the otps edge.
 	Otps []*OTP `json:"otps,omitempty"`
+	// Resumes holds the value of the resumes edge.
+	Resumes []*Resume `json:"resumes,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // OtpsOrErr returns the Otps value or an error if the edge
@@ -50,6 +52,15 @@ func (e UserEdges) OtpsOrErr() ([]*OTP, error) {
 		return e.Otps, nil
 	}
 	return nil, &NotLoadedError{edge: "otps"}
+}
+
+// ResumesOrErr returns the Resumes value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ResumesOrErr() ([]*Resume, error) {
+	if e.loadedTypes[1] {
+		return e.Resumes, nil
+	}
+	return nil, &NotLoadedError{edge: "resumes"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -134,6 +145,11 @@ func (u *User) Value(name string) (ent.Value, error) {
 // QueryOtps queries the "otps" edge of the User entity.
 func (u *User) QueryOtps() *OTPQuery {
 	return NewUserClient(u.config).QueryOtps(u)
+}
+
+// QueryResumes queries the "resumes" edge of the User entity.
+func (u *User) QueryResumes() *ResumeQuery {
+	return NewUserClient(u.config).QueryResumes(u)
 }
 
 // Update returns a builder for updating this User.

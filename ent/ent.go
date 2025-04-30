@@ -16,6 +16,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
+	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -81,6 +82,7 @@ func checkColumn(table, column string) error {
 			department.Table: department.ValidColumn,
 			hrteam.Table:     hrteam.ValidColumn,
 			otp.Table:        otp.ValidColumn,
+			resume.Table:     resume.ValidColumn,
 			user.Table:       user.ValidColumn,
 		})
 	})

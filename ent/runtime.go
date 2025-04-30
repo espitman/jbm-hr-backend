@@ -9,6 +9,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
+	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/schema"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -87,6 +88,76 @@ func init() {
 	otpDescCreatedAt := otpFields[3].Descriptor()
 	// otp.DefaultCreatedAt holds the default value on creation for the created_at field.
 	otp.DefaultCreatedAt = otpDescCreatedAt.Default.(func() time.Time)
+	resumeFields := schema.Resume{}.Fields()
+	_ = resumeFields
+	// resumeDescIntroducedName is the schema descriptor for introduced_name field.
+	resumeDescIntroducedName := resumeFields[0].Descriptor()
+	// resume.IntroducedNameValidator is a validator for the "introduced_name" field. It is called by the builders before save.
+	resume.IntroducedNameValidator = func() func(string) error {
+		validators := resumeDescIntroducedName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(introduced_name string) error {
+			for _, fn := range fns {
+				if err := fn(introduced_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// resumeDescIntroducedPhone is the schema descriptor for introduced_phone field.
+	resumeDescIntroducedPhone := resumeFields[1].Descriptor()
+	// resume.IntroducedPhoneValidator is a validator for the "introduced_phone" field. It is called by the builders before save.
+	resume.IntroducedPhoneValidator = func() func(string) error {
+		validators := resumeDescIntroducedPhone.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(introduced_phone string) error {
+			for _, fn := range fns {
+				if err := fn(introduced_phone); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// resumeDescPosition is the schema descriptor for position field.
+	resumeDescPosition := resumeFields[2].Descriptor()
+	// resume.PositionValidator is a validator for the "position" field. It is called by the builders before save.
+	resume.PositionValidator = func() func(string) error {
+		validators := resumeDescPosition.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(position string) error {
+			for _, fn := range fns {
+				if err := fn(position); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// resumeDescFile is the schema descriptor for file field.
+	resumeDescFile := resumeFields[3].Descriptor()
+	// resume.FileValidator is a validator for the "file" field. It is called by the builders before save.
+	resume.FileValidator = resumeDescFile.Validators[0].(func(string) error)
+	// resumeDescCreatedAt is the schema descriptor for created_at field.
+	resumeDescCreatedAt := resumeFields[5].Descriptor()
+	// resume.DefaultCreatedAt holds the default value on creation for the created_at field.
+	resume.DefaultCreatedAt = resumeDescCreatedAt.Default.(func() time.Time)
+	// resumeDescUpdatedAt is the schema descriptor for updated_at field.
+	resumeDescUpdatedAt := resumeFields[6].Descriptor()
+	// resume.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	resume.DefaultUpdatedAt = resumeDescUpdatedAt.Default.(func() time.Time)
+	// resume.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	resume.UpdateDefaultUpdatedAt = resumeDescUpdatedAt.UpdateDefault.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.

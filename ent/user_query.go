@@ -14,17 +14,19 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
+	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx        *QueryContext
-	order      []user.OrderOption
-	inters     []Interceptor
-	predicates []predicate.User
-	withOtps   *OTPQuery
+	ctx         *QueryContext
+	order       []user.OrderOption
+	inters      []Interceptor
+	predicates  []predicate.User
+	withOtps    *OTPQuery
+	withResumes *ResumeQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,6 +78,28 @@ func (uq *UserQuery) QueryOtps() *OTPQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(otp.Table, otp.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.OtpsTable, user.OtpsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryResumes chains the current query on the "resumes" edge.
+func (uq *UserQuery) QueryResumes() *ResumeQuery {
+	query := (&ResumeClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(resume.Table, resume.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ResumesTable, user.ResumesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -270,12 +294,13 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:     uq.config,
-		ctx:        uq.ctx.Clone(),
-		order:      append([]user.OrderOption{}, uq.order...),
-		inters:     append([]Interceptor{}, uq.inters...),
-		predicates: append([]predicate.User{}, uq.predicates...),
-		withOtps:   uq.withOtps.Clone(),
+		config:      uq.config,
+		ctx:         uq.ctx.Clone(),
+		order:       append([]user.OrderOption{}, uq.order...),
+		inters:      append([]Interceptor{}, uq.inters...),
+		predicates:  append([]predicate.User{}, uq.predicates...),
+		withOtps:    uq.withOtps.Clone(),
+		withResumes: uq.withResumes.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -290,6 +315,17 @@ func (uq *UserQuery) WithOtps(opts ...func(*OTPQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withOtps = query
+	return uq
+}
+
+// WithResumes tells the query-builder to eager-load the nodes that are connected to
+// the "resumes" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithResumes(opts ...func(*ResumeQuery)) *UserQuery {
+	query := (&ResumeClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withResumes = query
 	return uq
 }
 
@@ -371,8 +407,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uq.withOtps != nil,
+			uq.withResumes != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -397,6 +434,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadOtps(ctx, query, nodes,
 			func(n *User) { n.Edges.Otps = []*OTP{} },
 			func(n *User, e *OTP) { n.Edges.Otps = append(n.Edges.Otps, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withResumes; query != nil {
+		if err := uq.loadResumes(ctx, query, nodes,
+			func(n *User) { n.Edges.Resumes = []*Resume{} },
+			func(n *User, e *Resume) { n.Edges.Resumes = append(n.Edges.Resumes, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -429,6 +473,36 @@ func (uq *UserQuery) loadOtps(ctx context.Context, query *OTPQuery, nodes []*Use
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_otps" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadResumes(ctx context.Context, query *ResumeQuery, nodes []*User, init func(*User), assign func(*User, *Resume)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(resume.FieldUserID)
+	}
+	query.Where(predicate.Resume(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ResumesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
