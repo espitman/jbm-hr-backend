@@ -18,6 +18,9 @@ type HRTeam func(*sql.Selector)
 // OTP is the predicate function for otp builders.
 type OTP func(*sql.Selector)
 
+// Request is the predicate function for request builders.
+type Request func(*sql.Selector)
+
 // Resume is the predicate function for resume builders.
 type Resume func(*sql.Selector)
 

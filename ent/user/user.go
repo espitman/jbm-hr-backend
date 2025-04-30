@@ -30,6 +30,8 @@ const (
 	EdgeOtps = "otps"
 	// EdgeResumes holds the string denoting the resumes edge name in mutations.
 	EdgeResumes = "resumes"
+	// EdgeRequests holds the string denoting the requests edge name in mutations.
+	EdgeRequests = "requests"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OtpsTable is the table that holds the otps relation/edge.
@@ -46,6 +48,13 @@ const (
 	ResumesInverseTable = "resumes"
 	// ResumesColumn is the table column denoting the resumes relation/edge.
 	ResumesColumn = "user_id"
+	// RequestsTable is the table that holds the requests relation/edge.
+	RequestsTable = "requests"
+	// RequestsInverseTable is the table name for the Request entity.
+	// It exists in this package in order to avoid circular dependency with the "request" package.
+	RequestsInverseTable = "requests"
+	// RequestsColumn is the table column denoting the requests relation/edge.
+	RequestsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -171,6 +180,20 @@ func ByResumes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newResumesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByRequestsCount orders the results by requests count.
+func ByRequestsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRequestsStep(), opts...)
+	}
+}
+
+// ByRequests orders the results by requests terms.
+func ByRequests(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRequestsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOtpsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -183,5 +206,12 @@ func newResumesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ResumesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ResumesTable, ResumesColumn),
+	)
+}
+func newRequestsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RequestsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RequestsTable, RequestsColumn),
 	)
 }

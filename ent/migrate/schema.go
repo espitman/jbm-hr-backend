@@ -74,6 +74,31 @@ var (
 			},
 		},
 	}
+	// RequestsColumns holds the columns for the "requests" table.
+	RequestsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "full_name", Type: field.TypeString},
+		{Name: "kind", Type: field.TypeEnum, Enums: []string{"employment", "payroll_stamped", "salary_deduction", "introduction_letter", "good_conduct_letter", "confirmation_letter", "embassy_letter"}},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "doing", "done", "rejected"}, Default: "pending"},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// RequestsTable holds the schema information for the "requests" table.
+	RequestsTable = &schema.Table{
+		Name:       "requests",
+		Columns:    RequestsColumns,
+		PrimaryKey: []*schema.Column{RequestsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "requests_users_requests",
+				Columns:    []*schema.Column{RequestsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// ResumesColumns holds the columns for the "resumes" table.
 	ResumesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -122,6 +147,7 @@ var (
 		DepartmentsTable,
 		HrTeamsTable,
 		OtPsTable,
+		RequestsTable,
 		ResumesTable,
 		UsersTable,
 	}
@@ -129,5 +155,6 @@ var (
 
 func init() {
 	OtPsTable.ForeignKeys[0].RefTable = UsersTable
+	RequestsTable.ForeignKeys[0].RefTable = UsersTable
 	ResumesTable.ForeignKeys[0].RefTable = UsersTable
 }

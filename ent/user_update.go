@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
+	"github.com/espitman/jbm-hr-backend/ent/request"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -149,6 +150,21 @@ func (uu *UserUpdate) AddResumes(r ...*Resume) *UserUpdate {
 	return uu.AddResumeIDs(ids...)
 }
 
+// AddRequestIDs adds the "requests" edge to the Request entity by IDs.
+func (uu *UserUpdate) AddRequestIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddRequestIDs(ids...)
+	return uu
+}
+
+// AddRequests adds the "requests" edges to the Request entity.
+func (uu *UserUpdate) AddRequests(r ...*Request) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddRequestIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -194,6 +210,27 @@ func (uu *UserUpdate) RemoveResumes(r ...*Resume) *UserUpdate {
 		ids[i] = r[i].ID
 	}
 	return uu.RemoveResumeIDs(ids...)
+}
+
+// ClearRequests clears all "requests" edges to the Request entity.
+func (uu *UserUpdate) ClearRequests() *UserUpdate {
+	uu.mutation.ClearRequests()
+	return uu
+}
+
+// RemoveRequestIDs removes the "requests" edge to Request entities by IDs.
+func (uu *UserUpdate) RemoveRequestIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveRequestIDs(ids...)
+	return uu
+}
+
+// RemoveRequests removes "requests" edges to Request entities.
+func (uu *UserUpdate) RemoveRequests(r ...*Request) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveRequestIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -376,6 +413,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.RequestsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RequestsTable,
+			Columns: []string{user.RequestsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(request.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedRequestsIDs(); len(nodes) > 0 && !uu.mutation.RequestsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RequestsTable,
+			Columns: []string{user.RequestsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(request.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RequestsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RequestsTable,
+			Columns: []string{user.RequestsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(request.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -516,6 +598,21 @@ func (uuo *UserUpdateOne) AddResumes(r ...*Resume) *UserUpdateOne {
 	return uuo.AddResumeIDs(ids...)
 }
 
+// AddRequestIDs adds the "requests" edge to the Request entity by IDs.
+func (uuo *UserUpdateOne) AddRequestIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddRequestIDs(ids...)
+	return uuo
+}
+
+// AddRequests adds the "requests" edges to the Request entity.
+func (uuo *UserUpdateOne) AddRequests(r ...*Request) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddRequestIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -561,6 +658,27 @@ func (uuo *UserUpdateOne) RemoveResumes(r ...*Resume) *UserUpdateOne {
 		ids[i] = r[i].ID
 	}
 	return uuo.RemoveResumeIDs(ids...)
+}
+
+// ClearRequests clears all "requests" edges to the Request entity.
+func (uuo *UserUpdateOne) ClearRequests() *UserUpdateOne {
+	uuo.mutation.ClearRequests()
+	return uuo
+}
+
+// RemoveRequestIDs removes the "requests" edge to Request entities by IDs.
+func (uuo *UserUpdateOne) RemoveRequestIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveRequestIDs(ids...)
+	return uuo
+}
+
+// RemoveRequests removes "requests" edges to Request entities.
+func (uuo *UserUpdateOne) RemoveRequests(r ...*Request) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveRequestIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -766,6 +884,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(resume.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.RequestsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RequestsTable,
+			Columns: []string{user.RequestsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(request.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedRequestsIDs(); len(nodes) > 0 && !uuo.mutation.RequestsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RequestsTable,
+			Columns: []string{user.RequestsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(request.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RequestsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RequestsTable,
+			Columns: []string{user.RequestsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(request.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

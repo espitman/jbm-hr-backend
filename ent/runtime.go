@@ -9,6 +9,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
+	"github.com/espitman/jbm-hr-backend/ent/request"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/schema"
 	"github.com/espitman/jbm-hr-backend/ent/user"
@@ -88,6 +89,22 @@ func init() {
 	otpDescCreatedAt := otpFields[3].Descriptor()
 	// otp.DefaultCreatedAt holds the default value on creation for the created_at field.
 	otp.DefaultCreatedAt = otpDescCreatedAt.Default.(func() time.Time)
+	requestFields := schema.Request{}.Fields()
+	_ = requestFields
+	// requestDescFullName is the schema descriptor for full_name field.
+	requestDescFullName := requestFields[1].Descriptor()
+	// request.FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
+	request.FullNameValidator = requestDescFullName.Validators[0].(func(string) error)
+	// requestDescCreatedAt is the schema descriptor for created_at field.
+	requestDescCreatedAt := requestFields[5].Descriptor()
+	// request.DefaultCreatedAt holds the default value on creation for the created_at field.
+	request.DefaultCreatedAt = requestDescCreatedAt.Default.(func() time.Time)
+	// requestDescUpdatedAt is the schema descriptor for updated_at field.
+	requestDescUpdatedAt := requestFields[6].Descriptor()
+	// request.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	request.DefaultUpdatedAt = requestDescUpdatedAt.Default.(func() time.Time)
+	// request.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	request.UpdateDefaultUpdatedAt = requestDescUpdatedAt.UpdateDefault.(func() time.Time)
 	resumeFields := schema.Resume{}.Fields()
 	_ = resumeFields
 	// resumeDescIntroducedName is the schema descriptor for introduced_name field.
