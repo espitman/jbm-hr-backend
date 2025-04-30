@@ -1,7 +1,5 @@
 package contract
 
-import "errors"
-
 // Department represents a department in the system
 type Department struct {
 	ID          int    `json:"id"`
@@ -22,9 +20,3 @@ type DepartmentInput struct {
 	Color       string `json:"color" validate:"required"`
 	ShortName   string `json:"short_name" validate:"required"`
 }
-
-// Error definitions for department-related operations
-var (
-	ErrDepartmentNotFound = errors.New("department not found")
-	ErrDepartmentExists   = errors.New("department already exists")
-)

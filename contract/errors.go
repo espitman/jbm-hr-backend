@@ -56,3 +56,14 @@ var (
 var (
 	ErrHRTeamNotFound = errors.New("hr team member not found")
 )
+
+// Resume related errors
+var (
+	ErrResumeNotFound = errors.New("resume not found")
+)
+
+// Error definitions for department-related operations
+var (
+	ErrDepartmentNotFound = errors.New("department not found")
+	ErrDepartmentExists   = errors.New("department already exists")
+)
