@@ -20,4 +20,5 @@ type ResumeInput struct {
 	Position        string `json:"position" validate:"required"`
 	File            string `json:"file" validate:"required"`
 	UserID          int    `json:"user_id" validate:"required"`
+	Status          string `json:"status" validate:"omitempty,oneof=pending reviewed accepted rejected"`
 }
