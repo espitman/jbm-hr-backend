@@ -152,6 +152,33 @@ func (s *service) GetUserByID(ctx context.Context, id int) (*contract.User, erro
 	return user, nil
 }
 
+// ListUsers retrieves a paginated list of users
+func (s *service) ListUsers(ctx context.Context, page, limit int) ([]*contract.User, int64, error) {
+	// Get all users
+	users, err := s.userRepo.GetAll(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Calculate total count
+	total := int64(len(users))
+
+	// Calculate pagination
+	start := (page - 1) * limit
+	end := start + limit
+
+	// Handle out of bounds
+	if start >= len(users) {
+		return []*contract.User{}, total, nil
+	}
+	if end > len(users) {
+		end = len(users)
+	}
+
+	// Return paginated results
+	return users[start:end], total, nil
+}
+
 // Helper functions
 func generateOTP() (string, error) {
 	// Generate a 6-digit OTP

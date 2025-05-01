@@ -65,3 +65,26 @@ type GetMeResponse struct {
 	dto.Response
 	Data GetMeData `json:"data,omitempty"`
 }
+
+// UserData represents the user data structure for list users response
+type UserData struct {
+	ID        int    `json:"id"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Role      string `json:"role"`
+	Avatar    string `json:"avatar,omitempty"`
+}
+
+// ListUsersData represents the data structure for list users response
+type ListUsersData struct {
+	Users []UserData `json:"users"`
+	Total int64      `json:"total"`
+}
+
+// ListUsersResponse represents the response structure for list users
+type ListUsersResponse struct {
+	dto.Response
+	Data ListUsersData `json:"data,omitempty"`
+}

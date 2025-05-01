@@ -504,6 +504,24 @@ definitions:
       success:
         type: boolean
     type: object
+  userhandler.ListUsersData:
+    properties:
+      total:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/userhandler.UserData'
+        type: array
+    type: object
+  userhandler.ListUsersResponse:
+    properties:
+      data:
+        $ref: '#/definitions/userhandler.ListUsersData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   userhandler.RegisterUserData:
     properties:
       avatar:
@@ -568,6 +586,23 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  userhandler.UserData:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
     type: object
   userhandler.VerifyOTPData:
     properties:
@@ -1182,6 +1217,46 @@ paths:
       summary: Update resume status
       tags:
       - admin - resumes
+  /api/v1/admin/users:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all users in the system (Admin only)
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.ListUsersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: List all users
+      tags:
+      - admin - users
   /api/v1/admin/users/register:
     post:
       consumes:

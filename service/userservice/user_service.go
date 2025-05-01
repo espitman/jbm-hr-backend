@@ -19,4 +19,7 @@ type Service interface {
 
 	// GetUserByID retrieves a user by their ID
 	GetUserByID(ctx context.Context, id int) (*contract.User, error)
+
+	// ListUsers retrieves a paginated list of users
+	ListUsers(ctx context.Context, page, limit int) ([]*contract.User, int64, error)
 }

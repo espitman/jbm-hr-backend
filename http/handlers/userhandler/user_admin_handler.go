@@ -58,3 +58,49 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 		Avatar:    user.Avatar,
 	})
 }
+
+// ListUsers handles listing all users with pagination
+// @Summary List all users
+// @Description Get a paginated list of all users in the system (Admin only)
+// @Tags admin - users
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Success 200 {object} ListUsersResponse
+// @Failure 400 {object} dto.Response
+// @Failure 403 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/admin/users [get]
+func (h *UserHandler) ListUsers(c echo.Context) error {
+	// Get pagination parameters
+	page := utils.GetQueryParamInt(c, "page", 1)
+	limit := utils.GetQueryParamInt(c, "limit", 10)
+
+	// Get users with pagination
+	users, total, err := h.userService.ListUsers(c.Request().Context(), page, limit)
+	if err != nil {
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	// Prepare response data
+	usersData := make([]UserData, len(users))
+	for i, user := range users {
+		usersData[i] = UserData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+		}
+	}
+
+	// Return paginated response
+	return dto.SuccessJSON(c, ListUsersData{
+		Users: usersData,
+		Total: total,
+	})
+}
