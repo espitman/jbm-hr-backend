@@ -20,3 +20,8 @@ type RegisterUserRequest struct {
 	Role      string `json:"role" validate:"required,oneof=admin employee"`
 	Avatar    string `json:"avatar,omitempty"`
 }
+
+// UpdatePasswordRequest represents the request body for updating a user's password
+type UpdatePasswordRequest struct {
+	Password string `json:"password" validate:"required,min=8"`
+}
