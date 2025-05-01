@@ -213,3 +213,36 @@ func generateOTP() (string, error) {
 	otp := fmt.Sprintf("%06d", rand.Intn(1000000))
 	return otp, nil
 }
+
+// AdminLogin authenticates an admin user and returns a JWT token
+func (s *service) AdminLogin(ctx context.Context, email, password string) (string, *contract.User, error) {
+	// Get user by email
+	user, err := s.userRepo.GetByEmail(ctx, email)
+	if err != nil {
+		return "", nil, contract.ErrUserNotFound
+	}
+
+	// Check if user is an admin
+	if user.Role != "admin" {
+		return "", nil, errors.New("only admin users can login with password")
+	}
+
+	// Check if user has a password set
+	if user.Password == "" {
+		return "", nil, errors.New("password not set for this user")
+	}
+
+	// Compare passwords
+	err = utils.ComparePassword(user.Password, password)
+	if err != nil {
+		return "", nil, errors.New("invalid password")
+	}
+
+	// Generate JWT token
+	token, err := utils.GenerateToken(user)
+	if err != nil {
+		return "", nil, fmt.Errorf("failed to generate token: %w", err)
+	}
+
+	return token, user, nil
+}

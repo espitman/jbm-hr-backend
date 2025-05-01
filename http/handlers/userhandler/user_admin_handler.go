@@ -147,3 +147,51 @@ func (h *UserHandler) UpdatePassword(c echo.Context) error {
 
 	return dto.SuccessJSON(c, nil)
 }
+
+// AdminLogin handles admin user login
+// @Summary Admin login
+// @Description Authenticate admin user with email and password
+// @Tags admin - users
+// @Accept json
+// @Produce json
+// @Param request body AdminLoginRequest true "Admin Login"
+// @Success 200 {object} AdminLoginResponse
+// @Failure 400 {object} dto.Response
+// @Failure 401 {object} dto.Response
+// @Failure 404 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/admin/login [post]
+func (h *UserHandler) AdminLogin(c echo.Context) error {
+	var req AdminLoginRequest
+	if err := c.Bind(&req); err != nil {
+		return dto.BadRequestJSON(c, "invalid request format")
+	}
+
+	if err := utils.ValidateStruct(req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	token, user, err := h.userService.AdminLogin(c.Request().Context(), req.Email, req.Password)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
+		}
+		if err.Error() == "invalid password" || err.Error() == "only admin users can login with password" || err.Error() == "password not set for this user" {
+			return dto.ErrorJSON(c, http.StatusUnauthorized, err.Error())
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, AdminLoginResponse{
+		Token: token,
+		User: UserData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+		},
+	})
+}

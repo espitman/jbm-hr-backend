@@ -478,6 +478,23 @@ definitions:
       success:
         type: boolean
     type: object
+  userhandler.AdminLoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  userhandler.AdminLoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/userhandler.UserData'
+    type: object
   userhandler.GetMeData:
     properties:
       avatar:
@@ -1017,6 +1034,44 @@ paths:
       summary: Update an HR team member (admin only)
       tags:
       - admin - hr-team
+  /api/v1/admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate admin user with email and password
+      parameters:
+      - description: Admin Login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.AdminLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.AdminLoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Admin login
+      tags:
+      - admin - users
   /api/v1/admin/requests:
     get:
       consumes:

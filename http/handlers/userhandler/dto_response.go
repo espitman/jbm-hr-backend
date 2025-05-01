@@ -88,3 +88,9 @@ type ListUsersResponse struct {
 	dto.Response
 	Data ListUsersData `json:"data,omitempty"`
 }
+
+// AdminLoginResponse represents the response structure for admin login
+type AdminLoginResponse struct {
+	Token string   `json:"token"`
+	User  UserData `json:"user"`
+}

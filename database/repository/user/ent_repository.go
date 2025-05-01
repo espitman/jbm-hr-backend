@@ -33,6 +33,7 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		LastName:  entUser.LastName,
 		Role:      string(entUser.Role),
 		Avatar:    entUser.Avatar,
+		Password:  entUser.Password,
 	}
 }
 
