@@ -106,3 +106,11 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 func (r *EntRepository) Delete(ctx context.Context, id int) error {
 	return r.client.User.DeleteOneID(id).Exec(ctx)
 }
+
+// UpdatePassword updates a user's password
+func (r *EntRepository) UpdatePassword(ctx context.Context, id int, req *contract.UpdatePasswordInput) error {
+	return r.client.User.
+		UpdateOneID(id).
+		SetPassword(req.Password).
+		Exec(ctx)
+}

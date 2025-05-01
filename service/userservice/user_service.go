@@ -22,4 +22,7 @@ type Service interface {
 
 	// ListUsers retrieves a paginated list of users
 	ListUsers(ctx context.Context, page, limit int) ([]*contract.User, int64, error)
+
+	// UpdatePassword updates a user's password
+	UpdatePassword(ctx context.Context, id int, input *contract.UpdatePasswordInput) error
 }

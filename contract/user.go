@@ -9,6 +9,7 @@ type User struct {
 	LastName  string `json:"last_name"`
 	Role      string `json:"role"`
 	Avatar    string `json:"avatar,omitempty"`
+	Password  string `json:"-"`
 }
 
 // CreateUserInput represents the input for creating a new user
@@ -39,4 +40,9 @@ type RegisterUserInput struct {
 	LastName  string `json:"last_name" validate:"required"`
 	Role      string `json:"role" validate:"required,oneof=admin employee"`
 	Avatar    string `json:"avatar,omitempty"`
+}
+
+// UpdatePasswordInput represents the input for updating a user's password
+type UpdatePasswordInput struct {
+	Password string `json:"password" validate:"required"`
 }

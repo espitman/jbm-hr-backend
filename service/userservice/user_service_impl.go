@@ -179,6 +179,29 @@ func (s *service) ListUsers(ctx context.Context, page, limit int) ([]*contract.U
 	return users[start:end], total, nil
 }
 
+// UpdatePassword updates a user's password
+func (s *service) UpdatePassword(ctx context.Context, id int, input *contract.UpdatePasswordInput) error {
+	// Check if user exists
+	_, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return contract.ErrUserNotFound
+	}
+
+	// Hash the password
+	hashedPassword, err := utils.HashPassword(input.Password)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	// Create a new input with the hashed password
+	hashedInput := &contract.UpdatePasswordInput{
+		Password: hashedPassword,
+	}
+
+	// Update the password
+	return s.userRepo.UpdatePassword(ctx, id, hashedInput)
+}
+
 // Helper functions
 func generateOTP() (string, error) {
 	// Generate a 6-digit OTP
