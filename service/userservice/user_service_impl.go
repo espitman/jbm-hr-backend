@@ -181,10 +181,15 @@ func (s *service) ListUsers(ctx context.Context, page, limit int) ([]*contract.U
 
 // UpdatePassword updates a user's password
 func (s *service) UpdatePassword(ctx context.Context, id int, input *contract.UpdatePasswordInput) error {
-	// Check if user exists
-	_, err := s.userRepo.GetByID(ctx, id)
+	// Check if user exists and get their role
+	user, err := s.userRepo.GetByID(ctx, id)
 	if err != nil {
 		return contract.ErrUserNotFound
+	}
+
+	// Check if user has admin role
+	if user.Role != "admin" {
+		return errors.New("only admin users can set passwords")
 	}
 
 	// Hash the password
