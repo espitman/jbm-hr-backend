@@ -1,0 +1,1 @@
+import{I as i,s as u,m as a}from"./CejuIrEN.js";const o=i(t=>{const{isAuthenticated:e}=u();if(!e.value&&t.path!=="/login")return a("/login");if(e.value&&t.path==="/login")return a("/")});export{o as default};

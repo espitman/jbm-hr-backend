@@ -1,1 +1,0 @@
-import{_ as t}from"./DlAUqK2U.js";import{c,o,A as s}from"./R59AZWGi.js";const r={},n={class:"w-full md:w-[calc(100vw-16rem)] flex items-center justify-center bg-white"};function a(e,l){return o(),c("section",n,[s(e.$slots,"default")])}const _=t(r,[["render",a]]);export{_ as S};
