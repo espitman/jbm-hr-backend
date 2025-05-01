@@ -29,6 +29,9 @@ func (User) Fields() []ent.Field {
 			Default("employee"),
 		field.String("avatar").
 			Optional(),
+		field.String("password").
+			Optional().
+			Sensitive(),
 	}
 }
 
