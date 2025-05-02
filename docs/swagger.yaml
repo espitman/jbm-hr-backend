@@ -760,7 +760,7 @@ paths:
       - BearerAuth: []
       summary: Create a new album
       tags:
-      - admin - albums
+      - albums - admin
   /api/v1/admin/albums/{id}:
     delete:
       consumes:
@@ -799,7 +799,7 @@ paths:
       - BearerAuth: []
       summary: Delete an album
       tags:
-      - admin - albums
+      - albums - admin
     put:
       consumes:
       - application/json
@@ -843,7 +843,7 @@ paths:
       - BearerAuth: []
       summary: Update an album
       tags:
-      - admin - albums
+      - albums - admin
   /api/v1/admin/departments:
     post:
       consumes:
@@ -879,7 +879,7 @@ paths:
       - BearerAuth: []
       summary: Create a new department (admin only)
       tags:
-      - admin - departments
+      - departments - admin
   /api/v1/admin/departments/{id}:
     delete:
       consumes:
@@ -914,7 +914,7 @@ paths:
       - BearerAuth: []
       summary: Delete a department (admin only)
       tags:
-      - admin - departments
+      - departments - admin
     put:
       consumes:
       - application/json
@@ -958,7 +958,7 @@ paths:
       - BearerAuth: []
       summary: Update a department (admin only)
       tags:
-      - admin - departments
+      - departments - admin
   /api/v1/admin/hr-team:
     post:
       consumes:
@@ -994,7 +994,7 @@ paths:
       - BearerAuth: []
       summary: Create a new HR team member (admin only)
       tags:
-      - admin - hr-team
+      - hr-team - admin
   /api/v1/admin/hr-team/{id}:
     delete:
       consumes:
@@ -1029,7 +1029,7 @@ paths:
       - BearerAuth: []
       summary: Delete an HR team member (admin only)
       tags:
-      - admin - hr-team
+      - hr-team - admin
     put:
       consumes:
       - application/json
@@ -1073,7 +1073,7 @@ paths:
       - BearerAuth: []
       summary: Update an HR team member (admin only)
       tags:
-      - admin - hr-team
+      - hr-team - admin
   /api/v1/admin/login:
     post:
       consumes:
@@ -1111,7 +1111,7 @@ paths:
             $ref: '#/definitions/dto.Response'
       summary: Admin login
       tags:
-      - admin - users
+      - users - admin
   /api/v1/admin/requests:
     get:
       consumes:
@@ -1141,7 +1141,7 @@ paths:
             $ref: '#/definitions/dto.Response'
       summary: List requests
       tags:
-      - admin-requests
+      - requests - admin
   /api/v1/admin/requests/{id}:
     get:
       consumes:
@@ -1174,7 +1174,7 @@ paths:
             $ref: '#/definitions/dto.Response'
       summary: Get a request by ID
       tags:
-      - admin-requests
+      - requests - admin
   /api/v1/admin/requests/{id}/status:
     put:
       consumes:
@@ -1213,7 +1213,7 @@ paths:
             $ref: '#/definitions/dto.Response'
       summary: Update request status
       tags:
-      - admin-requests
+      - requests - admin
   /api/v1/admin/resumes:
     get:
       consumes:
@@ -1243,7 +1243,7 @@ paths:
       - BearerAuth: []
       summary: List resumes
       tags:
-      - admin - resumes
+      - resumes - admin
   /api/v1/admin/resumes/{id}:
     get:
       consumes:
@@ -1278,7 +1278,7 @@ paths:
       - BearerAuth: []
       summary: Get a resume
       tags:
-      - admin - resumes
+      - resumes - admin
   /api/v1/admin/resumes/{id}/status:
     put:
       consumes:
@@ -1319,7 +1319,7 @@ paths:
       - BearerAuth: []
       summary: Update resume status
       tags:
-      - admin - resumes
+      - resumes - admin
   /api/v1/admin/users:
     get:
       consumes:
@@ -1359,7 +1359,7 @@ paths:
       - BearerAuth: []
       summary: List all users
       tags:
-      - admin - users
+      - users - admin
   /api/v1/admin/users/{id}:
     get:
       consumes:
@@ -1394,7 +1394,7 @@ paths:
       - BearerAuth: []
       summary: Get user by ID
       tags:
-      - admin - users
+      - users - admin
     put:
       consumes:
       - application/json
@@ -1434,7 +1434,7 @@ paths:
       - BearerAuth: []
       summary: Update user information
       tags:
-      - admin - users
+      - users - admin
   /api/v1/admin/users/{id}/password:
     put:
       consumes:
@@ -1479,7 +1479,7 @@ paths:
       - BearerAuth: []
       summary: Update user password
       tags:
-      - admin - users
+      - users - admin
   /api/v1/admin/users/register:
     post:
       consumes:
@@ -1515,7 +1515,7 @@ paths:
       - BearerAuth: []
       summary: Register a new user
       tags:
-      - admin - users
+      - users - admin
   /api/v1/albums:
     get:
       consumes:
@@ -1868,7 +1868,7 @@ paths:
             $ref: '#/definitions/dto.Response'
       summary: Update user password
       tags:
-      - users
+      - users - admin
   /api/v1/users/me:
     get:
       consumes:

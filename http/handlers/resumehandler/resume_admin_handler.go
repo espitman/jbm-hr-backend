@@ -25,7 +25,7 @@ func NewResumeAdminHandler(resumeService resumeservice.Service) *ResumeAdminHand
 // Get handles retrieving a resume by ID
 // @Summary Get a resume
 // @Description Get a resume by ID
-// @Tags admin - resumes
+// @Tags resumes - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Resume ID"
@@ -56,7 +56,7 @@ func (h *ResumeAdminHandler) Get(c echo.Context) error {
 // List handles retrieving all resumes
 // @Summary List resumes
 // @Description Get all resumes
-// @Tags admin - resumes
+// @Tags resumes - admin
 // @Accept json
 // @Produce json
 // @Param page query int false "Page number"
@@ -96,7 +96,7 @@ func (h *ResumeAdminHandler) List(c echo.Context) error {
 // UpdateStatus handles updating a resume's status
 // @Summary Update resume status
 // @Description Update a resume's status
-// @Tags admin - resumes
+// @Tags resumes - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Resume ID"

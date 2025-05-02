@@ -26,7 +26,7 @@ func NewDepartmentAdminHandler(departmentService departmentservice.Service) *Dep
 // Create handles the creation of a new department (admin only)
 // @Summary Create a new department (admin only)
 // @Description Create a new department in the system (admin only)
-// @Tags admin - departments
+// @Tags departments - admin
 // @Accept json
 // @Produce json
 // @Param request body CreateDepartmentRequest true "Create Department"
@@ -66,7 +66,7 @@ func (h *DepartmentAdminHandler) Create(c echo.Context) error {
 // Update handles the update of an existing department (admin only)
 // @Summary Update a department (admin only)
 // @Description Update an existing department in the system (admin only)
-// @Tags admin - departments
+// @Tags departments - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Department ID"
@@ -116,7 +116,7 @@ func (h *DepartmentAdminHandler) Update(c echo.Context) error {
 // Delete handles the deletion of a department (admin only)
 // @Summary Delete a department (admin only)
 // @Description Delete a department by its ID (admin only)
-// @Tags admin - departments
+// @Tags departments - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Department ID"

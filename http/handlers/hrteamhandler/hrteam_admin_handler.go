@@ -26,7 +26,7 @@ func NewHRTeamAdminHandler(hrteamService hrteamservice.Service) *HRTeamAdminHand
 // Create handles the creation of a new HR team member (admin only)
 // @Summary Create a new HR team member (admin only)
 // @Description Create a new HR team member in the system (admin only)
-// @Tags admin - hr-team
+// @Tags hr-team - admin
 // @Accept json
 // @Produce json
 // @Param request body HRTeamInput true "Create HR Team Member"
@@ -64,7 +64,7 @@ func (h *HRTeamAdminHandler) Create(c echo.Context) error {
 // Update handles the update of an existing HR team member (admin only)
 // @Summary Update an HR team member (admin only)
 // @Description Update an existing HR team member in the system (admin only)
-// @Tags admin - hr-team
+// @Tags hr-team - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "HR Team Member ID"
@@ -112,7 +112,7 @@ func (h *HRTeamAdminHandler) Update(c echo.Context) error {
 // Delete handles the deletion of an HR team member (admin only)
 // @Summary Delete an HR team member (admin only)
 // @Description Delete an HR team member by their ID (admin only)
-// @Tags admin - hr-team
+// @Tags hr-team - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "HR Team Member ID"

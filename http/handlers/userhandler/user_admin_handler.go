@@ -13,7 +13,7 @@ import (
 // RegisterUser handles the user registration
 // @Summary Register a new user
 // @Description Register a new user in the system (Admin only)
-// @Tags admin - users
+// @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param request body RegisterUserRequest true "Register User"
@@ -63,7 +63,7 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 // ListUsers handles listing all users with pagination
 // @Summary List all users
 // @Description Get a paginated list of all users in the system (Admin only)
-// @Tags admin - users
+// @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param page query int false "Page number" default(1)
@@ -109,7 +109,7 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 // UpdatePassword handles updating a user's password
 // @Summary Update user password
 // @Description Update a user's password
-// @Tags users
+// @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
@@ -151,7 +151,7 @@ func (h *UserHandler) UpdatePassword(c echo.Context) error {
 // AdminLogin handles admin user login
 // @Summary Admin login
 // @Description Authenticate admin user with email and password
-// @Tags admin - users
+// @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param request body AdminLoginRequest true "Admin Login"
@@ -199,7 +199,7 @@ func (h *UserHandler) AdminLogin(c echo.Context) error {
 // GetUserByID handles getting a user by ID
 // @Summary Get user by ID
 // @Description Get user details by ID
-// @Tags admin - users
+// @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
@@ -237,7 +237,7 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 // UpdateUser handles updating a user's information
 // @Summary Update user information
 // @Description Update a user's information (Admin only)
-// @Tags admin - users
+// @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
@@ -287,7 +287,7 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 // UpdateUserPassword handles updating a user's password by admin
 // @Summary Update user password
 // @Description Update a user's password (Admin only)
-// @Tags admin - users
+// @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"

@@ -39,7 +39,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - albums"
+                    "albums - admin"
                 ],
                 "summary": "Create a new album",
                 "parameters": [
@@ -96,7 +96,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - albums"
+                    "albums - admin"
                 ],
                 "summary": "Update an album",
                 "parameters": [
@@ -164,7 +164,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - albums"
+                    "albums - admin"
                 ],
                 "summary": "Delete an album",
                 "parameters": [
@@ -225,7 +225,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - departments"
+                    "departments - admin"
                 ],
                 "summary": "Create a new department (admin only)",
                 "parameters": [
@@ -282,7 +282,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - departments"
+                    "departments - admin"
                 ],
                 "summary": "Update a department (admin only)",
                 "parameters": [
@@ -350,7 +350,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - departments"
+                    "departments - admin"
                 ],
                 "summary": "Delete a department (admin only)",
                 "parameters": [
@@ -405,7 +405,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - hr-team"
+                    "hr-team - admin"
                 ],
                 "summary": "Create a new HR team member (admin only)",
                 "parameters": [
@@ -462,7 +462,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - hr-team"
+                    "hr-team - admin"
                 ],
                 "summary": "Update an HR team member (admin only)",
                 "parameters": [
@@ -530,7 +530,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - hr-team"
+                    "hr-team - admin"
                 ],
                 "summary": "Delete an HR team member (admin only)",
                 "parameters": [
@@ -580,7 +580,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - users"
+                    "users - admin"
                 ],
                 "summary": "Admin login",
                 "parameters": [
@@ -638,7 +638,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin-requests"
+                    "requests - admin"
                 ],
                 "summary": "List requests",
                 "parameters": [
@@ -684,7 +684,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin-requests"
+                    "requests - admin"
                 ],
                 "summary": "Get a request by ID",
                 "parameters": [
@@ -734,7 +734,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin-requests"
+                    "requests - admin"
                 ],
                 "summary": "Update request status",
                 "parameters": [
@@ -798,7 +798,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - resumes"
+                    "resumes - admin"
                 ],
                 "summary": "List resumes",
                 "parameters": [
@@ -846,7 +846,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - resumes"
+                    "resumes - admin"
                 ],
                 "summary": "Get a resume",
                 "parameters": [
@@ -901,7 +901,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - resumes"
+                    "resumes - admin"
                 ],
                 "summary": "Update resume status",
                 "parameters": [
@@ -965,7 +965,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - users"
+                    "users - admin"
                 ],
                 "summary": "List all users",
                 "parameters": [
@@ -1027,7 +1027,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - users"
+                    "users - admin"
                 ],
                 "summary": "Register a new user",
                 "parameters": [
@@ -1084,7 +1084,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - users"
+                    "users - admin"
                 ],
                 "summary": "Get user by ID",
                 "parameters": [
@@ -1137,7 +1137,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - users"
+                    "users - admin"
                 ],
                 "summary": "Update user information",
                 "parameters": [
@@ -1201,7 +1201,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin - users"
+                    "users - admin"
                 ],
                 "summary": "Update user password",
                 "parameters": [
@@ -1904,7 +1904,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "users - admin"
                 ],
                 "summary": "Update user password",
                 "parameters": [

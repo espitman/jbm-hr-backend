@@ -24,7 +24,7 @@ func NewAlbumAdminHandler(service albumservice.Service) *AlbumAdminHandler {
 // CreateAlbum godoc
 // @Summary Create a new album
 // @Description Create a new album with the provided details (Admin only)
-// @Tags admin - albums
+// @Tags albums - admin
 // @Accept json
 // @Produce json
 // @Param album body CreateAlbumRequest true "Album creation details"
@@ -56,7 +56,7 @@ func (h *AlbumAdminHandler) CreateAlbum(c echo.Context) error {
 // UpdateAlbum godoc
 // @Summary Update an album
 // @Description Update an album with the provided details (Admin only)
-// @Tags admin - albums
+// @Tags albums - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Album ID"
@@ -95,7 +95,7 @@ func (h *AlbumAdminHandler) UpdateAlbum(c echo.Context) error {
 // DeleteAlbum godoc
 // @Summary Delete an album
 // @Description Delete an album by ID (Admin only)
-// @Tags admin - albums
+// @Tags albums - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Album ID"

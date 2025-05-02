@@ -23,7 +23,7 @@ func NewAdminHandler(requestService requestservice.Service) *AdminHandler {
 // GetRequest handles getting a single request by ID
 // @Summary Get a request by ID
 // @Description Get a request by its ID
-// @Tags admin-requests
+// @Tags requests - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Request ID"
@@ -52,7 +52,7 @@ func (h *AdminHandler) GetRequest(c echo.Context) error {
 // GetRequests handles listing requests with optional filters
 // @Summary List requests
 // @Description Get a list of requests with optional filters
-// @Tags admin-requests
+// @Tags requests - admin
 // @Accept json
 // @Produce json
 // @Param request body GetRequestsRequest true "Request body"
@@ -84,7 +84,7 @@ func (h *AdminHandler) GetRequests(c echo.Context) error {
 // UpdateRequestStatus handles updating a request's status
 // @Summary Update request status
 // @Description Update the status of a request
-// @Tags admin-requests
+// @Tags requests - admin
 // @Accept json
 // @Produce json
 // @Param id path int true "Request ID"
