@@ -77,7 +77,11 @@ func NewRouter(
 
 // SetupRoutes sets up all the routes in the application
 func (r *Router) SetupRoutes() {
-	// Serve UI static files first
+	// Serve admin UI static files first
+	r.GET("/admin", r.uiHandler.ServeAdminUI)
+	r.GET("/admin/*", r.uiHandler.ServeAdminUI)
+
+	// Serve web UI static files
 	r.GET("/*", r.uiHandler.ServeUI)
 
 	// Create API v1 group

@@ -116,8 +116,9 @@ func main() {
 	requestAdminHandler := requesthandler.NewAdminHandler(requestService)
 
 	// Initialize UI handler
-	uiPath, _ := filepath.Abs("ui/web")
-	uiHandler := uihandler.NewUIHandler(uiPath)
+	webPath, _ := filepath.Abs("ui/web")
+	adminPath, _ := filepath.Abs("ui/admin")
+	uiHandler := uihandler.NewUIHandler(webPath, adminPath)
 
 	// Initialize router
 	r := router.NewRouter(
