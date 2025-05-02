@@ -1235,6 +1235,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.Response"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
