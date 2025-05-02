@@ -31,6 +31,7 @@ func (r *Router) registerUserAdminRoutes(group *echo.Group) {
 		// Admin routes (protected by admin middleware)
 		users.POST("/register", r.userHandler.RegisterUser)
 		users.GET("", r.userHandler.ListUsers)
+		users.GET("/:id", r.userHandler.GetUserByID)
 		// Add other admin routes here
 		// Example: users.GET("/all", r.userHandler.GetAllUsers)
 	}

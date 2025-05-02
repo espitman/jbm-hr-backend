@@ -195,3 +195,41 @@ func (h *UserHandler) AdminLogin(c echo.Context) error {
 		},
 	})
 }
+
+// GetUserByID handles getting a user by ID
+// @Summary Get user by ID
+// @Description Get user details by ID
+// @Tags admin - users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} UserData
+// @Failure 400 {object} dto.Response
+// @Failure 404 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/admin/users/{id} [get]
+func (h *UserHandler) GetUserByID(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return dto.BadRequestJSON(c, "invalid user ID")
+	}
+
+	user, err := h.userService.GetUserByID(c.Request().Context(), id)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, "user not found")
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, UserData{
+		ID:        user.ID,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Avatar:    user.Avatar,
+	})
+}
