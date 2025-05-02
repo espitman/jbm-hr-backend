@@ -528,6 +528,7 @@ definitions:
       email:
         type: string
       password:
+        minLength: 6
         type: string
     required:
     - email
@@ -648,14 +649,6 @@ definitions:
         type: string
       success:
         type: boolean
-    type: object
-  userhandler.UpdatePasswordRequest:
-    properties:
-      password:
-        minLength: 8
-        type: string
-    required:
-    - password
     type: object
   userhandler.UpdateUserResponse:
     properties:
@@ -1338,7 +1331,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get a paginated list of all users in the system (Admin only)
+      description: Get a list of all users with pagination
       parameters:
       - default: 1
         description: Page number
@@ -1359,10 +1352,6 @@ paths:
             $ref: '#/definitions/userhandler.ListUsersResponse'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "403":
-          description: Forbidden
           schema:
             $ref: '#/definitions/dto.Response'
         "500":
@@ -1878,45 +1867,6 @@ paths:
       summary: Get a pre-signed URL for a file
       tags:
       - upload
-  /api/v1/users/{id}/password:
-    put:
-      consumes:
-      - application/json
-      description: Update a user's password
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Update Password
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/userhandler.UpdatePasswordRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.Response'
-      summary: Update user password
-      tags:
-      - users - admin
   /api/v1/users/me:
     get:
       consumes:

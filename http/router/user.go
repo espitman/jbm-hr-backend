@@ -12,7 +12,6 @@ func (r *Router) registerUserRoutes(group *echo.Group) {
 		// Public routes (no JWT required)
 		users.POST("/request-otp", r.userHandler.RequestOTP)
 		users.POST("/verify-otp", r.userHandler.VerifyOTP)
-		users.PUT("/:id/password", r.userHandler.UpdatePassword)
 		group.POST("/admin/login", r.userHandler.AdminLogin)
 
 		// Protected routes (JWT required)

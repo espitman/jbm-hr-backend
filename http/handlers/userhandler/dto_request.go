@@ -21,13 +21,8 @@ type RegisterUserRequest struct {
 	Avatar    string `json:"avatar,omitempty"`
 }
 
-// UpdatePasswordRequest represents the request body for updating a user's password
-type UpdatePasswordRequest struct {
-	Password string `json:"password" validate:"required,min=8"`
-}
-
 // AdminLoginRequest represents the request body for admin login
 type AdminLoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
+	Password string `json:"password" validate:"required,min=6"`
 }

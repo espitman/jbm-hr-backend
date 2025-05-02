@@ -60,9 +60,9 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 	})
 }
 
-// ListUsers handles listing all users with pagination
+// ListUsers handles listing all users
 // @Summary List all users
-// @Description Get a paginated list of all users in the system (Admin only)
+// @Description Get a list of all users with pagination
 // @Tags users - admin
 // @Accept json
 // @Produce json
@@ -70,7 +70,6 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 // @Param limit query int false "Items per page" default(10)
 // @Success 200 {object} ListUsersResponse
 // @Failure 400 {object} dto.Response
-// @Failure 403 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Security BearerAuth
 // @Router /api/v1/admin/users [get]
@@ -104,48 +103,6 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 		Users: usersData,
 		Total: total,
 	})
-}
-
-// UpdatePassword handles updating a user's password
-// @Summary Update user password
-// @Description Update a user's password
-// @Tags users - admin
-// @Accept json
-// @Produce json
-// @Param id path int true "User ID"
-// @Param request body UpdatePasswordRequest true "Update Password"
-// @Success 200 {object} dto.Response
-// @Failure 400 {object} dto.Response
-// @Failure 404 {object} dto.Response
-// @Failure 500 {object} dto.Response
-// @Router /api/v1/users/{id}/password [put]
-func (h *UserHandler) UpdatePassword(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		return dto.BadRequestJSON(c, "invalid user ID")
-	}
-
-	var req UpdatePasswordRequest
-	if err := c.Bind(&req); err != nil {
-		return dto.BadRequestJSON(c, "invalid request format")
-	}
-
-	if err := utils.ValidateStruct(req); err != nil {
-		return dto.BadRequestJSON(c, err.Error())
-	}
-
-	// Update the password
-	err = h.userService.UpdatePassword(c.Request().Context(), id, &contract.UpdatePasswordInput{
-		Password: req.Password,
-	})
-	if err != nil {
-		if err == contract.ErrUserNotFound {
-			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
-		}
-		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
-	}
-
-	return dto.SuccessJSON(c, nil)
 }
 
 // AdminLogin handles admin user login
