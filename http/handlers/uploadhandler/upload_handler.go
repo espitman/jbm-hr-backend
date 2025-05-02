@@ -127,3 +127,42 @@ func (h *UploadHandler) GetPresignedURL(c echo.Context) error {
 		URL: presignedURL,
 	})
 }
+
+// UploadPublicImage handles public image file uploads
+// @Summary Upload a public image
+// @Description Upload an image file to public S3 storage
+// @Tags upload
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "Image file to upload"
+// @Success 200 {object} UploadPublicImageResponse
+// @Failure 400 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/upload/image/public [post]
+func (h *UploadHandler) UploadPublicImage(c echo.Context) error {
+	// Get the file from the request
+	file, err := c.FormFile("file")
+	if err != nil {
+		return dto.BadRequestJSON(c, "Failed to get file from request")
+	}
+
+	// Validate file type
+	ext := filepath.Ext(file.Filename)
+	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" {
+		return dto.BadRequestJSON(c, "Invalid file type. Only jpg, jpeg, png, and gif files are allowed")
+	}
+
+	// Define the path for public image uploads
+	path := "public/images"
+
+	// Upload the file to public bucket
+	fileURL, err := h.uploadService.UploadFileToPublicBucket(c.Request().Context(), file, path)
+	if err != nil {
+		return dto.InternalServerErrorJSON(c, "Failed to upload file")
+	}
+
+	// Return the URL of the uploaded file
+	return dto.SuccessJSON(c, UploadPublicImageData{
+		URL: fileURL,
+	})
+}

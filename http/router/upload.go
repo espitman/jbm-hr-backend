@@ -19,5 +19,8 @@ func (r *Router) registerUploadRoutes(group *echo.Group) {
 			// Pre-signed URL route
 			upload.GET("/presigned/:key", r.uploadHandler.GetPresignedURL)
 		}
+
+		// Public routes (no JWT required)
+		upload.POST("/image/public", r.uploadHandler.UploadPublicImage)
 	}
 }

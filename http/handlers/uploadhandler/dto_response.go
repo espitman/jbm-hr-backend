@@ -15,6 +15,17 @@ type UploadImageData struct {
 	Key string `json:"key"`
 }
 
+// UploadPublicImageResponse represents the response structure for public image upload
+type UploadPublicImageResponse struct {
+	dto.Response
+	Data UploadPublicImageData `json:"data,omitempty"`
+}
+
+// UploadPublicImageData represents the data structure for public image upload responses
+type UploadPublicImageData struct {
+	URL string `json:"url"`
+}
+
 // UploadDocumentResponse represents the response structure for document upload
 type UploadDocumentResponse struct {
 	dto.Response

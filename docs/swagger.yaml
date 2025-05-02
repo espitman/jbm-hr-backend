@@ -509,6 +509,20 @@ definitions:
       success:
         type: boolean
     type: object
+  uploadhandler.UploadPublicImageData:
+    properties:
+      url:
+        type: string
+    type: object
+  uploadhandler.UploadPublicImageResponse:
+    properties:
+      data:
+        $ref: '#/definitions/uploadhandler.UploadPublicImageData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   userhandler.AdminLoginRequest:
     properties:
       email:
@@ -1799,6 +1813,35 @@ paths:
           schema:
             $ref: '#/definitions/dto.Response'
       summary: Upload an image
+      tags:
+      - upload
+  /api/v1/upload/image/public:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an image file to public S3 storage
+      parameters:
+      - description: Image file to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/uploadhandler.UploadPublicImageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Upload a public image
       tags:
       - upload
   /api/v1/upload/presigned/{key}:

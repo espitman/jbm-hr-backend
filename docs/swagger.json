@@ -1693,6 +1693,50 @@
                 }
             }
         },
+        "/api/v1/upload/image/public": {
+            "post": {
+                "description": "Upload an image file to public S3 storage",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "upload"
+                ],
+                "summary": "Upload a public image",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Image file to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/uploadhandler.UploadPublicImageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/upload/presigned/{key}": {
             "get": {
                 "description": "Generate a pre-signed URL for accessing a file in S3 storage",
@@ -2701,6 +2745,28 @@
             "properties": {
                 "data": {
                     "$ref": "#/definitions/uploadhandler.UploadImageData"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "uploadhandler.UploadPublicImageData": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "uploadhandler.UploadPublicImageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/uploadhandler.UploadPublicImageData"
                 },
                 "message": {
                     "type": "string"

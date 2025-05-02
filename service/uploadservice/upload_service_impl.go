@@ -127,3 +127,35 @@ func (s *service) GetPresignedURL(ctx context.Context, fileKey string) (string, 
 
 	return request.URL, nil
 }
+
+// UploadFileToPublicBucket uploads a file to the public bucket and returns the unique filename
+func (s *service) UploadFileToPublicBucket(ctx context.Context, file *multipart.FileHeader, path string) (string, error) {
+	src, err := file.Open()
+	if err != nil {
+		return "", fmt.Errorf("failed to open file: %v", err)
+	}
+	defer src.Close()
+
+	// Generate a unique filename using UUID
+	ext := filepath.Ext(file.Filename)
+	uniqueFilename := uuid.New().String() + ext
+
+	// Combine path and filename
+	fullPath := filepath.Join(path, uniqueFilename)
+
+	// Get public bucket from environment
+	publicBucket := config.GetConfig("S3_BUCKET_PUBLIC", "jabama-files")
+
+	// Upload the file to public S3 bucket
+	_, err = s.s3Client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket: aws.String(publicBucket),
+		Key:    aws.String(fullPath),
+		Body:   src,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to upload file to public bucket: %v", err)
+	}
+
+	// Return the full URL of the uploaded file
+	return fmt.Sprintf("%s/%s/%s", s.endpoint, publicBucket, fullPath), nil
+}
