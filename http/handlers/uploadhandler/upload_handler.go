@@ -161,7 +161,7 @@ func (h *UploadHandler) UploadPublicImage(c echo.Context) error {
 	}
 
 	// Define the path for public image uploads
-	path := fmt.Sprintf("%s/images", dirPath)
+	path := fmt.Sprintf("images/%s", dirPath)
 
 	// Upload the file to public bucket
 	fileURL, err := h.uploadService.UploadFileToPublicBucket(c.Request().Context(), file, path)
