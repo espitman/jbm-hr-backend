@@ -26,3 +26,8 @@ type AdminLoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6"`
 }
+
+// UpdateUserAvatarRequest represents the request body for updating a user's avatar
+type UpdateUserAvatarRequest struct {
+	Avatar string `json:"avatar" validate:"required,url"`
+}

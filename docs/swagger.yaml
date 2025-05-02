@@ -650,6 +650,13 @@ definitions:
       success:
         type: boolean
     type: object
+  userhandler.UpdateUserAvatarRequest:
+    properties:
+      avatar:
+        type: string
+    required:
+    - avatar
+    type: object
   userhandler.UpdateUserResponse:
     properties:
       data:
@@ -1436,6 +1443,47 @@ paths:
       security:
       - BearerAuth: []
       summary: Update user information
+      tags:
+      - users - admin
+  /api/v1/admin/users/{id}/avatar:
+    put:
+      consumes:
+      - application/json
+      description: Update a user's avatar URL
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Avatar
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.UpdateUserAvatarRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.UpdateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Update user avatar
       tags:
       - users - admin
   /api/v1/admin/users/{id}/password:
