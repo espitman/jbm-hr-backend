@@ -21,6 +21,6 @@ func (r *Router) registerUploadRoutes(group *echo.Group) {
 		}
 
 		// Public routes (no JWT required)
-		upload.POST("/image/public", r.uploadHandler.UploadPublicImage)
+		upload.POST("/image/public/:dir", r.uploadHandler.UploadPublicImage)
 	}
 }
