@@ -207,6 +207,23 @@ func (s *service) UpdatePassword(ctx context.Context, id int, input *contract.Up
 	return s.userRepo.UpdatePassword(ctx, id, hashedInput)
 }
 
+// UpdateUser updates a user's information
+func (s *service) UpdateUser(ctx context.Context, id int, input *contract.UpdateUserInput) (*contract.User, error) {
+	// Check if user exists
+	_, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, contract.ErrUserNotFound
+	}
+
+	// Update user
+	updatedUser, err := s.userRepo.Update(ctx, id, input)
+	if err != nil {
+		return nil, contract.ErrDatabaseQuery
+	}
+
+	return updatedUser, nil
+}
+
 // Helper functions
 func generateOTP() (string, error) {
 	// Generate a 6-digit OTP

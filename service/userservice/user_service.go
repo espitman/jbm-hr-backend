@@ -28,4 +28,7 @@ type Service interface {
 
 	// AdminLogin authenticates an admin user and returns a JWT token
 	AdminLogin(ctx context.Context, email, password string) (string, *contract.User, error)
+
+	// UpdateUser updates a user's information
+	UpdateUser(ctx context.Context, id int, input *contract.UpdateUserInput) (*contract.User, error)
 }

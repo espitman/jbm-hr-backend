@@ -94,3 +94,9 @@ type AdminLoginResponse struct {
 	Token string   `json:"token"`
 	User  UserData `json:"user"`
 }
+
+// UpdateUserResponse represents the response for updating a user
+type UpdateUserResponse struct {
+	dto.Response
+	Data UserData `json:"data"`
+}
