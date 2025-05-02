@@ -136,11 +136,11 @@ func (h *UploadHandler) GetPresignedURL(c echo.Context) error {
 // @Accept multipart/form-data
 // @Produce json
 // @Param file formData file true "Image file to upload"
-// @Param url path string true "URL path for the image"
+// @Param dir path string true "Directory path for the image"
 // @Success 200 {object} UploadPublicImageResponse
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
-// @Router /api/v1/upload/image/public/{url} [post]
+// @Router /api/v1/upload/image/public/{dir} [post]
 func (h *UploadHandler) UploadPublicImage(c echo.Context) error {
 	// Get the file from the request
 	file, err := c.FormFile("file")
@@ -148,10 +148,10 @@ func (h *UploadHandler) UploadPublicImage(c echo.Context) error {
 		return dto.BadRequestJSON(c, "Failed to get file from request")
 	}
 
-	// Get the URL path parameter
-	urlPath := c.Param("url")
-	if urlPath == "" {
-		return dto.BadRequestJSON(c, "URL path is required")
+	// Get the directory path parameter
+	dirPath := c.Param("dir")
+	if dirPath == "" {
+		return dto.BadRequestJSON(c, "Directory path is required")
 	}
 
 	// Validate file type
@@ -161,7 +161,7 @@ func (h *UploadHandler) UploadPublicImage(c echo.Context) error {
 	}
 
 	// Define the path for public image uploads
-	path := fmt.Sprintf("%s/images", urlPath)
+	path := fmt.Sprintf("%s/images", dirPath)
 
 	// Upload the file to public bucket
 	fileURL, err := h.uploadService.UploadFileToPublicBucket(c.Request().Context(), file, path)

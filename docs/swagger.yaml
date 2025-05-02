@@ -1815,7 +1815,7 @@ paths:
       summary: Upload an image
       tags:
       - upload
-  /api/v1/upload/image/public/{url}:
+  /api/v1/upload/image/public/{dir}:
     post:
       consumes:
       - multipart/form-data
@@ -1826,9 +1826,9 @@ paths:
         name: file
         required: true
         type: file
-      - description: URL path for the image
+      - description: Directory path for the image
         in: path
-        name: url
+        name: dir
         required: true
         type: string
       produces:

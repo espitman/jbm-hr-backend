@@ -1700,7 +1700,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/upload/image/public/{url}": {
+        "/api/v1/upload/image/public/{dir}": {
             "post": {
                 "description": "Upload an image file to public S3 storage",
                 "consumes": [
@@ -1723,8 +1723,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "URL path for the image",
-                        "name": "url",
+                        "description": "Directory path for the image",
+                        "name": "dir",
                         "in": "path",
                         "required": true
                     }
