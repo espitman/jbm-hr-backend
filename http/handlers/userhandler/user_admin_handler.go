@@ -314,9 +314,8 @@ func (h *UserHandler) UpdateUserAvatar(c echo.Context) error {
 		return dto.BadRequestJSON(c, err.Error())
 	}
 
-	user, err := h.userService.UpdateUser(c.Request().Context(), id, &contract.UpdateUserInput{
-		Avatar: req.Avatar,
-	})
+	// Update avatar
+	updatedUser, err := h.userService.UpdateAvatar(c.Request().Context(), id, req.Avatar)
 	if err != nil {
 		if err == contract.ErrUserNotFound {
 			return dto.ErrorJSON(c, http.StatusNotFound, "user not found")
@@ -326,13 +325,13 @@ func (h *UserHandler) UpdateUserAvatar(c echo.Context) error {
 
 	return dto.SuccessJSON(c, UpdateUserResponse{
 		Data: UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
+			ID:        updatedUser.ID,
+			Email:     updatedUser.Email,
+			Phone:     updatedUser.Phone,
+			FirstName: updatedUser.FirstName,
+			LastName:  updatedUser.LastName,
+			Role:      updatedUser.Role,
+			Avatar:    updatedUser.Avatar,
 		},
 	})
 }

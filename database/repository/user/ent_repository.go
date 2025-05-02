@@ -115,3 +115,15 @@ func (r *EntRepository) UpdatePassword(ctx context.Context, id int, req *contrac
 		SetPassword(req.Password).
 		Exec(ctx)
 }
+
+// UpdateAvatar updates only the avatar of a user
+func (r *EntRepository) UpdateAvatar(ctx context.Context, id int, avatar string) (*contract.User, error) {
+	entUser, err := r.client.User.
+		UpdateOneID(id).
+		SetAvatar(avatar).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convertToContractUser(entUser), nil
+}

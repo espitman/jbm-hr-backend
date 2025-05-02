@@ -23,6 +23,9 @@ type Repository interface {
 	// Update updates an existing user
 	Update(ctx context.Context, id int, req *contract.UpdateUserInput) (*contract.User, error)
 
+	// UpdateAvatar updates only the avatar of a user
+	UpdateAvatar(ctx context.Context, id int, avatar string) (*contract.User, error)
+
 	// UpdatePassword updates a user's password
 	UpdatePassword(ctx context.Context, id int, req *contract.UpdatePasswordInput) error
 

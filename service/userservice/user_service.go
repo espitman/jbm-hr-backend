@@ -34,4 +34,7 @@ type Service interface {
 
 	// UpdateUserPassword updates a user's password by admin
 	UpdateUserPassword(ctx context.Context, id int, input *contract.UpdatePasswordInput) error
+
+	// UpdateAvatar updates only the avatar of a user
+	UpdateAvatar(ctx context.Context, id int, avatar string) (*contract.User, error)
 }

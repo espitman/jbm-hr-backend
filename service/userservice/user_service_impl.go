@@ -224,6 +224,23 @@ func (s *service) UpdateUser(ctx context.Context, id int, input *contract.Update
 	return updatedUser, nil
 }
 
+// UpdateAvatar updates only the avatar of a user
+func (s *service) UpdateAvatar(ctx context.Context, id int, avatar string) (*contract.User, error) {
+	// Check if user exists
+	_, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, contract.ErrUserNotFound
+	}
+
+	// Update avatar
+	updatedUser, err := s.userRepo.UpdateAvatar(ctx, id, avatar)
+	if err != nil {
+		return nil, contract.ErrDatabaseQuery
+	}
+
+	return updatedUser, nil
+}
+
 // Helper functions
 func generateOTP() (string, error) {
 	// Generate a 6-digit OTP
