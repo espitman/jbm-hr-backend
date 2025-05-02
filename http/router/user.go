@@ -33,6 +33,7 @@ func (r *Router) registerUserAdminRoutes(group *echo.Group) {
 		users.GET("", r.userHandler.ListUsers)
 		users.GET("/:id", r.userHandler.GetUserByID)
 		users.PUT("/:id", r.userHandler.UpdateUser)
+		users.PUT("/:id/password", r.userHandler.UpdateUserPassword)
 		// Add other admin routes here
 		// Example: users.GET("/all", r.userHandler.GetAllUsers)
 	}

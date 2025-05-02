@@ -31,4 +31,7 @@ type Service interface {
 
 	// UpdateUser updates a user's information
 	UpdateUser(ctx context.Context, id int, input *contract.UpdateUserInput) (*contract.User, error)
+
+	// UpdateUserPassword updates a user's password by admin
+	UpdateUserPassword(ctx context.Context, id int, input *contract.UpdatePasswordInput) error
 }

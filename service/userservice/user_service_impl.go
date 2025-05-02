@@ -263,3 +263,31 @@ func (s *service) AdminLogin(ctx context.Context, email, password string) (strin
 
 	return token, user, nil
 }
+
+// UpdateUserPassword updates a user's password by admin
+func (s *service) UpdateUserPassword(ctx context.Context, id int, input *contract.UpdatePasswordInput) error {
+	// Check if user exists and get their role
+	user, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return contract.ErrUserNotFound
+	}
+
+	// Check if user has admin role
+	if user.Role != "admin" {
+		return errors.New("only admin users can set passwords")
+	}
+
+	// Hash the password
+	hashedPassword, err := utils.HashPassword(input.Password)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	// Create a new input with the hashed password
+	hashedInput := &contract.UpdatePasswordInput{
+		Password: hashedPassword,
+	}
+
+	// Update the password
+	return s.userRepo.UpdatePassword(ctx, id, hashedInput)
+}

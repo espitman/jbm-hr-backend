@@ -283,3 +283,47 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 		},
 	})
 }
+
+// UpdateUserPassword handles updating a user's password by admin
+// @Summary Update user password
+// @Description Update a user's password (Admin only)
+// @Tags admin - users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body contract.UpdatePasswordInput true "Update Password"
+// @Success 200 {object} dto.Response
+// @Failure 400 {object} dto.Response
+// @Failure 403 {object} dto.Response
+// @Failure 404 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/admin/users/{id}/password [put]
+func (h *UserHandler) UpdateUserPassword(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return dto.BadRequestJSON(c, "invalid user ID")
+	}
+
+	var input contract.UpdatePasswordInput
+	if err := c.Bind(&input); err != nil {
+		return dto.BadRequestJSON(c, "invalid request format")
+	}
+
+	if err := utils.ValidateStruct(input); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	err = h.userService.UpdateUserPassword(c.Request().Context(), id, &input)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, "user not found")
+		}
+		if err.Error() == "only admin users can set passwords" {
+			return dto.ErrorJSON(c, http.StatusForbidden, err.Error())
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, nil)
+}
