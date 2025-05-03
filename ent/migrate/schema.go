@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "url", Type: field.TypeString},
 		{Name: "caption", Type: field.TypeString, Nullable: true},
+		{Name: "display_order", Type: field.TypeInt, Default: 0},
 	}
 	// AlbumsTable holds the schema information for the "albums" table.
 	AlbumsTable = &schema.Table{

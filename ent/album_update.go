@@ -61,6 +61,27 @@ func (au *AlbumUpdate) ClearCaption() *AlbumUpdate {
 	return au
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (au *AlbumUpdate) SetDisplayOrder(i int) *AlbumUpdate {
+	au.mutation.ResetDisplayOrder()
+	au.mutation.SetDisplayOrder(i)
+	return au
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (au *AlbumUpdate) SetNillableDisplayOrder(i *int) *AlbumUpdate {
+	if i != nil {
+		au.SetDisplayOrder(*i)
+	}
+	return au
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (au *AlbumUpdate) AddDisplayOrder(i int) *AlbumUpdate {
+	au.mutation.AddDisplayOrder(i)
+	return au
+}
+
 // Mutation returns the AlbumMutation object of the builder.
 func (au *AlbumUpdate) Mutation() *AlbumMutation {
 	return au.mutation
@@ -124,6 +145,12 @@ func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if au.mutation.CaptionCleared() {
 		_spec.ClearField(album.FieldCaption, field.TypeString)
 	}
+	if value, ok := au.mutation.DisplayOrder(); ok {
+		_spec.SetField(album.FieldDisplayOrder, field.TypeInt, value)
+	}
+	if value, ok := au.mutation.AddedDisplayOrder(); ok {
+		_spec.AddField(album.FieldDisplayOrder, field.TypeInt, value)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{album.Label}
@@ -175,6 +202,27 @@ func (auo *AlbumUpdateOne) SetNillableCaption(s *string) *AlbumUpdateOne {
 // ClearCaption clears the value of the "caption" field.
 func (auo *AlbumUpdateOne) ClearCaption() *AlbumUpdateOne {
 	auo.mutation.ClearCaption()
+	return auo
+}
+
+// SetDisplayOrder sets the "display_order" field.
+func (auo *AlbumUpdateOne) SetDisplayOrder(i int) *AlbumUpdateOne {
+	auo.mutation.ResetDisplayOrder()
+	auo.mutation.SetDisplayOrder(i)
+	return auo
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (auo *AlbumUpdateOne) SetNillableDisplayOrder(i *int) *AlbumUpdateOne {
+	if i != nil {
+		auo.SetDisplayOrder(*i)
+	}
+	return auo
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (auo *AlbumUpdateOne) AddDisplayOrder(i int) *AlbumUpdateOne {
+	auo.mutation.AddDisplayOrder(i)
 	return auo
 }
 
@@ -270,6 +318,12 @@ func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error
 	}
 	if auo.mutation.CaptionCleared() {
 		_spec.ClearField(album.FieldCaption, field.TypeString)
+	}
+	if value, ok := auo.mutation.DisplayOrder(); ok {
+		_spec.SetField(album.FieldDisplayOrder, field.TypeInt, value)
+	}
+	if value, ok := auo.mutation.AddedDisplayOrder(); ok {
+		_spec.AddField(album.FieldDisplayOrder, field.TypeInt, value)
 	}
 	_node = &Album{config: auo.config}
 	_spec.Assign = _node.assignValues

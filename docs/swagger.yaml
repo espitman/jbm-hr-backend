@@ -16,6 +16,9 @@ definitions:
       caption:
         example: Album caption
         type: string
+      display_order:
+        example: 0
+        type: integer
       url:
         example: https://example.com/image.jpg
         type: string
@@ -28,6 +31,9 @@ definitions:
       caption:
         example: Updated album caption
         type: string
+      display_order:
+        example: 0
+        type: integer
       url:
         example: https://example.com/updated-image.jpg
         type: string
@@ -39,6 +45,8 @@ definitions:
     properties:
       caption:
         type: string
+      display_order:
+        type: integer
       id:
         type: integer
       url:

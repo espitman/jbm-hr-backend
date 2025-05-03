@@ -17,6 +17,9 @@ func (Album) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("caption").
 			Optional(),
+		field.Int("display_order").
+			Default(0).
+			Comment("Order in which the album should be displayed"),
 	}
 }
 

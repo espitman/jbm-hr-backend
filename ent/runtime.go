@@ -25,6 +25,10 @@ func init() {
 	albumDescURL := albumFields[0].Descriptor()
 	// album.URLValidator is a validator for the "url" field. It is called by the builders before save.
 	album.URLValidator = albumDescURL.Validators[0].(func(string) error)
+	// albumDescDisplayOrder is the schema descriptor for display_order field.
+	albumDescDisplayOrder := albumFields[2].Descriptor()
+	// album.DefaultDisplayOrder holds the default value on creation for the display_order field.
+	album.DefaultDisplayOrder = albumDescDisplayOrder.Default.(int)
 	departmentFields := schema.Department{}.Fields()
 	_ = departmentFields
 	// departmentDescTitle is the schema descriptor for title field.

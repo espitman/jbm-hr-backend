@@ -26,15 +26,18 @@ func convertToContractAlbum(entAlbum *ent.Album) *contract.Album {
 		return nil
 	}
 	return &contract.Album{
-		ID:      entAlbum.ID,
-		URL:     entAlbum.URL,
-		Caption: entAlbum.Caption,
+		ID:           entAlbum.ID,
+		URL:          entAlbum.URL,
+		Caption:      entAlbum.Caption,
+		DisplayOrder: entAlbum.DisplayOrder,
 	}
 }
 
 // GetAll retrieves all albums
 func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.Album, error) {
-	entAlbums, err := r.client.Album.Query().All(ctx)
+	entAlbums, err := r.client.Album.Query().
+		Order(ent.Asc(entAlbum.FieldDisplayOrder)).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -61,6 +64,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateAlbumInp
 		Create().
 		SetURL(req.URL).
 		SetCaption(req.Caption).
+		SetDisplayOrder(req.DisplayOrder).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -74,6 +78,7 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 		UpdateOneID(id).
 		SetURL(req.URL).
 		SetCaption(req.Caption).
+		SetDisplayOrder(req.DisplayOrder).
 		Save(ctx)
 	if err != nil {
 		return nil, err

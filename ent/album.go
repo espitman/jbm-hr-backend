@@ -19,7 +19,9 @@ type Album struct {
 	// URL holds the value of the "url" field.
 	URL string `json:"url,omitempty"`
 	// Caption holds the value of the "caption" field.
-	Caption      string `json:"caption,omitempty"`
+	Caption string `json:"caption,omitempty"`
+	// Order in which the album should be displayed
+	DisplayOrder int `json:"display_order,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -28,7 +30,7 @@ func (*Album) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case album.FieldID:
+		case album.FieldID, album.FieldDisplayOrder:
 			values[i] = new(sql.NullInt64)
 		case album.FieldURL, album.FieldCaption:
 			values[i] = new(sql.NullString)
@@ -64,6 +66,12 @@ func (a *Album) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field caption", values[i])
 			} else if value.Valid {
 				a.Caption = value.String
+			}
+		case album.FieldDisplayOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field display_order", values[i])
+			} else if value.Valid {
+				a.DisplayOrder = int(value.Int64)
 			}
 		default:
 			a.selectValues.Set(columns[i], values[i])
@@ -106,6 +114,9 @@ func (a *Album) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("caption=")
 	builder.WriteString(a.Caption)
+	builder.WriteString(", ")
+	builder.WriteString("display_order=")
+	builder.WriteString(fmt.Sprintf("%v", a.DisplayOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -15,6 +15,8 @@ const (
 	FieldURL = "url"
 	// FieldCaption holds the string denoting the caption field in the database.
 	FieldCaption = "caption"
+	// FieldDisplayOrder holds the string denoting the display_order field in the database.
+	FieldDisplayOrder = "display_order"
 	// Table holds the table name of the album in the database.
 	Table = "albums"
 )
@@ -24,6 +26,7 @@ var Columns = []string{
 	FieldID,
 	FieldURL,
 	FieldCaption,
+	FieldDisplayOrder,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -39,6 +42,8 @@ func ValidColumn(column string) bool {
 var (
 	// URLValidator is a validator for the "url" field. It is called by the builders before save.
 	URLValidator func(string) error
+	// DefaultDisplayOrder holds the default value on creation for the "display_order" field.
+	DefaultDisplayOrder int
 )
 
 // OrderOption defines the ordering options for the Album queries.
@@ -57,4 +62,9 @@ func ByURL(opts ...sql.OrderTermOption) OrderOption {
 // ByCaption orders the results by the caption field.
 func ByCaption(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCaption, opts...).ToFunc()
+}
+
+// ByDisplayOrder orders the results by the display_order field.
+func ByDisplayOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisplayOrder, opts...).ToFunc()
 }

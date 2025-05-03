@@ -39,6 +39,20 @@ func (ac *AlbumCreate) SetNillableCaption(s *string) *AlbumCreate {
 	return ac
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (ac *AlbumCreate) SetDisplayOrder(i int) *AlbumCreate {
+	ac.mutation.SetDisplayOrder(i)
+	return ac
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (ac *AlbumCreate) SetNillableDisplayOrder(i *int) *AlbumCreate {
+	if i != nil {
+		ac.SetDisplayOrder(*i)
+	}
+	return ac
+}
+
 // Mutation returns the AlbumMutation object of the builder.
 func (ac *AlbumCreate) Mutation() *AlbumMutation {
 	return ac.mutation
@@ -46,6 +60,7 @@ func (ac *AlbumCreate) Mutation() *AlbumMutation {
 
 // Save creates the Album in the database.
 func (ac *AlbumCreate) Save(ctx context.Context) (*Album, error) {
+	ac.defaults()
 	return withHooks(ctx, ac.sqlSave, ac.mutation, ac.hooks)
 }
 
@@ -71,6 +86,14 @@ func (ac *AlbumCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ac *AlbumCreate) defaults() {
+	if _, ok := ac.mutation.DisplayOrder(); !ok {
+		v := album.DefaultDisplayOrder
+		ac.mutation.SetDisplayOrder(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ac *AlbumCreate) check() error {
 	if _, ok := ac.mutation.URL(); !ok {
@@ -80,6 +103,9 @@ func (ac *AlbumCreate) check() error {
 		if err := album.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Album.url": %w`, err)}
 		}
+	}
+	if _, ok := ac.mutation.DisplayOrder(); !ok {
+		return &ValidationError{Name: "display_order", err: errors.New(`ent: missing required field "Album.display_order"`)}
 	}
 	return nil
 }
@@ -115,6 +141,10 @@ func (ac *AlbumCreate) createSpec() (*Album, *sqlgraph.CreateSpec) {
 		_spec.SetField(album.FieldCaption, field.TypeString, value)
 		_node.Caption = value
 	}
+	if value, ok := ac.mutation.DisplayOrder(); ok {
+		_spec.SetField(album.FieldDisplayOrder, field.TypeInt, value)
+		_node.DisplayOrder = value
+	}
 	return _node, _spec
 }
 
@@ -136,6 +166,7 @@ func (acb *AlbumCreateBulk) Save(ctx context.Context) ([]*Album, error) {
 	for i := range acb.builders {
 		func(i int, root context.Context) {
 			builder := acb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AlbumMutation)
 				if !ok {

@@ -41,8 +41,9 @@ func (h *AlbumAdminHandler) CreateAlbum(c echo.Context) error {
 	}
 
 	input := contract.CreateAlbumInput{
-		URL:     req.URL,
-		Caption: req.Caption,
+		URL:          req.URL,
+		Caption:      req.Caption,
+		DisplayOrder: req.DisplayOrder,
 	}
 
 	album, err := h.service.CreateAlbum(c.Request().Context(), &input)
@@ -80,8 +81,9 @@ func (h *AlbumAdminHandler) UpdateAlbum(c echo.Context) error {
 	}
 
 	input := contract.UpdateAlbumInput{
-		URL:     req.URL,
-		Caption: req.Caption,
+		URL:          req.URL,
+		Caption:      req.Caption,
+		DisplayOrder: req.DisplayOrder,
 	}
 
 	album, err := h.service.UpdateAlbum(c.Request().Context(), id, &input)

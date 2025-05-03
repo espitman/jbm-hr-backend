@@ -42,15 +42,17 @@ const (
 // AlbumMutation represents an operation that mutates the Album nodes in the graph.
 type AlbumMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	url           *string
-	caption       *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Album, error)
-	predicates    []predicate.Album
+	op               Op
+	typ              string
+	id               *int
+	url              *string
+	caption          *string
+	display_order    *int
+	adddisplay_order *int
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*Album, error)
+	predicates       []predicate.Album
 }
 
 var _ ent.Mutation = (*AlbumMutation)(nil)
@@ -236,6 +238,62 @@ func (m *AlbumMutation) ResetCaption() {
 	delete(m.clearedFields, album.FieldCaption)
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (m *AlbumMutation) SetDisplayOrder(i int) {
+	m.display_order = &i
+	m.adddisplay_order = nil
+}
+
+// DisplayOrder returns the value of the "display_order" field in the mutation.
+func (m *AlbumMutation) DisplayOrder() (r int, exists bool) {
+	v := m.display_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayOrder returns the old "display_order" field's value of the Album entity.
+// If the Album object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlbumMutation) OldDisplayOrder(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayOrder: %w", err)
+	}
+	return oldValue.DisplayOrder, nil
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (m *AlbumMutation) AddDisplayOrder(i int) {
+	if m.adddisplay_order != nil {
+		*m.adddisplay_order += i
+	} else {
+		m.adddisplay_order = &i
+	}
+}
+
+// AddedDisplayOrder returns the value that was added to the "display_order" field in this mutation.
+func (m *AlbumMutation) AddedDisplayOrder() (r int, exists bool) {
+	v := m.adddisplay_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDisplayOrder resets all changes to the "display_order" field.
+func (m *AlbumMutation) ResetDisplayOrder() {
+	m.display_order = nil
+	m.adddisplay_order = nil
+}
+
 // Where appends a list predicates to the AlbumMutation builder.
 func (m *AlbumMutation) Where(ps ...predicate.Album) {
 	m.predicates = append(m.predicates, ps...)
@@ -270,12 +328,15 @@ func (m *AlbumMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AlbumMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.url != nil {
 		fields = append(fields, album.FieldURL)
 	}
 	if m.caption != nil {
 		fields = append(fields, album.FieldCaption)
+	}
+	if m.display_order != nil {
+		fields = append(fields, album.FieldDisplayOrder)
 	}
 	return fields
 }
@@ -289,6 +350,8 @@ func (m *AlbumMutation) Field(name string) (ent.Value, bool) {
 		return m.URL()
 	case album.FieldCaption:
 		return m.Caption()
+	case album.FieldDisplayOrder:
+		return m.DisplayOrder()
 	}
 	return nil, false
 }
@@ -302,6 +365,8 @@ func (m *AlbumMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldURL(ctx)
 	case album.FieldCaption:
 		return m.OldCaption(ctx)
+	case album.FieldDisplayOrder:
+		return m.OldDisplayOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown Album field %s", name)
 }
@@ -325,6 +390,13 @@ func (m *AlbumMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCaption(v)
 		return nil
+	case album.FieldDisplayOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Album field %s", name)
 }
@@ -332,13 +404,21 @@ func (m *AlbumMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *AlbumMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.adddisplay_order != nil {
+		fields = append(fields, album.FieldDisplayOrder)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *AlbumMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case album.FieldDisplayOrder:
+		return m.AddedDisplayOrder()
+	}
 	return nil, false
 }
 
@@ -347,6 +427,13 @@ func (m *AlbumMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *AlbumMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case album.FieldDisplayOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDisplayOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Album numeric field %s", name)
 }
@@ -388,6 +475,9 @@ func (m *AlbumMutation) ResetField(name string) error {
 		return nil
 	case album.FieldCaption:
 		m.ResetCaption()
+		return nil
+	case album.FieldDisplayOrder:
+		m.ResetDisplayOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown Album field %s", name)

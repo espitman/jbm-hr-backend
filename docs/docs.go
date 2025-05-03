@@ -2033,6 +2033,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Album caption"
                 },
+                "display_order": {
+                    "type": "integer",
+                    "example": 0
+                },
                 "url": {
                     "type": "string",
                     "example": "https://example.com/image.jpg"
@@ -2050,6 +2054,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Updated album caption"
                 },
+                "display_order": {
+                    "type": "integer",
+                    "example": 0
+                },
                 "url": {
                     "type": "string",
                     "example": "https://example.com/updated-image.jpg"
@@ -2061,6 +2069,9 @@ const docTemplate = `{
             "properties": {
                 "caption": {
                     "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
