@@ -111,6 +111,27 @@ func (du *DepartmentUpdate) SetNillableShortName(s *string) *DepartmentUpdate {
 	return du
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (du *DepartmentUpdate) SetDisplayOrder(i int) *DepartmentUpdate {
+	du.mutation.ResetDisplayOrder()
+	du.mutation.SetDisplayOrder(i)
+	return du
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (du *DepartmentUpdate) SetNillableDisplayOrder(i *int) *DepartmentUpdate {
+	if i != nil {
+		du.SetDisplayOrder(*i)
+	}
+	return du
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (du *DepartmentUpdate) AddDisplayOrder(i int) *DepartmentUpdate {
+	du.mutation.AddDisplayOrder(i)
+	return du
+}
+
 // Mutation returns the DepartmentMutation object of the builder.
 func (du *DepartmentUpdate) Mutation() *DepartmentMutation {
 	return du.mutation
@@ -207,6 +228,12 @@ func (du *DepartmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.ShortName(); ok {
 		_spec.SetField(department.FieldShortName, field.TypeString, value)
+	}
+	if value, ok := du.mutation.DisplayOrder(); ok {
+		_spec.SetField(department.FieldDisplayOrder, field.TypeInt, value)
+	}
+	if value, ok := du.mutation.AddedDisplayOrder(); ok {
+		_spec.AddField(department.FieldDisplayOrder, field.TypeInt, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -309,6 +336,27 @@ func (duo *DepartmentUpdateOne) SetNillableShortName(s *string) *DepartmentUpdat
 	if s != nil {
 		duo.SetShortName(*s)
 	}
+	return duo
+}
+
+// SetDisplayOrder sets the "display_order" field.
+func (duo *DepartmentUpdateOne) SetDisplayOrder(i int) *DepartmentUpdateOne {
+	duo.mutation.ResetDisplayOrder()
+	duo.mutation.SetDisplayOrder(i)
+	return duo
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (duo *DepartmentUpdateOne) SetNillableDisplayOrder(i *int) *DepartmentUpdateOne {
+	if i != nil {
+		duo.SetDisplayOrder(*i)
+	}
+	return duo
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (duo *DepartmentUpdateOne) AddDisplayOrder(i int) *DepartmentUpdateOne {
+	duo.mutation.AddDisplayOrder(i)
 	return duo
 }
 
@@ -438,6 +486,12 @@ func (duo *DepartmentUpdateOne) sqlSave(ctx context.Context) (_node *Department,
 	}
 	if value, ok := duo.mutation.ShortName(); ok {
 		_spec.SetField(department.FieldShortName, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.DisplayOrder(); ok {
+		_spec.SetField(department.FieldDisplayOrder, field.TypeInt, value)
+	}
+	if value, ok := duo.mutation.AddedDisplayOrder(); ok {
+		_spec.AddField(department.FieldDisplayOrder, field.TypeInt, value)
 	}
 	_node = &Department{config: duo.config}
 	_spec.Assign = _node.assignValues

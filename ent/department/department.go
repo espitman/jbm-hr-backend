@@ -23,6 +23,8 @@ const (
 	FieldColor = "color"
 	// FieldShortName holds the string denoting the shortname field in the database.
 	FieldShortName = "short_name"
+	// FieldDisplayOrder holds the string denoting the display_order field in the database.
+	FieldDisplayOrder = "display_order"
 	// Table holds the table name of the department in the database.
 	Table = "departments"
 )
@@ -36,6 +38,7 @@ var Columns = []string{
 	FieldIcon,
 	FieldColor,
 	FieldShortName,
+	FieldDisplayOrder,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -61,6 +64,8 @@ var (
 	ColorValidator func(string) error
 	// ShortNameValidator is a validator for the "shortName" field. It is called by the builders before save.
 	ShortNameValidator func(string) error
+	// DefaultDisplayOrder holds the default value on creation for the "display_order" field.
+	DefaultDisplayOrder int
 )
 
 // OrderOption defines the ordering options for the Department queries.
@@ -99,4 +104,9 @@ func ByColor(opts ...sql.OrderTermOption) OrderOption {
 // ByShortName orders the results by the shortName field.
 func ByShortName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldShortName, opts...).ToFunc()
+}
+
+// ByDisplayOrder orders the results by the display_order field.
+func ByDisplayOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisplayOrder, opts...).ToFunc()
 }

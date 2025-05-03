@@ -2079,6 +2079,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "display_order": {
+                    "type": "integer"
+                },
                 "icon": {
                     "type": "string"
                 },
@@ -2244,6 +2247,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "display_order": {
+                    "type": "integer"
+                },
                 "icon": {
                     "type": "string"
                 },
@@ -2330,6 +2336,9 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
                 },
                 "icon": {
                     "type": "string"

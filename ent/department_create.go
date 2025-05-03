@@ -55,6 +55,20 @@ func (dc *DepartmentCreate) SetShortName(s string) *DepartmentCreate {
 	return dc
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (dc *DepartmentCreate) SetDisplayOrder(i int) *DepartmentCreate {
+	dc.mutation.SetDisplayOrder(i)
+	return dc
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (dc *DepartmentCreate) SetNillableDisplayOrder(i *int) *DepartmentCreate {
+	if i != nil {
+		dc.SetDisplayOrder(*i)
+	}
+	return dc
+}
+
 // Mutation returns the DepartmentMutation object of the builder.
 func (dc *DepartmentCreate) Mutation() *DepartmentMutation {
 	return dc.mutation
@@ -62,6 +76,7 @@ func (dc *DepartmentCreate) Mutation() *DepartmentMutation {
 
 // Save creates the Department in the database.
 func (dc *DepartmentCreate) Save(ctx context.Context) (*Department, error) {
+	dc.defaults()
 	return withHooks(ctx, dc.sqlSave, dc.mutation, dc.hooks)
 }
 
@@ -84,6 +99,14 @@ func (dc *DepartmentCreate) Exec(ctx context.Context) error {
 func (dc *DepartmentCreate) ExecX(ctx context.Context) {
 	if err := dc.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (dc *DepartmentCreate) defaults() {
+	if _, ok := dc.mutation.DisplayOrder(); !ok {
+		v := department.DefaultDisplayOrder
+		dc.mutation.SetDisplayOrder(v)
 	}
 }
 
@@ -137,6 +160,9 @@ func (dc *DepartmentCreate) check() error {
 			return &ValidationError{Name: "shortName", err: fmt.Errorf(`ent: validator failed for field "Department.shortName": %w`, err)}
 		}
 	}
+	if _, ok := dc.mutation.DisplayOrder(); !ok {
+		return &ValidationError{Name: "display_order", err: errors.New(`ent: missing required field "Department.display_order"`)}
+	}
 	return nil
 }
 
@@ -187,6 +213,10 @@ func (dc *DepartmentCreate) createSpec() (*Department, *sqlgraph.CreateSpec) {
 		_spec.SetField(department.FieldShortName, field.TypeString, value)
 		_node.ShortName = value
 	}
+	if value, ok := dc.mutation.DisplayOrder(); ok {
+		_spec.SetField(department.FieldDisplayOrder, field.TypeInt, value)
+		_node.DisplayOrder = value
+	}
 	return _node, _spec
 }
 
@@ -208,6 +238,7 @@ func (dcb *DepartmentCreateBulk) Save(ctx context.Context) ([]*Department, error
 	for i := range dcb.builders {
 		func(i int, root context.Context) {
 			builder := dcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*DepartmentMutation)
 				if !ok {

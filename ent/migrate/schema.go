@@ -29,6 +29,7 @@ var (
 		{Name: "icon", Type: field.TypeString},
 		{Name: "color", Type: field.TypeString},
 		{Name: "short_name", Type: field.TypeString, Unique: true},
+		{Name: "display_order", Type: field.TypeInt, Default: 0},
 	}
 	// DepartmentsTable holds the schema information for the "departments" table.
 	DepartmentsTable = &schema.Table{

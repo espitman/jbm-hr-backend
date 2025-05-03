@@ -51,6 +51,10 @@ func init() {
 	departmentDescShortName := departmentFields[5].Descriptor()
 	// department.ShortNameValidator is a validator for the "shortName" field. It is called by the builders before save.
 	department.ShortNameValidator = departmentDescShortName.Validators[0].(func(string) error)
+	// departmentDescDisplayOrder is the schema descriptor for display_order field.
+	departmentDescDisplayOrder := departmentFields[6].Descriptor()
+	// department.DefaultDisplayOrder holds the default value on creation for the display_order field.
+	department.DefaultDisplayOrder = departmentDescDisplayOrder.Default.(int)
 	hrteamFields := schema.HRTeam{}.Fields()
 	_ = hrteamFields
 	// hrteamDescFullName is the schema descriptor for full_name field.

@@ -26,19 +26,22 @@ func convertToContractDepartment(entDepartment *ent.Department) *contract.Depart
 		return nil
 	}
 	return &contract.Department{
-		ID:          entDepartment.ID,
-		Title:       entDepartment.Title,
-		Description: entDepartment.Description,
-		Image:       entDepartment.Image,
-		Icon:        entDepartment.Icon,
-		Color:       entDepartment.Color,
-		ShortName:   entDepartment.ShortName,
+		ID:           entDepartment.ID,
+		Title:        entDepartment.Title,
+		Description:  entDepartment.Description,
+		Image:        entDepartment.Image,
+		Icon:         entDepartment.Icon,
+		Color:        entDepartment.Color,
+		ShortName:    entDepartment.ShortName,
+		DisplayOrder: entDepartment.DisplayOrder,
 	}
 }
 
 // GetAll retrieves all departments
 func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.Department, error) {
-	entDepartments, err := r.client.Department.Query().All(ctx)
+	entDepartments, err := r.client.Department.Query().
+		Order(ent.Asc(entDepartment.FieldDisplayOrder)).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +72,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.DepartmentInpu
 		SetIcon(req.Icon).
 		SetColor(req.Color).
 		SetShortName(req.ShortName).
+		SetDisplayOrder(req.DisplayOrder).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -86,6 +90,7 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Depart
 		SetIcon(req.Icon).
 		SetColor(req.Color).
 		SetShortName(req.ShortName).
+		SetDisplayOrder(req.DisplayOrder).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -111,6 +116,7 @@ func (r *EntRepository) List(ctx context.Context, page, limit int) ([]*contract.
 
 	// Get paginated departments
 	entDepartments, err := r.client.Department.Query().
+		Order(ent.Asc(entDepartment.FieldDisplayOrder)).
 		Offset(offset).
 		Limit(limit).
 		All(ctx)

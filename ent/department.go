@@ -27,7 +27,9 @@ type Department struct {
 	// Color holds the value of the "color" field.
 	Color string `json:"color,omitempty"`
 	// ShortName holds the value of the "shortName" field.
-	ShortName    string `json:"shortName,omitempty"`
+	ShortName string `json:"shortName,omitempty"`
+	// Order in which the department should be displayed
+	DisplayOrder int `json:"display_order,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -36,7 +38,7 @@ func (*Department) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case department.FieldID:
+		case department.FieldID, department.FieldDisplayOrder:
 			values[i] = new(sql.NullInt64)
 		case department.FieldTitle, department.FieldDescription, department.FieldImage, department.FieldIcon, department.FieldColor, department.FieldShortName:
 			values[i] = new(sql.NullString)
@@ -97,6 +99,12 @@ func (d *Department) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.ShortName = value.String
 			}
+		case department.FieldDisplayOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field display_order", values[i])
+			} else if value.Valid {
+				d.DisplayOrder = int(value.Int64)
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -150,6 +158,9 @@ func (d *Department) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("shortName=")
 	builder.WriteString(d.ShortName)
+	builder.WriteString(", ")
+	builder.WriteString("display_order=")
+	builder.WriteString(fmt.Sprintf("%v", d.DisplayOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

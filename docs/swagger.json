@@ -2072,6 +2072,9 @@
                 "description": {
                     "type": "string"
                 },
+                "display_order": {
+                    "type": "integer"
+                },
                 "icon": {
                     "type": "string"
                 },
@@ -2237,6 +2240,9 @@
                 "description": {
                     "type": "string"
                 },
+                "display_order": {
+                    "type": "integer"
+                },
                 "icon": {
                     "type": "string"
                 },
@@ -2323,6 +2329,9 @@
                 },
                 "description": {
                     "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
                 },
                 "icon": {
                     "type": "string"

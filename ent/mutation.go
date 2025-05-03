@@ -444,19 +444,21 @@ func (m *AlbumMutation) ResetEdge(name string) error {
 // DepartmentMutation represents an operation that mutates the Department nodes in the graph.
 type DepartmentMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	title         *string
-	description   *string
-	image         *string
-	icon          *string
-	color         *string
-	shortName     *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Department, error)
-	predicates    []predicate.Department
+	op               Op
+	typ              string
+	id               *int
+	title            *string
+	description      *string
+	image            *string
+	icon             *string
+	color            *string
+	shortName        *string
+	display_order    *int
+	adddisplay_order *int
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*Department, error)
+	predicates       []predicate.Department
 }
 
 var _ ent.Mutation = (*DepartmentMutation)(nil)
@@ -773,6 +775,62 @@ func (m *DepartmentMutation) ResetShortName() {
 	m.shortName = nil
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (m *DepartmentMutation) SetDisplayOrder(i int) {
+	m.display_order = &i
+	m.adddisplay_order = nil
+}
+
+// DisplayOrder returns the value of the "display_order" field in the mutation.
+func (m *DepartmentMutation) DisplayOrder() (r int, exists bool) {
+	v := m.display_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayOrder returns the old "display_order" field's value of the Department entity.
+// If the Department object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DepartmentMutation) OldDisplayOrder(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayOrder: %w", err)
+	}
+	return oldValue.DisplayOrder, nil
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (m *DepartmentMutation) AddDisplayOrder(i int) {
+	if m.adddisplay_order != nil {
+		*m.adddisplay_order += i
+	} else {
+		m.adddisplay_order = &i
+	}
+}
+
+// AddedDisplayOrder returns the value that was added to the "display_order" field in this mutation.
+func (m *DepartmentMutation) AddedDisplayOrder() (r int, exists bool) {
+	v := m.adddisplay_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDisplayOrder resets all changes to the "display_order" field.
+func (m *DepartmentMutation) ResetDisplayOrder() {
+	m.display_order = nil
+	m.adddisplay_order = nil
+}
+
 // Where appends a list predicates to the DepartmentMutation builder.
 func (m *DepartmentMutation) Where(ps ...predicate.Department) {
 	m.predicates = append(m.predicates, ps...)
@@ -807,7 +865,7 @@ func (m *DepartmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DepartmentMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.title != nil {
 		fields = append(fields, department.FieldTitle)
 	}
@@ -825,6 +883,9 @@ func (m *DepartmentMutation) Fields() []string {
 	}
 	if m.shortName != nil {
 		fields = append(fields, department.FieldShortName)
+	}
+	if m.display_order != nil {
+		fields = append(fields, department.FieldDisplayOrder)
 	}
 	return fields
 }
@@ -846,6 +907,8 @@ func (m *DepartmentMutation) Field(name string) (ent.Value, bool) {
 		return m.Color()
 	case department.FieldShortName:
 		return m.ShortName()
+	case department.FieldDisplayOrder:
+		return m.DisplayOrder()
 	}
 	return nil, false
 }
@@ -867,6 +930,8 @@ func (m *DepartmentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldColor(ctx)
 	case department.FieldShortName:
 		return m.OldShortName(ctx)
+	case department.FieldDisplayOrder:
+		return m.OldDisplayOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown Department field %s", name)
 }
@@ -918,6 +983,13 @@ func (m *DepartmentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetShortName(v)
 		return nil
+	case department.FieldDisplayOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Department field %s", name)
 }
@@ -925,13 +997,21 @@ func (m *DepartmentMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *DepartmentMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.adddisplay_order != nil {
+		fields = append(fields, department.FieldDisplayOrder)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *DepartmentMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case department.FieldDisplayOrder:
+		return m.AddedDisplayOrder()
+	}
 	return nil, false
 }
 
@@ -940,6 +1020,13 @@ func (m *DepartmentMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *DepartmentMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case department.FieldDisplayOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDisplayOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Department numeric field %s", name)
 }
@@ -984,6 +1071,9 @@ func (m *DepartmentMutation) ResetField(name string) error {
 		return nil
 	case department.FieldShortName:
 		m.ResetShortName()
+		return nil
+	case department.FieldDisplayOrder:
+		m.ResetDisplayOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown Department field %s", name)

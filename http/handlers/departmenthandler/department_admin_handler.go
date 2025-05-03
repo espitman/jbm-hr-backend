@@ -47,12 +47,13 @@ func (h *DepartmentAdminHandler) Create(c echo.Context) error {
 	}
 
 	input := &contract.DepartmentInput{
-		Title:       req.Title,
-		Description: req.Description,
-		Image:       req.Image,
-		Icon:        req.Icon,
-		Color:       req.Color,
-		ShortName:   req.ShortName,
+		Title:        req.Title,
+		Description:  req.Description,
+		Image:        req.Image,
+		Icon:         req.Icon,
+		Color:        req.Color,
+		ShortName:    req.ShortName,
+		DisplayOrder: req.DisplayOrder,
 	}
 
 	department, err := h.departmentService.Create(c.Request().Context(), input)
@@ -94,12 +95,13 @@ func (h *DepartmentAdminHandler) Update(c echo.Context) error {
 	}
 
 	input := &contract.DepartmentInput{
-		Title:       req.Title,
-		Description: req.Description,
-		Image:       req.Image,
-		Icon:        req.Icon,
-		Color:       req.Color,
-		ShortName:   req.ShortName,
+		Title:        req.Title,
+		Description:  req.Description,
+		Image:        req.Image,
+		Icon:         req.Icon,
+		Color:        req.Color,
+		ShortName:    req.ShortName,
+		DisplayOrder: req.DisplayOrder,
 	}
 
 	department, err := h.departmentService.Update(c.Request().Context(), id, input)

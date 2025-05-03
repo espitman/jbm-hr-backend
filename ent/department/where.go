@@ -82,6 +82,11 @@ func ShortName(v string) predicate.Department {
 	return predicate.Department(sql.FieldEQ(FieldShortName, v))
 }
 
+// DisplayOrder applies equality check predicate on the "display_order" field. It's identical to DisplayOrderEQ.
+func DisplayOrder(v int) predicate.Department {
+	return predicate.Department(sql.FieldEQ(FieldDisplayOrder, v))
+}
+
 // TitleEQ applies the EQ predicate on the "title" field.
 func TitleEQ(v string) predicate.Department {
 	return predicate.Department(sql.FieldEQ(FieldTitle, v))
@@ -470,6 +475,46 @@ func ShortNameEqualFold(v string) predicate.Department {
 // ShortNameContainsFold applies the ContainsFold predicate on the "shortName" field.
 func ShortNameContainsFold(v string) predicate.Department {
 	return predicate.Department(sql.FieldContainsFold(FieldShortName, v))
+}
+
+// DisplayOrderEQ applies the EQ predicate on the "display_order" field.
+func DisplayOrderEQ(v int) predicate.Department {
+	return predicate.Department(sql.FieldEQ(FieldDisplayOrder, v))
+}
+
+// DisplayOrderNEQ applies the NEQ predicate on the "display_order" field.
+func DisplayOrderNEQ(v int) predicate.Department {
+	return predicate.Department(sql.FieldNEQ(FieldDisplayOrder, v))
+}
+
+// DisplayOrderIn applies the In predicate on the "display_order" field.
+func DisplayOrderIn(vs ...int) predicate.Department {
+	return predicate.Department(sql.FieldIn(FieldDisplayOrder, vs...))
+}
+
+// DisplayOrderNotIn applies the NotIn predicate on the "display_order" field.
+func DisplayOrderNotIn(vs ...int) predicate.Department {
+	return predicate.Department(sql.FieldNotIn(FieldDisplayOrder, vs...))
+}
+
+// DisplayOrderGT applies the GT predicate on the "display_order" field.
+func DisplayOrderGT(v int) predicate.Department {
+	return predicate.Department(sql.FieldGT(FieldDisplayOrder, v))
+}
+
+// DisplayOrderGTE applies the GTE predicate on the "display_order" field.
+func DisplayOrderGTE(v int) predicate.Department {
+	return predicate.Department(sql.FieldGTE(FieldDisplayOrder, v))
+}
+
+// DisplayOrderLT applies the LT predicate on the "display_order" field.
+func DisplayOrderLT(v int) predicate.Department {
+	return predicate.Department(sql.FieldLT(FieldDisplayOrder, v))
+}
+
+// DisplayOrderLTE applies the LTE predicate on the "display_order" field.
+func DisplayOrderLTE(v int) predicate.Department {
+	return predicate.Department(sql.FieldLTE(FieldDisplayOrder, v))
 }
 
 // And groups predicates with the AND operator between them.
