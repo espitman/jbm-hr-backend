@@ -1040,17 +1040,19 @@ func (m *DepartmentMutation) ResetEdge(name string) error {
 // HRTeamMutation represents an operation that mutates the HRTeam nodes in the graph.
 type HRTeamMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	full_name     *string
-	role          *string
-	email         *string
-	phone         *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*HRTeam, error)
-	predicates    []predicate.HRTeam
+	op               Op
+	typ              string
+	id               *int
+	full_name        *string
+	role             *string
+	email            *string
+	phone            *string
+	display_order    *int
+	adddisplay_order *int
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*HRTeam, error)
+	predicates       []predicate.HRTeam
 }
 
 var _ ent.Mutation = (*HRTeamMutation)(nil)
@@ -1295,6 +1297,62 @@ func (m *HRTeamMutation) ResetPhone() {
 	m.phone = nil
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (m *HRTeamMutation) SetDisplayOrder(i int) {
+	m.display_order = &i
+	m.adddisplay_order = nil
+}
+
+// DisplayOrder returns the value of the "display_order" field in the mutation.
+func (m *HRTeamMutation) DisplayOrder() (r int, exists bool) {
+	v := m.display_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayOrder returns the old "display_order" field's value of the HRTeam entity.
+// If the HRTeam object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HRTeamMutation) OldDisplayOrder(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayOrder: %w", err)
+	}
+	return oldValue.DisplayOrder, nil
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (m *HRTeamMutation) AddDisplayOrder(i int) {
+	if m.adddisplay_order != nil {
+		*m.adddisplay_order += i
+	} else {
+		m.adddisplay_order = &i
+	}
+}
+
+// AddedDisplayOrder returns the value that was added to the "display_order" field in this mutation.
+func (m *HRTeamMutation) AddedDisplayOrder() (r int, exists bool) {
+	v := m.adddisplay_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDisplayOrder resets all changes to the "display_order" field.
+func (m *HRTeamMutation) ResetDisplayOrder() {
+	m.display_order = nil
+	m.adddisplay_order = nil
+}
+
 // Where appends a list predicates to the HRTeamMutation builder.
 func (m *HRTeamMutation) Where(ps ...predicate.HRTeam) {
 	m.predicates = append(m.predicates, ps...)
@@ -1329,7 +1387,7 @@ func (m *HRTeamMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *HRTeamMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.full_name != nil {
 		fields = append(fields, hrteam.FieldFullName)
 	}
@@ -1341,6 +1399,9 @@ func (m *HRTeamMutation) Fields() []string {
 	}
 	if m.phone != nil {
 		fields = append(fields, hrteam.FieldPhone)
+	}
+	if m.display_order != nil {
+		fields = append(fields, hrteam.FieldDisplayOrder)
 	}
 	return fields
 }
@@ -1358,6 +1419,8 @@ func (m *HRTeamMutation) Field(name string) (ent.Value, bool) {
 		return m.Email()
 	case hrteam.FieldPhone:
 		return m.Phone()
+	case hrteam.FieldDisplayOrder:
+		return m.DisplayOrder()
 	}
 	return nil, false
 }
@@ -1375,6 +1438,8 @@ func (m *HRTeamMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldEmail(ctx)
 	case hrteam.FieldPhone:
 		return m.OldPhone(ctx)
+	case hrteam.FieldDisplayOrder:
+		return m.OldDisplayOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown HRTeam field %s", name)
 }
@@ -1412,6 +1477,13 @@ func (m *HRTeamMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPhone(v)
 		return nil
+	case hrteam.FieldDisplayOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown HRTeam field %s", name)
 }
@@ -1419,13 +1491,21 @@ func (m *HRTeamMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *HRTeamMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.adddisplay_order != nil {
+		fields = append(fields, hrteam.FieldDisplayOrder)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *HRTeamMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case hrteam.FieldDisplayOrder:
+		return m.AddedDisplayOrder()
+	}
 	return nil, false
 }
 
@@ -1434,6 +1514,13 @@ func (m *HRTeamMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *HRTeamMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case hrteam.FieldDisplayOrder:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDisplayOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown HRTeam numeric field %s", name)
 }
@@ -1472,6 +1559,9 @@ func (m *HRTeamMutation) ResetField(name string) error {
 		return nil
 	case hrteam.FieldPhone:
 		m.ResetPhone()
+		return nil
+	case hrteam.FieldDisplayOrder:
+		m.ResetDisplayOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown HRTeam field %s", name)

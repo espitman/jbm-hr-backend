@@ -43,6 +43,7 @@ var (
 		{Name: "role", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString},
+		{Name: "display_order", Type: field.TypeInt, Default: 0},
 	}
 	// HrTeamsTable holds the schema information for the "hr_teams" table.
 	HrTeamsTable = &schema.Table{

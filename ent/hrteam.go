@@ -23,7 +23,9 @@ type HRTeam struct {
 	// Email address of the HR team member
 	Email string `json:"email,omitempty"`
 	// Phone number of the HR team member
-	Phone        string `json:"phone,omitempty"`
+	Phone string `json:"phone,omitempty"`
+	// Order in which the HR team member should be displayed
+	DisplayOrder int `json:"display_order,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -32,7 +34,7 @@ func (*HRTeam) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case hrteam.FieldID:
+		case hrteam.FieldID, hrteam.FieldDisplayOrder:
 			values[i] = new(sql.NullInt64)
 		case hrteam.FieldFullName, hrteam.FieldRole, hrteam.FieldEmail, hrteam.FieldPhone:
 			values[i] = new(sql.NullString)
@@ -81,6 +83,12 @@ func (ht *HRTeam) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ht.Phone = value.String
 			}
+		case hrteam.FieldDisplayOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field display_order", values[i])
+			} else if value.Valid {
+				ht.DisplayOrder = int(value.Int64)
+			}
 		default:
 			ht.selectValues.Set(columns[i], values[i])
 		}
@@ -128,6 +136,9 @@ func (ht *HRTeam) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("phone=")
 	builder.WriteString(ht.Phone)
+	builder.WriteString(", ")
+	builder.WriteString("display_order=")
+	builder.WriteString(fmt.Sprintf("%v", ht.DisplayOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

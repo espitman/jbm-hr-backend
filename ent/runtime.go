@@ -69,6 +69,10 @@ func init() {
 	hrteamDescPhone := hrteamFields[3].Descriptor()
 	// hrteam.PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
 	hrteam.PhoneValidator = hrteamDescPhone.Validators[0].(func(string) error)
+	// hrteamDescDisplayOrder is the schema descriptor for display_order field.
+	hrteamDescDisplayOrder := hrteamFields[4].Descriptor()
+	// hrteam.DefaultDisplayOrder holds the default value on creation for the display_order field.
+	hrteam.DefaultDisplayOrder = hrteamDescDisplayOrder.Default.(int)
 	otpFields := schema.OTP{}.Fields()
 	_ = otpFields
 	// otpDescCode is the schema descriptor for code field.

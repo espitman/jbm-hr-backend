@@ -25,6 +25,9 @@ func (HRTeam) Fields() []ent.Field {
 		field.String("phone").
 			NotEmpty().
 			Comment("Phone number of the HR team member"),
+		field.Int("display_order").
+			Default(0).
+			Comment("Order in which the HR team member should be displayed"),
 	}
 }
 

@@ -19,6 +19,8 @@ const (
 	FieldEmail = "email"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
+	// FieldDisplayOrder holds the string denoting the display_order field in the database.
+	FieldDisplayOrder = "display_order"
 	// Table holds the table name of the hrteam in the database.
 	Table = "hr_teams"
 )
@@ -30,6 +32,7 @@ var Columns = []string{
 	FieldRole,
 	FieldEmail,
 	FieldPhone,
+	FieldDisplayOrder,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -51,6 +54,8 @@ var (
 	EmailValidator func(string) error
 	// PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
 	PhoneValidator func(string) error
+	// DefaultDisplayOrder holds the default value on creation for the "display_order" field.
+	DefaultDisplayOrder int
 )
 
 // OrderOption defines the ordering options for the HRTeam queries.
@@ -79,4 +84,9 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 // ByPhone orders the results by the phone field.
 func ByPhone(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPhone, opts...).ToFunc()
+}
+
+// ByDisplayOrder orders the results by the display_order field.
+func ByDisplayOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisplayOrder, opts...).ToFunc()
 }

@@ -2099,6 +2099,9 @@ const docTemplate = `{
         "contract.HRTeam": {
             "type": "object",
             "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -2405,6 +2408,9 @@ const docTemplate = `{
                 "role"
             ],
             "properties": {
+                "displayOrder": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },

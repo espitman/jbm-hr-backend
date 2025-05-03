@@ -47,10 +47,11 @@ func (h *HRTeamAdminHandler) Create(c echo.Context) error {
 	}
 
 	input := &contract.HRTeamInput{
-		FullName: req.FullName,
-		Role:     req.Role,
-		Email:    req.Email,
-		Phone:    req.Phone,
+		FullName:     req.FullName,
+		Role:         req.Role,
+		Email:        req.Email,
+		Phone:        req.Phone,
+		DisplayOrder: req.DisplayOrder,
 	}
 
 	hrTeam, err := h.hrteamService.CreateHRTeam(c.Request().Context(), input)
@@ -92,10 +93,11 @@ func (h *HRTeamAdminHandler) Update(c echo.Context) error {
 	}
 
 	input := &contract.HRTeamInput{
-		FullName: req.FullName,
-		Role:     req.Role,
-		Email:    req.Email,
-		Phone:    req.Phone,
+		FullName:     req.FullName,
+		Role:         req.Role,
+		Email:        req.Email,
+		Phone:        req.Phone,
+		DisplayOrder: req.DisplayOrder,
 	}
 
 	hrTeam, err := h.hrteamService.UpdateHRTeam(c.Request().Context(), id, input)

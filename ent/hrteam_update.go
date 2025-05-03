@@ -83,6 +83,27 @@ func (htu *HRTeamUpdate) SetNillablePhone(s *string) *HRTeamUpdate {
 	return htu
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (htu *HRTeamUpdate) SetDisplayOrder(i int) *HRTeamUpdate {
+	htu.mutation.ResetDisplayOrder()
+	htu.mutation.SetDisplayOrder(i)
+	return htu
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (htu *HRTeamUpdate) SetNillableDisplayOrder(i *int) *HRTeamUpdate {
+	if i != nil {
+		htu.SetDisplayOrder(*i)
+	}
+	return htu
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (htu *HRTeamUpdate) AddDisplayOrder(i int) *HRTeamUpdate {
+	htu.mutation.AddDisplayOrder(i)
+	return htu
+}
+
 // Mutation returns the HRTeamMutation object of the builder.
 func (htu *HRTeamUpdate) Mutation() *HRTeamMutation {
 	return htu.mutation
@@ -164,6 +185,12 @@ func (htu *HRTeamUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := htu.mutation.Phone(); ok {
 		_spec.SetField(hrteam.FieldPhone, field.TypeString, value)
 	}
+	if value, ok := htu.mutation.DisplayOrder(); ok {
+		_spec.SetField(hrteam.FieldDisplayOrder, field.TypeInt, value)
+	}
+	if value, ok := htu.mutation.AddedDisplayOrder(); ok {
+		_spec.AddField(hrteam.FieldDisplayOrder, field.TypeInt, value)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, htu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{hrteam.Label}
@@ -237,6 +264,27 @@ func (htuo *HRTeamUpdateOne) SetNillablePhone(s *string) *HRTeamUpdateOne {
 	if s != nil {
 		htuo.SetPhone(*s)
 	}
+	return htuo
+}
+
+// SetDisplayOrder sets the "display_order" field.
+func (htuo *HRTeamUpdateOne) SetDisplayOrder(i int) *HRTeamUpdateOne {
+	htuo.mutation.ResetDisplayOrder()
+	htuo.mutation.SetDisplayOrder(i)
+	return htuo
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (htuo *HRTeamUpdateOne) SetNillableDisplayOrder(i *int) *HRTeamUpdateOne {
+	if i != nil {
+		htuo.SetDisplayOrder(*i)
+	}
+	return htuo
+}
+
+// AddDisplayOrder adds i to the "display_order" field.
+func (htuo *HRTeamUpdateOne) AddDisplayOrder(i int) *HRTeamUpdateOne {
+	htuo.mutation.AddDisplayOrder(i)
 	return htuo
 }
 
@@ -350,6 +398,12 @@ func (htuo *HRTeamUpdateOne) sqlSave(ctx context.Context) (_node *HRTeam, err er
 	}
 	if value, ok := htuo.mutation.Phone(); ok {
 		_spec.SetField(hrteam.FieldPhone, field.TypeString, value)
+	}
+	if value, ok := htuo.mutation.DisplayOrder(); ok {
+		_spec.SetField(hrteam.FieldDisplayOrder, field.TypeInt, value)
+	}
+	if value, ok := htuo.mutation.AddedDisplayOrder(); ok {
+		_spec.AddField(hrteam.FieldDisplayOrder, field.TypeInt, value)
 	}
 	_node = &HRTeam{config: htuo.config}
 	_spec.Assign = _node.assignValues

@@ -43,6 +43,20 @@ func (htc *HRTeamCreate) SetPhone(s string) *HRTeamCreate {
 	return htc
 }
 
+// SetDisplayOrder sets the "display_order" field.
+func (htc *HRTeamCreate) SetDisplayOrder(i int) *HRTeamCreate {
+	htc.mutation.SetDisplayOrder(i)
+	return htc
+}
+
+// SetNillableDisplayOrder sets the "display_order" field if the given value is not nil.
+func (htc *HRTeamCreate) SetNillableDisplayOrder(i *int) *HRTeamCreate {
+	if i != nil {
+		htc.SetDisplayOrder(*i)
+	}
+	return htc
+}
+
 // Mutation returns the HRTeamMutation object of the builder.
 func (htc *HRTeamCreate) Mutation() *HRTeamMutation {
 	return htc.mutation
@@ -50,6 +64,7 @@ func (htc *HRTeamCreate) Mutation() *HRTeamMutation {
 
 // Save creates the HRTeam in the database.
 func (htc *HRTeamCreate) Save(ctx context.Context) (*HRTeam, error) {
+	htc.defaults()
 	return withHooks(ctx, htc.sqlSave, htc.mutation, htc.hooks)
 }
 
@@ -72,6 +87,14 @@ func (htc *HRTeamCreate) Exec(ctx context.Context) error {
 func (htc *HRTeamCreate) ExecX(ctx context.Context) {
 	if err := htc.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (htc *HRTeamCreate) defaults() {
+	if _, ok := htc.mutation.DisplayOrder(); !ok {
+		v := hrteam.DefaultDisplayOrder
+		htc.mutation.SetDisplayOrder(v)
 	}
 }
 
@@ -108,6 +131,9 @@ func (htc *HRTeamCreate) check() error {
 		if err := hrteam.PhoneValidator(v); err != nil {
 			return &ValidationError{Name: "phone", err: fmt.Errorf(`ent: validator failed for field "HRTeam.phone": %w`, err)}
 		}
+	}
+	if _, ok := htc.mutation.DisplayOrder(); !ok {
+		return &ValidationError{Name: "display_order", err: errors.New(`ent: missing required field "HRTeam.display_order"`)}
 	}
 	return nil
 }
@@ -151,6 +177,10 @@ func (htc *HRTeamCreate) createSpec() (*HRTeam, *sqlgraph.CreateSpec) {
 		_spec.SetField(hrteam.FieldPhone, field.TypeString, value)
 		_node.Phone = value
 	}
+	if value, ok := htc.mutation.DisplayOrder(); ok {
+		_spec.SetField(hrteam.FieldDisplayOrder, field.TypeInt, value)
+		_node.DisplayOrder = value
+	}
 	return _node, _spec
 }
 
@@ -172,6 +202,7 @@ func (htcb *HRTeamCreateBulk) Save(ctx context.Context) ([]*HRTeam, error) {
 	for i := range htcb.builders {
 		func(i int, root context.Context) {
 			builder := htcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*HRTeamMutation)
 				if !ok {

@@ -26,17 +26,20 @@ func convertToContractHRTeam(entHRTeam *ent.HRTeam) *contract.HRTeam {
 		return nil
 	}
 	return &contract.HRTeam{
-		ID:       entHRTeam.ID,
-		FullName: entHRTeam.FullName,
-		Role:     entHRTeam.Role,
-		Email:    entHRTeam.Email,
-		Phone:    entHRTeam.Phone,
+		ID:           entHRTeam.ID,
+		FullName:     entHRTeam.FullName,
+		Role:         entHRTeam.Role,
+		Email:        entHRTeam.Email,
+		Phone:        entHRTeam.Phone,
+		DisplayOrder: entHRTeam.DisplayOrder,
 	}
 }
 
 // GetAll retrieves all HR team members
 func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.HRTeam, error) {
-	entHRTeams, err := r.client.HRTeam.Query().All(ctx)
+	entHRTeams, err := r.client.HRTeam.Query().
+		Order(ent.Asc(entHRTeam.FieldDisplayOrder)).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +68,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.HRTeamInput) (
 		SetRole(req.Role).
 		SetEmail(req.Email).
 		SetPhone(req.Phone).
+		SetDisplayOrder(req.DisplayOrder).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -80,6 +84,7 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.HRTeam
 		SetRole(req.Role).
 		SetEmail(req.Email).
 		SetPhone(req.Phone).
+		SetDisplayOrder(req.DisplayOrder).
 		Save(ctx)
 	if err != nil {
 		return nil, err

@@ -63,6 +63,8 @@ definitions:
     type: object
   contract.HRTeam:
     properties:
+      display_order:
+        type: integer
       email:
         type: string
       full_name:
@@ -265,6 +267,8 @@ definitions:
     type: object
   hrteamhandler.HRTeamInput:
     properties:
+      displayOrder:
+        type: integer
       email:
         type: string
       fullName:
