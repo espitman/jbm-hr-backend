@@ -41,8 +41,8 @@ func (h *UploadHandler) UploadImage(c echo.Context) error {
 
 	// Validate file type
 	ext := filepath.Ext(file.Filename)
-	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" {
-		return dto.BadRequestJSON(c, "Invalid file type. Only jpg, jpeg, png, and gif files are allowed")
+	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" && ext != ".svg" {
+		return dto.BadRequestJSON(c, "Invalid file type. Only jpg, jpeg, png, gif, and svg files are allowed")
 	}
 
 	// Define the path for image uploads
@@ -156,8 +156,8 @@ func (h *UploadHandler) UploadPublicImage(c echo.Context) error {
 
 	// Validate file type
 	ext := filepath.Ext(file.Filename)
-	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" {
-		return dto.BadRequestJSON(c, "Invalid file type. Only jpg, jpeg, png, and gif files are allowed")
+	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" && ext != ".svg" {
+		return dto.BadRequestJSON(c, "Invalid file type. Only jpg, jpeg, png, gif, and svg files are allowed")
 	}
 
 	// Define the path for public image uploads
