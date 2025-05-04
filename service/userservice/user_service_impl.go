@@ -123,12 +123,13 @@ func (s *service) VerifyOTP(ctx context.Context, email string, code string) (str
 func (s *service) RegisterUser(ctx context.Context, input *contract.RegisterUserInput) (*contract.User, error) {
 	// Create a CreateUserInput from the RegisterUserInput
 	createInput := &contract.CreateUserInput{
-		Email:     input.Email,
-		Phone:     input.Phone,
-		FirstName: input.FirstName,
-		LastName:  input.LastName,
-		Role:      input.Role,
-		Avatar:    input.Avatar,
+		Email:        input.Email,
+		Phone:        input.Phone,
+		FirstName:    input.FirstName,
+		LastName:     input.LastName,
+		Role:         input.Role,
+		Avatar:       input.Avatar,
+		DepartmentID: input.DepartmentID,
 	}
 
 	// Create the user using the repository
