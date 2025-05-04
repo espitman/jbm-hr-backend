@@ -2213,6 +2213,12 @@
                 "avatar": {
                     "type": "string"
                 },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
+                    "type": "string"
+                },
                 "department_id": {
                     "type": "integer"
                 },
@@ -2861,6 +2867,12 @@
                 "avatar": {
                     "type": "string"
                 },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
+                    "type": "string"
+                },
                 "department": {
                     "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
@@ -2930,6 +2942,12 @@
             "type": "object",
             "properties": {
                 "avatar": {
+                    "type": "string"
+                },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
                     "type": "string"
                 },
                 "department": {
@@ -3060,6 +3078,12 @@
                 "avatar": {
                     "type": "string"
                 },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
+                    "type": "string"
+                },
                 "department": {
                     "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
@@ -3127,6 +3151,12 @@
             "type": "object",
             "properties": {
                 "avatar": {
+                    "type": "string"
+                },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
                     "type": "string"
                 },
                 "department": {

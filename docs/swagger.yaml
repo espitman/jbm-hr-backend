@@ -140,6 +140,10 @@ definitions:
     properties:
       avatar:
         type: string
+      birthdate:
+        type: string
+      cooperation_start_date:
+        type: string
       department_id:
         type: integer
       email:
@@ -576,6 +580,10 @@ definitions:
     properties:
       avatar:
         type: string
+      birthdate:
+        type: string
+      cooperation_start_date:
+        type: string
       department:
         $ref: '#/definitions/userhandler.DepartmentDTO'
       email:
@@ -621,6 +629,10 @@ definitions:
   userhandler.RegisterUserData:
     properties:
       avatar:
+        type: string
+      birthdate:
+        type: string
+      cooperation_start_date:
         type: string
       department:
         $ref: '#/definitions/userhandler.DepartmentDTO'
@@ -707,6 +719,10 @@ definitions:
     properties:
       avatar:
         type: string
+      birthdate:
+        type: string
+      cooperation_start_date:
+        type: string
       department:
         $ref: '#/definitions/userhandler.DepartmentDTO'
       email:
@@ -751,6 +767,10 @@ definitions:
   userhandler.VerifyOTPUserData:
     properties:
       avatar:
+        type: string
+      birthdate:
+        type: string
+      cooperation_start_date:
         type: string
       department:
         $ref: '#/definitions/userhandler.DepartmentDTO'

@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"time"
 
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/ent"
@@ -35,19 +36,31 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		departmentIcon = &entUser.Edges.Department.Icon
 		departmentShortName = &entUser.Edges.Department.ShortName
 	}
+	var birthdate *string
+	if !entUser.Birthdate.IsZero() {
+		birthdateStr := entUser.Birthdate.Format("2006-01-02")
+		birthdate = &birthdateStr
+	}
+	var cooperationStartDate *string
+	if !entUser.CooperationStartDate.IsZero() {
+		startDateStr := entUser.CooperationStartDate.Format("2006-01-02")
+		cooperationStartDate = &startDateStr
+	}
 	return &contract.User{
-		ID:                  entUser.ID,
-		Email:               entUser.Email,
-		Phone:               entUser.Phone,
-		FirstName:           entUser.FirstName,
-		LastName:            entUser.LastName,
-		Role:                string(entUser.Role),
-		Avatar:              entUser.Avatar,
-		Password:            entUser.Password,
-		DepartmentID:        departmentID,
-		DepartmentTitle:     departmentTitle,
-		DepartmentIcon:      departmentIcon,
-		DepartmentShortName: departmentShortName,
+		ID:                   entUser.ID,
+		Email:                entUser.Email,
+		Phone:                entUser.Phone,
+		FirstName:            entUser.FirstName,
+		LastName:             entUser.LastName,
+		Role:                 string(entUser.Role),
+		Avatar:               entUser.Avatar,
+		Password:             entUser.Password,
+		DepartmentID:         departmentID,
+		DepartmentTitle:      departmentTitle,
+		DepartmentIcon:       departmentIcon,
+		DepartmentShortName:  departmentShortName,
+		Birthdate:            birthdate,
+		CooperationStartDate: cooperationStartDate,
 	}
 }
 
@@ -112,6 +125,20 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateUserInpu
 	if req.DepartmentID != nil {
 		create = create.SetDepartmentID(*req.DepartmentID)
 	}
+	if req.Birthdate != nil {
+		birthdate, err := time.Parse("2006-01-02", *req.Birthdate)
+		if err != nil {
+			return nil, err
+		}
+		create = create.SetBirthdate(birthdate)
+	}
+	if req.CooperationStartDate != nil {
+		startDate, err := time.Parse("2006-01-02", *req.CooperationStartDate)
+		if err != nil {
+			return nil, err
+		}
+		create = create.SetCooperationStartDate(startDate)
+	}
 
 	entUser, err := create.Save(ctx)
 	if err != nil {
@@ -135,6 +162,24 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 		update = update.SetDepartmentID(*req.DepartmentID)
 	} else {
 		update = update.ClearDepartment()
+	}
+	if req.Birthdate != nil {
+		birthdate, err := time.Parse("2006-01-02", *req.Birthdate)
+		if err != nil {
+			return nil, err
+		}
+		update = update.SetBirthdate(birthdate)
+	} else {
+		update = update.ClearBirthdate()
+	}
+	if req.CooperationStartDate != nil {
+		startDate, err := time.Parse("2006-01-02", *req.CooperationStartDate)
+		if err != nil {
+			return nil, err
+		}
+		update = update.SetCooperationStartDate(startDate)
+	} else {
+		update = update.ClearCooperationStartDate()
 	}
 
 	entUser, err := update.Save(ctx)

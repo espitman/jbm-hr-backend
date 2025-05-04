@@ -2220,6 +2220,12 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
+                    "type": "string"
+                },
                 "department_id": {
                     "type": "integer"
                 },
@@ -2868,6 +2874,12 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
+                    "type": "string"
+                },
                 "department": {
                     "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
@@ -2937,6 +2949,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "avatar": {
+                    "type": "string"
+                },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
                     "type": "string"
                 },
                 "department": {
@@ -3067,6 +3085,12 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
+                    "type": "string"
+                },
                 "department": {
                     "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
@@ -3134,6 +3158,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "avatar": {
+                    "type": "string"
+                },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
                     "type": "string"
                 },
                 "department": {
