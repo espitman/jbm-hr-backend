@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
 // DepartmentCreate is the builder for creating a Department entity.
@@ -67,6 +68,21 @@ func (dc *DepartmentCreate) SetNillableDisplayOrder(i *int) *DepartmentCreate {
 		dc.SetDisplayOrder(*i)
 	}
 	return dc
+}
+
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (dc *DepartmentCreate) AddUserIDs(ids ...int) *DepartmentCreate {
+	dc.mutation.AddUserIDs(ids...)
+	return dc
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (dc *DepartmentCreate) AddUsers(u ...*User) *DepartmentCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return dc.AddUserIDs(ids...)
 }
 
 // Mutation returns the DepartmentMutation object of the builder.
@@ -216,6 +232,22 @@ func (dc *DepartmentCreate) createSpec() (*Department, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.DisplayOrder(); ok {
 		_spec.SetField(department.FieldDisplayOrder, field.TypeInt, value)
 		_node.DisplayOrder = value
+	}
+	if nodes := dc.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   department.UsersTable,
+			Columns: []string{department.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

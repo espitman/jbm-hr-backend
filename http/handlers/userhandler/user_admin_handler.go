@@ -37,12 +37,13 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 
 	// Register user
 	user, err := h.userService.RegisterUser(c.Request().Context(), &contract.RegisterUserInput{
-		Email:     req.Email,
-		Phone:     req.Phone,
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Role:      req.Role,
-		Avatar:    req.Avatar,
+		Email:        req.Email,
+		Phone:        req.Phone,
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		Role:         req.Role,
+		Avatar:       req.Avatar,
+		DepartmentID: req.DepartmentID,
 	})
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
@@ -50,13 +51,14 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 
 	// Prepare response
 	return dto.CreatedJSON(c, RegisterUserData{
-		ID:        user.ID,
-		Email:     user.Email,
-		Phone:     user.Phone,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Role:      user.Role,
-		Avatar:    user.Avatar,
+		ID:           user.ID,
+		Email:        user.Email,
+		Phone:        user.Phone,
+		FirstName:    user.FirstName,
+		LastName:     user.LastName,
+		Role:         user.Role,
+		Avatar:       user.Avatar,
+		DepartmentID: user.DepartmentID,
 	})
 }
 
@@ -230,13 +232,14 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 
 	return dto.SuccessJSON(c, UpdateUserResponse{
 		Data: UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
+			ID:           user.ID,
+			Email:        user.Email,
+			Phone:        user.Phone,
+			FirstName:    user.FirstName,
+			LastName:     user.LastName,
+			Role:         user.Role,
+			Avatar:       user.Avatar,
+			DepartmentID: user.DepartmentID,
 		},
 	})
 }

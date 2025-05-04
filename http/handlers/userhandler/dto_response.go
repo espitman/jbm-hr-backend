@@ -11,13 +11,14 @@ type RequestOTPResponse struct {
 
 // VerifyOTPUserData represents the user data structure for OTP verification response
 type VerifyOTPUserData struct {
-	ID        int    `json:"id"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Role      string `json:"role"`
-	Avatar    string `json:"avatar,omitempty"`
+	ID           int    `json:"id"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	Role         string `json:"role"`
+	Avatar       string `json:"avatar,omitempty"`
+	DepartmentID *int   `json:"department_id,omitempty"`
 }
 
 // VerifyOTPData represents the data structure for OTP verification response
@@ -34,13 +35,14 @@ type VerifyOTPResponse struct {
 
 // RegisterUserData represents the data structure for user registration response
 type RegisterUserData struct {
-	ID        int    `json:"id"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Role      string `json:"role"`
-	Avatar    string `json:"avatar,omitempty"`
+	ID           int    `json:"id"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	Role         string `json:"role"`
+	Avatar       string `json:"avatar,omitempty"`
+	DepartmentID *int   `json:"department_id,omitempty"`
 }
 
 // RegisterUserResponse represents the response structure for user registration
@@ -51,13 +53,14 @@ type RegisterUserResponse struct {
 
 // GetMeData represents the data structure for the /me endpoint response
 type GetMeData struct {
-	ID        int    `json:"id"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Role      string `json:"role"`
-	Avatar    string `json:"avatar,omitempty"`
+	ID           int    `json:"id"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	Role         string `json:"role"`
+	Avatar       string `json:"avatar,omitempty"`
+	DepartmentID *int   `json:"department_id,omitempty"`
 }
 
 // GetMeResponse represents the response structure for the /me endpoint
@@ -68,13 +71,14 @@ type GetMeResponse struct {
 
 // UserData represents the user data structure for list users response
 type UserData struct {
-	ID        int    `json:"id"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Role      string `json:"role"`
-	Avatar    string `json:"avatar,omitempty"`
+	ID           int    `json:"id"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	Role         string `json:"role"`
+	Avatar       string `json:"avatar,omitempty"`
+	DepartmentID *int   `json:"department_id,omitempty"`
 }
 
 // ListUsersData represents the data structure for list users response

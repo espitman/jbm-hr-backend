@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -32,8 +33,9 @@ type User struct {
 	Password string `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
-	Edges        UserEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges            UserEdges `json:"edges"`
+	department_users *int
+	selectValues     sql.SelectValues
 }
 
 // UserEdges holds the relations/edges for other nodes in the graph.
@@ -44,9 +46,11 @@ type UserEdges struct {
 	Resumes []*Resume `json:"resumes,omitempty"`
 	// Requests holds the value of the requests edge.
 	Requests []*Request `json:"requests,omitempty"`
+	// Department holds the value of the department edge.
+	Department *Department `json:"department,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // OtpsOrErr returns the Otps value or an error if the edge
@@ -76,6 +80,17 @@ func (e UserEdges) RequestsOrErr() ([]*Request, error) {
 	return nil, &NotLoadedError{edge: "requests"}
 }
 
+// DepartmentOrErr returns the Department value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) DepartmentOrErr() (*Department, error) {
+	if e.Department != nil {
+		return e.Department, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: department.Label}
+	}
+	return nil, &NotLoadedError{edge: "department"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -85,6 +100,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldRole, user.FieldAvatar, user.FieldPassword:
 			values[i] = new(sql.NullString)
+		case user.ForeignKeys[0]: // department_users
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -148,6 +165,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Password = value.String
 			}
+		case user.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field department_users", value)
+			} else if value.Valid {
+				u.department_users = new(int)
+				*u.department_users = int(value.Int64)
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -174,6 +198,11 @@ func (u *User) QueryResumes() *ResumeQuery {
 // QueryRequests queries the "requests" edge of the User entity.
 func (u *User) QueryRequests() *RequestQuery {
 	return NewUserClient(u.config).QueryRequests(u)
+}
+
+// QueryDepartment queries the "department" edge of the User entity.
+func (u *User) QueryDepartment() *DepartmentQuery {
+	return NewUserClient(u.config).QueryDepartment(u)
 }
 
 // Update returns a builder for updating this User.

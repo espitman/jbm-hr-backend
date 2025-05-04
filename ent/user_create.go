@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/request"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
@@ -131,6 +132,25 @@ func (uc *UserCreate) AddRequests(r ...*Request) *UserCreate {
 		ids[i] = r[i].ID
 	}
 	return uc.AddRequestIDs(ids...)
+}
+
+// SetDepartmentID sets the "department" edge to the Department entity by ID.
+func (uc *UserCreate) SetDepartmentID(id int) *UserCreate {
+	uc.mutation.SetDepartmentID(id)
+	return uc
+}
+
+// SetNillableDepartmentID sets the "department" edge to the Department entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableDepartmentID(id *int) *UserCreate {
+	if id != nil {
+		uc = uc.SetDepartmentID(*id)
+	}
+	return uc
+}
+
+// SetDepartment sets the "department" edge to the Department entity.
+func (uc *UserCreate) SetDepartment(d *Department) *UserCreate {
+	return uc.SetDepartmentID(d.ID)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -316,6 +336,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.DepartmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.DepartmentTable,
+			Columns: []string{user.DepartmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.department_users = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

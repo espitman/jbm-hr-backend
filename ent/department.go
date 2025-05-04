@@ -30,7 +30,28 @@ type Department struct {
 	ShortName string `json:"shortName,omitempty"`
 	// Order in which the department should be displayed
 	DisplayOrder int `json:"display_order,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the DepartmentQuery when eager-loading is set.
+	Edges        DepartmentEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// DepartmentEdges holds the relations/edges for other nodes in the graph.
+type DepartmentEdges struct {
+	// Users holds the value of the users edge.
+	Users []*User `json:"users,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading.
+func (e DepartmentEdges) UsersOrErr() ([]*User, error) {
+	if e.loadedTypes[0] {
+		return e.Users, nil
+	}
+	return nil, &NotLoadedError{edge: "users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -116,6 +137,11 @@ func (d *Department) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (d *Department) Value(name string) (ent.Value, error) {
 	return d.selectValues.Get(name)
+}
+
+// QueryUsers queries the "users" edge of the Department entity.
+func (d *Department) QueryUsers() *UserQuery {
+	return NewDepartmentClient(d.config).QueryUsers(d)
 }
 
 // Update returns a builder for updating this Department.

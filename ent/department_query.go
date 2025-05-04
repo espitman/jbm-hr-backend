@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -13,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
+	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
 // DepartmentQuery is the builder for querying Department entities.
@@ -22,6 +24,7 @@ type DepartmentQuery struct {
 	order      []department.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Department
+	withUsers  *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +59,28 @@ func (dq *DepartmentQuery) Unique(unique bool) *DepartmentQuery {
 func (dq *DepartmentQuery) Order(o ...department.OrderOption) *DepartmentQuery {
 	dq.order = append(dq.order, o...)
 	return dq
+}
+
+// QueryUsers chains the current query on the "users" edge.
+func (dq *DepartmentQuery) QueryUsers() *UserQuery {
+	query := (&UserClient{config: dq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(department.Table, department.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, department.UsersTable, department.UsersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Department entity from the query.
@@ -250,10 +275,22 @@ func (dq *DepartmentQuery) Clone() *DepartmentQuery {
 		order:      append([]department.OrderOption{}, dq.order...),
 		inters:     append([]Interceptor{}, dq.inters...),
 		predicates: append([]predicate.Department{}, dq.predicates...),
+		withUsers:  dq.withUsers.Clone(),
 		// clone intermediate query.
 		sql:  dq.sql.Clone(),
 		path: dq.path,
 	}
+}
+
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (dq *DepartmentQuery) WithUsers(opts ...func(*UserQuery)) *DepartmentQuery {
+	query := (&UserClient{config: dq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	dq.withUsers = query
+	return dq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -332,8 +369,11 @@ func (dq *DepartmentQuery) prepareQuery(ctx context.Context) error {
 
 func (dq *DepartmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Department, error) {
 	var (
-		nodes = []*Department{}
-		_spec = dq.querySpec()
+		nodes       = []*Department{}
+		_spec       = dq.querySpec()
+		loadedTypes = [1]bool{
+			dq.withUsers != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Department).scanValues(nil, columns)
@@ -341,6 +381,7 @@ func (dq *DepartmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*D
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Department{config: dq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -352,7 +393,46 @@ func (dq *DepartmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*D
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := dq.withUsers; query != nil {
+		if err := dq.loadUsers(ctx, query, nodes,
+			func(n *Department) { n.Edges.Users = []*User{} },
+			func(n *Department, e *User) { n.Edges.Users = append(n.Edges.Users, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (dq *DepartmentQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Department, init func(*Department), assign func(*Department, *User)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Department)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.User(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(department.UsersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.department_users
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "department_users" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "department_users" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }
 
 func (dq *DepartmentQuery) sqlCount(ctx context.Context) (int, error) {

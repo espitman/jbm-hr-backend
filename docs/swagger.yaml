@@ -140,6 +140,8 @@ definitions:
     properties:
       avatar:
         type: string
+      department_id:
+        type: integer
       email:
         type: string
       first_name:
@@ -563,6 +565,8 @@ definitions:
     properties:
       avatar:
         type: string
+      department_id:
+        type: integer
       email:
         type: string
       first_name:
@@ -607,6 +611,8 @@ definitions:
     properties:
       avatar:
         type: string
+      department_id:
+        type: integer
       email:
         type: string
       first_name:
@@ -624,6 +630,8 @@ definitions:
     properties:
       avatar:
         type: string
+      department_id:
+        type: integer
       email:
         type: string
       first_name:
@@ -688,6 +696,8 @@ definitions:
     properties:
       avatar:
         type: string
+      department_id:
+        type: integer
       email:
         type: string
       first_name:
@@ -731,6 +741,8 @@ definitions:
     properties:
       avatar:
         type: string
+      department_id:
+        type: integer
       email:
         type: string
       first_name:

@@ -50,5 +50,8 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
+		edge.From("department", Department.Type).
+			Ref("users").
+			Unique(),
 	}
 }

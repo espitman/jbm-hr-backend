@@ -2220,6 +2220,9 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "department_id": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -2848,6 +2851,9 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "department_id": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -2916,6 +2922,9 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "department_id": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -2948,6 +2957,9 @@ const docTemplate = `{
             "properties": {
                 "avatar": {
                     "type": "string"
+                },
+                "department_id": {
+                    "type": "integer"
                 },
                 "email": {
                     "type": "string"
@@ -3038,6 +3050,9 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "department_id": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3103,6 +3118,9 @@ const docTemplate = `{
             "properties": {
                 "avatar": {
                     "type": "string"
+                },
+                "department_id": {
+                    "type": "integer"
                 },
                 "email": {
                     "type": "string"

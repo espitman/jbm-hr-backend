@@ -25,15 +25,20 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 	if entUser == nil {
 		return nil
 	}
+	var departmentID *int
+	if entUser.Edges.Department != nil {
+		departmentID = &entUser.Edges.Department.ID
+	}
 	return &contract.User{
-		ID:        entUser.ID,
-		Email:     entUser.Email,
-		Phone:     entUser.Phone,
-		FirstName: entUser.FirstName,
-		LastName:  entUser.LastName,
-		Role:      string(entUser.Role),
-		Avatar:    entUser.Avatar,
-		Password:  entUser.Password,
+		ID:           entUser.ID,
+		Email:        entUser.Email,
+		Phone:        entUser.Phone,
+		FirstName:    entUser.FirstName,
+		LastName:     entUser.LastName,
+		Role:         string(entUser.Role),
+		Avatar:       entUser.Avatar,
+		Password:     entUser.Password,
+		DepartmentID: departmentID,
 	}
 }
 
@@ -71,15 +76,20 @@ func (r *EntRepository) GetByEmail(ctx context.Context, email string) (*contract
 
 // Create creates a new user
 func (r *EntRepository) Create(ctx context.Context, req *contract.CreateUserInput) (*contract.User, error) {
-	entUser, err := r.client.User.
+	create := r.client.User.
 		Create().
 		SetEmail(req.Email).
 		SetPhone(req.Phone).
 		SetFirstName(req.FirstName).
 		SetLastName(req.LastName).
 		SetRole(entUser.Role(req.Role)).
-		SetAvatar(req.Avatar).
-		Save(ctx)
+		SetAvatar(req.Avatar)
+
+	if req.DepartmentID != nil {
+		create = create.SetDepartmentID(*req.DepartmentID)
+	}
+
+	entUser, err := create.Save(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -88,15 +98,22 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateUserInpu
 
 // Update updates an existing user
 func (r *EntRepository) Update(ctx context.Context, id int, req *contract.UpdateUserInput) (*contract.User, error) {
-	entUser, err := r.client.User.
+	update := r.client.User.
 		UpdateOneID(id).
 		SetEmail(req.Email).
 		SetPhone(req.Phone).
 		SetFirstName(req.FirstName).
 		SetLastName(req.LastName).
 		SetRole(entUser.Role(req.Role)).
-		SetAvatar(req.Avatar).
-		Save(ctx)
+		SetAvatar(req.Avatar)
+
+	if req.DepartmentID != nil {
+		update = update.SetDepartmentID(*req.DepartmentID)
+	} else {
+		update = update.ClearDepartment()
+	}
+
+	entUser, err := update.Save(ctx)
 	if err != nil {
 		return nil, err
 	}
