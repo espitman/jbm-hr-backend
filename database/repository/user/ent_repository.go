@@ -44,7 +44,9 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 
 // GetAll retrieves all users
 func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.User, error) {
-	entUsers, err := r.client.User.Query().All(ctx)
+	entUsers, err := r.client.User.Query().
+		WithDepartment().
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +60,10 @@ func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.User, error) {
 
 // GetByID retrieves a user by their ID
 func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.User, error) {
-	entUser, err := r.client.User.Query().Where(entUser.ID(id)).Only(ctx)
+	entUser, err := r.client.User.Query().
+		Where(entUser.ID(id)).
+		WithDepartment().
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +72,10 @@ func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.User, er
 
 // GetByEmail retrieves a user by their email
 func (r *EntRepository) GetByEmail(ctx context.Context, email string) (*contract.User, error) {
-	entUser, err := r.client.User.Query().Where(entUser.Email(email)).Only(ctx)
+	entUser, err := r.client.User.Query().
+		Where(entUser.Email(email)).
+		WithDepartment().
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}

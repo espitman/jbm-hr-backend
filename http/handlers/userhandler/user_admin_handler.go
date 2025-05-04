@@ -90,13 +90,14 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 	usersData := make([]UserData, len(users))
 	for i, user := range users {
 		usersData[i] = UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
+			ID:           user.ID,
+			Email:        user.Email,
+			Phone:        user.Phone,
+			FirstName:    user.FirstName,
+			LastName:     user.LastName,
+			Role:         user.Role,
+			Avatar:       user.Avatar,
+			DepartmentID: user.DepartmentID,
 		}
 	}
 
@@ -183,13 +184,14 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 	}
 
 	return dto.SuccessJSON(c, UserData{
-		ID:        user.ID,
-		Email:     user.Email,
-		Phone:     user.Phone,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Role:      user.Role,
-		Avatar:    user.Avatar,
+		ID:           user.ID,
+		Email:        user.Email,
+		Phone:        user.Phone,
+		FirstName:    user.FirstName,
+		LastName:     user.LastName,
+		Role:         user.Role,
+		Avatar:       user.Avatar,
+		DepartmentID: user.DepartmentID,
 	})
 }
 
