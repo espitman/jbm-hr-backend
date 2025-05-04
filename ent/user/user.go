@@ -28,6 +28,10 @@ const (
 	FieldAvatar = "avatar"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
+	// FieldBirthdate holds the string denoting the birthdate field in the database.
+	FieldBirthdate = "birthdate"
+	// FieldCooperationStartDate holds the string denoting the cooperation_start_date field in the database.
+	FieldCooperationStartDate = "cooperation_start_date"
 	// EdgeOtps holds the string denoting the otps edge name in mutations.
 	EdgeOtps = "otps"
 	// EdgeResumes holds the string denoting the resumes edge name in mutations.
@@ -78,6 +82,8 @@ var Columns = []string{
 	FieldRole,
 	FieldAvatar,
 	FieldPassword,
+	FieldBirthdate,
+	FieldCooperationStartDate,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
@@ -179,6 +185,16 @@ func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
 // ByPassword orders the results by the password field.
 func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
+}
+
+// ByBirthdate orders the results by the birthdate field.
+func ByBirthdate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBirthdate, opts...).ToFunc()
+}
+
+// ByCooperationStartDate orders the results by the cooperation_start_date field.
+func ByCooperationStartDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCooperationStartDate, opts...).ToFunc()
 }
 
 // ByOtpsCount orders the results by otps count.

@@ -138,6 +138,8 @@ var (
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"admin", "employee"}, Default: "employee"},
 		{Name: "avatar", Type: field.TypeString, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
+		{Name: "birthdate", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "date"}},
+		{Name: "cooperation_start_date", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "date"}},
 		{Name: "department_users", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -148,7 +150,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_departments_users",
-				Columns:    []*schema.Column{UsersColumns[8]},
+				Columns:    []*schema.Column{UsersColumns[10]},
 				RefColumns: []*schema.Column{DepartmentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

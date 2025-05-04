@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -85,6 +86,34 @@ func (uc *UserCreate) SetPassword(s string) *UserCreate {
 func (uc *UserCreate) SetNillablePassword(s *string) *UserCreate {
 	if s != nil {
 		uc.SetPassword(*s)
+	}
+	return uc
+}
+
+// SetBirthdate sets the "birthdate" field.
+func (uc *UserCreate) SetBirthdate(t time.Time) *UserCreate {
+	uc.mutation.SetBirthdate(t)
+	return uc
+}
+
+// SetNillableBirthdate sets the "birthdate" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBirthdate(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetBirthdate(*t)
+	}
+	return uc
+}
+
+// SetCooperationStartDate sets the "cooperation_start_date" field.
+func (uc *UserCreate) SetCooperationStartDate(t time.Time) *UserCreate {
+	uc.mutation.SetCooperationStartDate(t)
+	return uc
+}
+
+// SetNillableCooperationStartDate sets the "cooperation_start_date" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCooperationStartDate(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetCooperationStartDate(*t)
 	}
 	return uc
 }
@@ -289,6 +318,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
+	}
+	if value, ok := uc.mutation.Birthdate(); ok {
+		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)
+		_node.Birthdate = value
+	}
+	if value, ok := uc.mutation.CooperationStartDate(); ok {
+		_spec.SetField(user.FieldCooperationStartDate, field.TypeTime, value)
+		_node.CooperationStartDate = value
 	}
 	if nodes := uc.mutation.OtpsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

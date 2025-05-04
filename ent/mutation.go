@@ -4012,31 +4012,33 @@ func (m *ResumeMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	email             *string
-	phone             *string
-	first_name        *string
-	last_name         *string
-	role              *user.Role
-	avatar            *string
-	password          *string
-	clearedFields     map[string]struct{}
-	otps              map[int]struct{}
-	removedotps       map[int]struct{}
-	clearedotps       bool
-	resumes           map[int]struct{}
-	removedresumes    map[int]struct{}
-	clearedresumes    bool
-	requests          map[int]struct{}
-	removedrequests   map[int]struct{}
-	clearedrequests   bool
-	department        *int
-	cleareddepartment bool
-	done              bool
-	oldValue          func(context.Context) (*User, error)
-	predicates        []predicate.User
+	op                     Op
+	typ                    string
+	id                     *int
+	email                  *string
+	phone                  *string
+	first_name             *string
+	last_name              *string
+	role                   *user.Role
+	avatar                 *string
+	password               *string
+	birthdate              *time.Time
+	cooperation_start_date *time.Time
+	clearedFields          map[string]struct{}
+	otps                   map[int]struct{}
+	removedotps            map[int]struct{}
+	clearedotps            bool
+	resumes                map[int]struct{}
+	removedresumes         map[int]struct{}
+	clearedresumes         bool
+	requests               map[int]struct{}
+	removedrequests        map[int]struct{}
+	clearedrequests        bool
+	department             *int
+	cleareddepartment      bool
+	done                   bool
+	oldValue               func(context.Context) (*User, error)
+	predicates             []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -4415,6 +4417,104 @@ func (m *UserMutation) ResetPassword() {
 	delete(m.clearedFields, user.FieldPassword)
 }
 
+// SetBirthdate sets the "birthdate" field.
+func (m *UserMutation) SetBirthdate(t time.Time) {
+	m.birthdate = &t
+}
+
+// Birthdate returns the value of the "birthdate" field in the mutation.
+func (m *UserMutation) Birthdate() (r time.Time, exists bool) {
+	v := m.birthdate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBirthdate returns the old "birthdate" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldBirthdate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBirthdate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBirthdate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBirthdate: %w", err)
+	}
+	return oldValue.Birthdate, nil
+}
+
+// ClearBirthdate clears the value of the "birthdate" field.
+func (m *UserMutation) ClearBirthdate() {
+	m.birthdate = nil
+	m.clearedFields[user.FieldBirthdate] = struct{}{}
+}
+
+// BirthdateCleared returns if the "birthdate" field was cleared in this mutation.
+func (m *UserMutation) BirthdateCleared() bool {
+	_, ok := m.clearedFields[user.FieldBirthdate]
+	return ok
+}
+
+// ResetBirthdate resets all changes to the "birthdate" field.
+func (m *UserMutation) ResetBirthdate() {
+	m.birthdate = nil
+	delete(m.clearedFields, user.FieldBirthdate)
+}
+
+// SetCooperationStartDate sets the "cooperation_start_date" field.
+func (m *UserMutation) SetCooperationStartDate(t time.Time) {
+	m.cooperation_start_date = &t
+}
+
+// CooperationStartDate returns the value of the "cooperation_start_date" field in the mutation.
+func (m *UserMutation) CooperationStartDate() (r time.Time, exists bool) {
+	v := m.cooperation_start_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCooperationStartDate returns the old "cooperation_start_date" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCooperationStartDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCooperationStartDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCooperationStartDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCooperationStartDate: %w", err)
+	}
+	return oldValue.CooperationStartDate, nil
+}
+
+// ClearCooperationStartDate clears the value of the "cooperation_start_date" field.
+func (m *UserMutation) ClearCooperationStartDate() {
+	m.cooperation_start_date = nil
+	m.clearedFields[user.FieldCooperationStartDate] = struct{}{}
+}
+
+// CooperationStartDateCleared returns if the "cooperation_start_date" field was cleared in this mutation.
+func (m *UserMutation) CooperationStartDateCleared() bool {
+	_, ok := m.clearedFields[user.FieldCooperationStartDate]
+	return ok
+}
+
+// ResetCooperationStartDate resets all changes to the "cooperation_start_date" field.
+func (m *UserMutation) ResetCooperationStartDate() {
+	m.cooperation_start_date = nil
+	delete(m.clearedFields, user.FieldCooperationStartDate)
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by ids.
 func (m *UserMutation) AddOtpIDs(ids ...int) {
 	if m.otps == nil {
@@ -4650,7 +4750,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
 	}
@@ -4671,6 +4771,12 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.password != nil {
 		fields = append(fields, user.FieldPassword)
+	}
+	if m.birthdate != nil {
+		fields = append(fields, user.FieldBirthdate)
+	}
+	if m.cooperation_start_date != nil {
+		fields = append(fields, user.FieldCooperationStartDate)
 	}
 	return fields
 }
@@ -4694,6 +4800,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Avatar()
 	case user.FieldPassword:
 		return m.Password()
+	case user.FieldBirthdate:
+		return m.Birthdate()
+	case user.FieldCooperationStartDate:
+		return m.CooperationStartDate()
 	}
 	return nil, false
 }
@@ -4717,6 +4827,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAvatar(ctx)
 	case user.FieldPassword:
 		return m.OldPassword(ctx)
+	case user.FieldBirthdate:
+		return m.OldBirthdate(ctx)
+	case user.FieldCooperationStartDate:
+		return m.OldCooperationStartDate(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -4775,6 +4889,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPassword(v)
 		return nil
+	case user.FieldBirthdate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBirthdate(v)
+		return nil
+	case user.FieldCooperationStartDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCooperationStartDate(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -4811,6 +4939,12 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldPassword) {
 		fields = append(fields, user.FieldPassword)
 	}
+	if m.FieldCleared(user.FieldBirthdate) {
+		fields = append(fields, user.FieldBirthdate)
+	}
+	if m.FieldCleared(user.FieldCooperationStartDate) {
+		fields = append(fields, user.FieldCooperationStartDate)
+	}
 	return fields
 }
 
@@ -4830,6 +4964,12 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldPassword:
 		m.ClearPassword()
+		return nil
+	case user.FieldBirthdate:
+		m.ClearBirthdate()
+		return nil
+	case user.FieldCooperationStartDate:
+		m.ClearCooperationStartDate()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -4859,6 +4999,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPassword:
 		m.ResetPassword()
+		return nil
+	case user.FieldBirthdate:
+		m.ResetBirthdate()
+		return nil
+	case user.FieldCooperationStartDate:
+		m.ResetCooperationStartDate()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

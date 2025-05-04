@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -31,6 +32,10 @@ type User struct {
 	Avatar string `json:"avatar,omitempty"`
 	// Password holds the value of the "password" field.
 	Password string `json:"-"`
+	// Birthdate holds the value of the "birthdate" field.
+	Birthdate time.Time `json:"birthdate,omitempty"`
+	// CooperationStartDate holds the value of the "cooperation_start_date" field.
+	CooperationStartDate time.Time `json:"cooperation_start_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges            UserEdges `json:"edges"`
@@ -100,6 +105,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldRole, user.FieldAvatar, user.FieldPassword:
 			values[i] = new(sql.NullString)
+		case user.FieldBirthdate, user.FieldCooperationStartDate:
+			values[i] = new(sql.NullTime)
 		case user.ForeignKeys[0]: // department_users
 			values[i] = new(sql.NullInt64)
 		default:
@@ -164,6 +171,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
 				u.Password = value.String
+			}
+		case user.FieldBirthdate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field birthdate", values[i])
+			} else if value.Valid {
+				u.Birthdate = value.Time
+			}
+		case user.FieldCooperationStartDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field cooperation_start_date", values[i])
+			} else if value.Valid {
+				u.CooperationStartDate = value.Time
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -247,6 +266,12 @@ func (u *User) String() string {
 	builder.WriteString(u.Avatar)
 	builder.WriteString(", ")
 	builder.WriteString("password=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("birthdate=")
+	builder.WriteString(u.Birthdate.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("cooperation_start_date=")
+	builder.WriteString(u.CooperationStartDate.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

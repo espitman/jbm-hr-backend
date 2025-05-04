@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -138,6 +139,46 @@ func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 // ClearPassword clears the value of the "password" field.
 func (uu *UserUpdate) ClearPassword() *UserUpdate {
 	uu.mutation.ClearPassword()
+	return uu
+}
+
+// SetBirthdate sets the "birthdate" field.
+func (uu *UserUpdate) SetBirthdate(t time.Time) *UserUpdate {
+	uu.mutation.SetBirthdate(t)
+	return uu
+}
+
+// SetNillableBirthdate sets the "birthdate" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableBirthdate(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetBirthdate(*t)
+	}
+	return uu
+}
+
+// ClearBirthdate clears the value of the "birthdate" field.
+func (uu *UserUpdate) ClearBirthdate() *UserUpdate {
+	uu.mutation.ClearBirthdate()
+	return uu
+}
+
+// SetCooperationStartDate sets the "cooperation_start_date" field.
+func (uu *UserUpdate) SetCooperationStartDate(t time.Time) *UserUpdate {
+	uu.mutation.SetCooperationStartDate(t)
+	return uu
+}
+
+// SetNillableCooperationStartDate sets the "cooperation_start_date" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCooperationStartDate(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetCooperationStartDate(*t)
+	}
+	return uu
+}
+
+// ClearCooperationStartDate clears the value of the "cooperation_start_date" field.
+func (uu *UserUpdate) ClearCooperationStartDate() *UserUpdate {
+	uu.mutation.ClearCooperationStartDate()
 	return uu
 }
 
@@ -374,6 +415,18 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.PasswordCleared() {
 		_spec.ClearField(user.FieldPassword, field.TypeString)
+	}
+	if value, ok := uu.mutation.Birthdate(); ok {
+		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)
+	}
+	if uu.mutation.BirthdateCleared() {
+		_spec.ClearField(user.FieldBirthdate, field.TypeTime)
+	}
+	if value, ok := uu.mutation.CooperationStartDate(); ok {
+		_spec.SetField(user.FieldCooperationStartDate, field.TypeTime, value)
+	}
+	if uu.mutation.CooperationStartDateCleared() {
+		_spec.ClearField(user.FieldCooperationStartDate, field.TypeTime)
 	}
 	if uu.mutation.OtpsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -669,6 +722,46 @@ func (uuo *UserUpdateOne) ClearPassword() *UserUpdateOne {
 	return uuo
 }
 
+// SetBirthdate sets the "birthdate" field.
+func (uuo *UserUpdateOne) SetBirthdate(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetBirthdate(t)
+	return uuo
+}
+
+// SetNillableBirthdate sets the "birthdate" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableBirthdate(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetBirthdate(*t)
+	}
+	return uuo
+}
+
+// ClearBirthdate clears the value of the "birthdate" field.
+func (uuo *UserUpdateOne) ClearBirthdate() *UserUpdateOne {
+	uuo.mutation.ClearBirthdate()
+	return uuo
+}
+
+// SetCooperationStartDate sets the "cooperation_start_date" field.
+func (uuo *UserUpdateOne) SetCooperationStartDate(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetCooperationStartDate(t)
+	return uuo
+}
+
+// SetNillableCooperationStartDate sets the "cooperation_start_date" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCooperationStartDate(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetCooperationStartDate(*t)
+	}
+	return uuo
+}
+
+// ClearCooperationStartDate clears the value of the "cooperation_start_date" field.
+func (uuo *UserUpdateOne) ClearCooperationStartDate() *UserUpdateOne {
+	uuo.mutation.ClearCooperationStartDate()
+	return uuo
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by IDs.
 func (uuo *UserUpdateOne) AddOtpIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddOtpIDs(ids...)
@@ -932,6 +1025,18 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.PasswordCleared() {
 		_spec.ClearField(user.FieldPassword, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Birthdate(); ok {
+		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)
+	}
+	if uuo.mutation.BirthdateCleared() {
+		_spec.ClearField(user.FieldBirthdate, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.CooperationStartDate(); ok {
+		_spec.SetField(user.FieldCooperationStartDate, field.TypeTime, value)
+	}
+	if uuo.mutation.CooperationStartDateCleared() {
+		_spec.ClearField(user.FieldCooperationStartDate, field.TypeTime)
 	}
 	if uuo.mutation.OtpsCleared() {
 		edge := &sqlgraph.EdgeSpec{

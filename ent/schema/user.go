@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -32,6 +33,16 @@ func (User) Fields() []ent.Field {
 		field.String("password").
 			Optional().
 			Sensitive(),
+		field.Time("birthdate").
+			SchemaType(map[string]string{
+				dialect.Postgres: "date",
+			}).
+			Optional(),
+		field.Time("cooperation_start_date").
+			SchemaType(map[string]string{
+				dialect.Postgres: "date",
+			}).
+			Optional(),
 	}
 }
 

@@ -3,6 +3,8 @@
 package user
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
@@ -81,6 +83,16 @@ func Avatar(v string) predicate.User {
 // Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
 func Password(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPassword, v))
+}
+
+// Birthdate applies equality check predicate on the "birthdate" field. It's identical to BirthdateEQ.
+func Birthdate(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldBirthdate, v))
+}
+
+// CooperationStartDate applies equality check predicate on the "cooperation_start_date" field. It's identical to CooperationStartDateEQ.
+func CooperationStartDate(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCooperationStartDate, v))
 }
 
 // EmailEQ applies the EQ predicate on the "email" field.
@@ -511,6 +523,106 @@ func PasswordEqualFold(v string) predicate.User {
 // PasswordContainsFold applies the ContainsFold predicate on the "password" field.
 func PasswordContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldPassword, v))
+}
+
+// BirthdateEQ applies the EQ predicate on the "birthdate" field.
+func BirthdateEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldBirthdate, v))
+}
+
+// BirthdateNEQ applies the NEQ predicate on the "birthdate" field.
+func BirthdateNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldBirthdate, v))
+}
+
+// BirthdateIn applies the In predicate on the "birthdate" field.
+func BirthdateIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldBirthdate, vs...))
+}
+
+// BirthdateNotIn applies the NotIn predicate on the "birthdate" field.
+func BirthdateNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldBirthdate, vs...))
+}
+
+// BirthdateGT applies the GT predicate on the "birthdate" field.
+func BirthdateGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldBirthdate, v))
+}
+
+// BirthdateGTE applies the GTE predicate on the "birthdate" field.
+func BirthdateGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldBirthdate, v))
+}
+
+// BirthdateLT applies the LT predicate on the "birthdate" field.
+func BirthdateLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldBirthdate, v))
+}
+
+// BirthdateLTE applies the LTE predicate on the "birthdate" field.
+func BirthdateLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldBirthdate, v))
+}
+
+// BirthdateIsNil applies the IsNil predicate on the "birthdate" field.
+func BirthdateIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldBirthdate))
+}
+
+// BirthdateNotNil applies the NotNil predicate on the "birthdate" field.
+func BirthdateNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldBirthdate))
+}
+
+// CooperationStartDateEQ applies the EQ predicate on the "cooperation_start_date" field.
+func CooperationStartDateEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCooperationStartDate, v))
+}
+
+// CooperationStartDateNEQ applies the NEQ predicate on the "cooperation_start_date" field.
+func CooperationStartDateNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCooperationStartDate, v))
+}
+
+// CooperationStartDateIn applies the In predicate on the "cooperation_start_date" field.
+func CooperationStartDateIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldCooperationStartDate, vs...))
+}
+
+// CooperationStartDateNotIn applies the NotIn predicate on the "cooperation_start_date" field.
+func CooperationStartDateNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldCooperationStartDate, vs...))
+}
+
+// CooperationStartDateGT applies the GT predicate on the "cooperation_start_date" field.
+func CooperationStartDateGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldCooperationStartDate, v))
+}
+
+// CooperationStartDateGTE applies the GTE predicate on the "cooperation_start_date" field.
+func CooperationStartDateGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldCooperationStartDate, v))
+}
+
+// CooperationStartDateLT applies the LT predicate on the "cooperation_start_date" field.
+func CooperationStartDateLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldCooperationStartDate, v))
+}
+
+// CooperationStartDateLTE applies the LTE predicate on the "cooperation_start_date" field.
+func CooperationStartDateLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldCooperationStartDate, v))
+}
+
+// CooperationStartDateIsNil applies the IsNil predicate on the "cooperation_start_date" field.
+func CooperationStartDateIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldCooperationStartDate))
+}
+
+// CooperationStartDateNotNil applies the NotNil predicate on the "cooperation_start_date" field.
+func CooperationStartDateNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldCooperationStartDate))
 }
 
 // HasOtps applies the HasEdge predicate on the "otps" edge.
