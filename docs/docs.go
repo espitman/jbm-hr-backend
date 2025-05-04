@@ -2993,6 +2993,12 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "birthdate": {
+                    "type": "string"
+                },
+                "cooperation_start_date": {
+                    "type": "string"
+                },
                 "department_id": {
                     "type": "integer"
                 },

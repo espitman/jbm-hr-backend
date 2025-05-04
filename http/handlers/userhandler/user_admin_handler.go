@@ -50,13 +50,15 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 
 	// Register user
 	user, err := h.userService.RegisterUser(c.Request().Context(), &contract.RegisterUserInput{
-		Email:        req.Email,
-		Phone:        req.Phone,
-		FirstName:    req.FirstName,
-		LastName:     req.LastName,
-		Role:         req.Role,
-		Avatar:       req.Avatar,
-		DepartmentID: req.DepartmentID,
+		Email:                req.Email,
+		Phone:                req.Phone,
+		FirstName:            req.FirstName,
+		LastName:             req.LastName,
+		Role:                 req.Role,
+		Avatar:               req.Avatar,
+		DepartmentID:         req.DepartmentID,
+		Birthdate:            req.Birthdate,
+		CooperationStartDate: req.CooperationStartDate,
 	})
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
@@ -77,6 +79,8 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 			user.DepartmentIcon,
 			user.DepartmentShortName,
 		),
+		Birthdate:            user.Birthdate,
+		CooperationStartDate: user.CooperationStartDate,
 	})
 }
 
@@ -121,6 +125,8 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 				user.DepartmentIcon,
 				user.DepartmentShortName,
 			),
+			Birthdate:            user.Birthdate,
+			CooperationStartDate: user.CooperationStartDate,
 		}
 	}
 
@@ -220,6 +226,8 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 			user.DepartmentIcon,
 			user.DepartmentShortName,
 		),
+		Birthdate:            user.Birthdate,
+		CooperationStartDate: user.CooperationStartDate,
 	})
 }
 
