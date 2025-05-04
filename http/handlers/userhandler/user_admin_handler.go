@@ -10,6 +10,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// convertToDepartmentDTO converts department data to DTO format
+func convertToDepartmentDTO(departmentID *int, title *string, icon *string, shortName *string) *DepartmentDTO {
+	if departmentID == nil {
+		return nil
+	}
+	return &DepartmentDTO{
+		ID:        *departmentID,
+		Title:     *title,
+		Icon:      *icon,
+		ShortName: *shortName,
+	}
+}
+
 // RegisterUser handles the user registration
 // @Summary Register a new user
 // @Description Register a new user in the system (Admin only)
@@ -51,17 +64,19 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 
 	// Prepare response
 	return dto.CreatedJSON(c, RegisterUserData{
-		ID:                  user.ID,
-		Email:               user.Email,
-		Phone:               user.Phone,
-		FirstName:           user.FirstName,
-		LastName:            user.LastName,
-		Role:                user.Role,
-		Avatar:              user.Avatar,
-		DepartmentID:        user.DepartmentID,
-		DepartmentTitle:     user.DepartmentTitle,
-		DepartmentIcon:      user.DepartmentIcon,
-		DepartmentShortName: user.DepartmentShortName,
+		ID:        user.ID,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Avatar:    user.Avatar,
+		Department: convertToDepartmentDTO(
+			user.DepartmentID,
+			user.DepartmentTitle,
+			user.DepartmentIcon,
+			user.DepartmentShortName,
+		),
 	})
 }
 
@@ -93,17 +108,19 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 	usersData := make([]UserData, len(users))
 	for i, user := range users {
 		usersData[i] = UserData{
-			ID:                  user.ID,
-			Email:               user.Email,
-			Phone:               user.Phone,
-			FirstName:           user.FirstName,
-			LastName:            user.LastName,
-			Role:                user.Role,
-			Avatar:              user.Avatar,
-			DepartmentID:        user.DepartmentID,
-			DepartmentTitle:     user.DepartmentTitle,
-			DepartmentIcon:      user.DepartmentIcon,
-			DepartmentShortName: user.DepartmentShortName,
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+			Department: convertToDepartmentDTO(
+				user.DepartmentID,
+				user.DepartmentTitle,
+				user.DepartmentIcon,
+				user.DepartmentShortName,
+			),
 		}
 	}
 
@@ -190,17 +207,19 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 	}
 
 	return dto.SuccessJSON(c, UserData{
-		ID:                  user.ID,
-		Email:               user.Email,
-		Phone:               user.Phone,
-		FirstName:           user.FirstName,
-		LastName:            user.LastName,
-		Role:                user.Role,
-		Avatar:              user.Avatar,
-		DepartmentID:        user.DepartmentID,
-		DepartmentTitle:     user.DepartmentTitle,
-		DepartmentIcon:      user.DepartmentIcon,
-		DepartmentShortName: user.DepartmentShortName,
+		ID:        user.ID,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Avatar:    user.Avatar,
+		Department: convertToDepartmentDTO(
+			user.DepartmentID,
+			user.DepartmentTitle,
+			user.DepartmentIcon,
+			user.DepartmentShortName,
+		),
 	})
 }
 
@@ -243,17 +262,19 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 
 	return dto.SuccessJSON(c, UpdateUserResponse{
 		Data: UserData{
-			ID:                  user.ID,
-			Email:               user.Email,
-			Phone:               user.Phone,
-			FirstName:           user.FirstName,
-			LastName:            user.LastName,
-			Role:                user.Role,
-			Avatar:              user.Avatar,
-			DepartmentID:        user.DepartmentID,
-			DepartmentTitle:     user.DepartmentTitle,
-			DepartmentIcon:      user.DepartmentIcon,
-			DepartmentShortName: user.DepartmentShortName,
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+			Department: convertToDepartmentDTO(
+				user.DepartmentID,
+				user.DepartmentTitle,
+				user.DepartmentIcon,
+				user.DepartmentShortName,
+			),
 		},
 	})
 }

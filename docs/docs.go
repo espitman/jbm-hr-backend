@@ -2845,14 +2845,31 @@ const docTemplate = `{
                 }
             }
         },
+        "userhandler.DepartmentDTO": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "short_name": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "userhandler.GetMeData": {
             "type": "object",
             "properties": {
                 "avatar": {
                     "type": "string"
                 },
-                "department_id": {
-                    "type": "integer"
+                "department": {
+                    "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
                 "email": {
                     "type": "string"
@@ -2922,8 +2939,8 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
-                "department_id": {
-                    "type": "integer"
+                "department": {
+                    "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
                 "email": {
                     "type": "string"
@@ -3050,8 +3067,8 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
-                "department_id": {
-                    "type": "integer"
+                "department": {
+                    "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
                 "email": {
                     "type": "string"
@@ -3119,8 +3136,8 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
-                "department_id": {
-                    "type": "integer"
+                "department": {
+                    "$ref": "#/definitions/userhandler.DepartmentDTO"
                 },
                 "email": {
                     "type": "string"
