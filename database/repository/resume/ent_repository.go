@@ -7,6 +7,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/ent"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
+	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
 type repository struct {
@@ -22,14 +23,18 @@ func NewRepository(client *ent.Client) Repository {
 
 // GetAll retrieves all resumes
 func (r *repository) GetAll(ctx context.Context) ([]*contract.Resume, error) {
-	resumes, err := r.client.Resume.Query().All(ctx)
+	resumes, err := r.client.Resume.Query().
+		WithUser(func(q *ent.UserQuery) {
+			q.Select(user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldAvatar)
+		}).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var result []*contract.Resume
 	for _, res := range resumes {
-		result = append(result, &contract.Resume{
+		resume := &contract.Resume{
 			ID:              res.ID,
 			IntroducedName:  res.IntroducedName,
 			IntroducedPhone: res.IntroducedPhone,
@@ -39,7 +44,19 @@ func (r *repository) GetAll(ctx context.Context) ([]*contract.Resume, error) {
 			UserID:          res.UserID,
 			CreatedAt:       res.CreatedAt.Format(time.RFC3339),
 			UpdatedAt:       res.UpdatedAt.Format(time.RFC3339),
-		})
+		}
+
+		if res.Edges.User != nil {
+			resume.User = contract.ResumeUser{
+				ID:        res.Edges.User.ID,
+				Email:     res.Edges.User.Email,
+				FirstName: res.Edges.User.FirstName,
+				LastName:  res.Edges.User.LastName,
+				Avatar:    res.Edges.User.Avatar,
+			}
+		}
+
+		result = append(result, resume)
 	}
 
 	return result, nil
@@ -47,12 +64,17 @@ func (r *repository) GetAll(ctx context.Context) ([]*contract.Resume, error) {
 
 // GetByID retrieves a resume by their ID
 func (r *repository) GetByID(ctx context.Context, id int) (*contract.Resume, error) {
-	res, err := r.client.Resume.Get(ctx, id)
+	res, err := r.client.Resume.Query().
+		WithUser(func(q *ent.UserQuery) {
+			q.Select(user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldAvatar)
+		}).
+		Where(resume.ID(id)).
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &contract.Resume{
+	result := &contract.Resume{
 		ID:              res.ID,
 		IntroducedName:  res.IntroducedName,
 		IntroducedPhone: res.IntroducedPhone,
@@ -62,7 +84,19 @@ func (r *repository) GetByID(ctx context.Context, id int) (*contract.Resume, err
 		UserID:          res.UserID,
 		CreatedAt:       res.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:       res.UpdatedAt.Format(time.RFC3339),
-	}, nil
+	}
+
+	if res.Edges.User != nil {
+		result.User = contract.ResumeUser{
+			ID:        res.Edges.User.ID,
+			Email:     res.Edges.User.Email,
+			FirstName: res.Edges.User.FirstName,
+			LastName:  res.Edges.User.LastName,
+			Avatar:    res.Edges.User.Avatar,
+		}
+	}
+
+	return result, nil
 }
 
 // Create creates a new resume
@@ -78,17 +112,8 @@ func (r *repository) Create(ctx context.Context, req *contract.ResumeInput) (*co
 		return nil, err
 	}
 
-	return &contract.Resume{
-		ID:              res.ID,
-		IntroducedName:  res.IntroducedName,
-		IntroducedPhone: res.IntroducedPhone,
-		Position:        res.Position,
-		File:            res.File,
-		Status:          string(res.Status),
-		UserID:          res.UserID,
-		CreatedAt:       res.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:       res.UpdatedAt.Format(time.RFC3339),
-	}, nil
+	// Fetch the created resume with user details
+	return r.GetByID(ctx, res.ID)
 }
 
 // Update updates an existing resume
@@ -104,17 +129,8 @@ func (r *repository) Update(ctx context.Context, id int, req *contract.ResumeInp
 		return nil, err
 	}
 
-	return &contract.Resume{
-		ID:              res.ID,
-		IntroducedName:  res.IntroducedName,
-		IntroducedPhone: res.IntroducedPhone,
-		Position:        res.Position,
-		File:            res.File,
-		Status:          string(res.Status),
-		UserID:          res.UserID,
-		CreatedAt:       res.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:       res.UpdatedAt.Format(time.RFC3339),
-	}, nil
+	// Fetch the updated resume with user details
+	return r.GetByID(ctx, res.ID)
 }
 
 // Delete deletes a resume by their ID
@@ -134,6 +150,9 @@ func (r *repository) List(ctx context.Context, page, limit int) ([]*contract.Res
 
 	// Get paginated results
 	resumes, err := r.client.Resume.Query().
+		WithUser(func(q *ent.UserQuery) {
+			q.Select(user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldAvatar)
+		}).
 		Offset(offset).
 		Limit(limit).
 		Order(ent.Desc(resume.FieldCreatedAt)).
@@ -144,7 +163,7 @@ func (r *repository) List(ctx context.Context, page, limit int) ([]*contract.Res
 
 	var result []*contract.Resume
 	for _, res := range resumes {
-		result = append(result, &contract.Resume{
+		resume := &contract.Resume{
 			ID:              res.ID,
 			IntroducedName:  res.IntroducedName,
 			IntroducedPhone: res.IntroducedPhone,
@@ -154,7 +173,19 @@ func (r *repository) List(ctx context.Context, page, limit int) ([]*contract.Res
 			UserID:          res.UserID,
 			CreatedAt:       res.CreatedAt.Format(time.RFC3339),
 			UpdatedAt:       res.UpdatedAt.Format(time.RFC3339),
-		})
+		}
+
+		if res.Edges.User != nil {
+			resume.User = contract.ResumeUser{
+				ID:        res.Edges.User.ID,
+				Email:     res.Edges.User.Email,
+				FirstName: res.Edges.User.FirstName,
+				LastName:  res.Edges.User.LastName,
+				Avatar:    res.Edges.User.Avatar,
+			}
+		}
+
+		result = append(result, resume)
 	}
 
 	return result, total, nil
