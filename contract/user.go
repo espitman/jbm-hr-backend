@@ -2,15 +2,18 @@ package contract
 
 // User represents a user in the system
 type User struct {
-	ID           int    `json:"id"`
-	Email        string `json:"email"`
-	Phone        string `json:"phone"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	Role         string `json:"role"`
-	Avatar       string `json:"avatar,omitempty"`
-	Password     string `json:"-"`
-	DepartmentID *int   `json:"department_id,omitempty"`
+	ID                  int     `json:"id"`
+	Email               string  `json:"email"`
+	Phone               string  `json:"phone"`
+	FirstName           string  `json:"first_name"`
+	LastName            string  `json:"last_name"`
+	Role                string  `json:"role"`
+	Avatar              string  `json:"avatar,omitempty"`
+	Password            string  `json:"-"`
+	DepartmentID        *int    `json:"department_id,omitempty"`
+	DepartmentTitle     *string `json:"department_title,omitempty"`
+	DepartmentIcon      *string `json:"department_icon,omitempty"`
+	DepartmentShortName *string `json:"department_short_name,omitempty"`
 }
 
 // CreateUserInput represents the input for creating a new user

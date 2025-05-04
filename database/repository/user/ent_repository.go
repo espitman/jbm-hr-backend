@@ -26,19 +26,28 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		return nil
 	}
 	var departmentID *int
+	var departmentTitle *string
+	var departmentIcon *string
+	var departmentShortName *string
 	if entUser.Edges.Department != nil {
 		departmentID = &entUser.Edges.Department.ID
+		departmentTitle = &entUser.Edges.Department.Title
+		departmentIcon = &entUser.Edges.Department.Icon
+		departmentShortName = &entUser.Edges.Department.ShortName
 	}
 	return &contract.User{
-		ID:           entUser.ID,
-		Email:        entUser.Email,
-		Phone:        entUser.Phone,
-		FirstName:    entUser.FirstName,
-		LastName:     entUser.LastName,
-		Role:         string(entUser.Role),
-		Avatar:       entUser.Avatar,
-		Password:     entUser.Password,
-		DepartmentID: departmentID,
+		ID:                  entUser.ID,
+		Email:               entUser.Email,
+		Phone:               entUser.Phone,
+		FirstName:           entUser.FirstName,
+		LastName:            entUser.LastName,
+		Role:                string(entUser.Role),
+		Avatar:              entUser.Avatar,
+		Password:            entUser.Password,
+		DepartmentID:        departmentID,
+		DepartmentTitle:     departmentTitle,
+		DepartmentIcon:      departmentIcon,
+		DepartmentShortName: departmentShortName,
 	}
 }
 
