@@ -213,3 +213,39 @@ func (r *EntRepository) UpdateAvatar(ctx context.Context, id int, avatar string)
 	}
 	return convertToContractUser(entUser), nil
 }
+
+// UpdateBirthdate updates a user's birthdate
+func (r *EntRepository) UpdateBirthdate(ctx context.Context, id int, birthdate string) (*contract.User, error) {
+	// Parse the birthdate string to time.Time
+	birthdateTime, err := time.Parse("2006-01-02", birthdate)
+	if err != nil {
+		return nil, err
+	}
+
+	entUser, err := r.client.User.
+		UpdateOneID(id).
+		SetBirthdate(birthdateTime).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convertToContractUser(entUser), nil
+}
+
+// UpdateCooperationStartDate updates a user's cooperation start date
+func (r *EntRepository) UpdateCooperationStartDate(ctx context.Context, id int, startDate string) (*contract.User, error) {
+	// Parse the start date string to time.Time
+	startDateTime, err := time.Parse("2006-01-02", startDate)
+	if err != nil {
+		return nil, err
+	}
+
+	entUser, err := r.client.User.
+		UpdateOneID(id).
+		SetCooperationStartDate(startDateTime).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convertToContractUser(entUser), nil
+}

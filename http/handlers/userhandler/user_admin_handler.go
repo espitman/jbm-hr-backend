@@ -381,3 +381,119 @@ func (h *UserHandler) UpdateUserAvatar(c echo.Context) error {
 		},
 	})
 }
+
+// UpdateUserBirthdate handles updating a user's birthdate
+// @Summary Update user birthdate
+// @Description Update a user's birthdate (Admin only)
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body UpdateUserBirthdateRequest true "Update Birthdate"
+// @Success 200 {object} UpdateUserResponse
+// @Failure 400 {object} dto.Response
+// @Failure 404 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/admin/users/{id}/birthdate [put]
+func (h *UserHandler) UpdateUserBirthdate(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return dto.BadRequestJSON(c, "invalid user ID")
+	}
+
+	var req UpdateUserBirthdateRequest
+	if err := c.Bind(&req); err != nil {
+		return dto.BadRequestJSON(c, "invalid request format")
+	}
+
+	if err := utils.ValidateStruct(req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	user, err := h.userService.UpdateBirthdate(c.Request().Context(), id, req.Birthdate)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, "user not found")
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, UpdateUserResponse{
+		Data: UserData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+			Department: convertToDepartmentDTO(
+				user.DepartmentID,
+				user.DepartmentTitle,
+				user.DepartmentIcon,
+				user.DepartmentShortName,
+			),
+			Birthdate:            user.Birthdate,
+			CooperationStartDate: user.CooperationStartDate,
+		},
+	})
+}
+
+// UpdateUserCooperationStartDate handles updating a user's cooperation start date
+// @Summary Update user cooperation start date
+// @Description Update a user's cooperation start date (Admin only)
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body UpdateUserCooperationStartDateRequest true "Update Cooperation Start Date"
+// @Success 200 {object} UpdateUserResponse
+// @Failure 400 {object} dto.Response
+// @Failure 404 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/admin/users/{id}/cooperation-start-date [put]
+func (h *UserHandler) UpdateUserCooperationStartDate(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return dto.BadRequestJSON(c, "invalid user ID")
+	}
+
+	var req UpdateUserCooperationStartDateRequest
+	if err := c.Bind(&req); err != nil {
+		return dto.BadRequestJSON(c, "invalid request format")
+	}
+
+	if err := utils.ValidateStruct(req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	user, err := h.userService.UpdateCooperationStartDate(c.Request().Context(), id, req.CooperationStartDate)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, "user not found")
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, UpdateUserResponse{
+		Data: UserData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+			Department: convertToDepartmentDTO(
+				user.DepartmentID,
+				user.DepartmentTitle,
+				user.DepartmentIcon,
+				user.DepartmentShortName,
+			),
+			Birthdate:            user.Birthdate,
+			CooperationStartDate: user.CooperationStartDate,
+		},
+	})
+}

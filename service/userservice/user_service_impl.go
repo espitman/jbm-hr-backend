@@ -309,3 +309,37 @@ func (s *service) UpdateUserPassword(ctx context.Context, id int, input *contrac
 	// Update the password
 	return s.userRepo.UpdatePassword(ctx, id, hashedInput)
 }
+
+// UpdateBirthdate updates a user's birthdate
+func (s *service) UpdateBirthdate(ctx context.Context, id int, birthdate string) (*contract.User, error) {
+	// Check if user exists
+	_, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, contract.ErrUserNotFound
+	}
+
+	// Update birthdate
+	updatedUser, err := s.userRepo.UpdateBirthdate(ctx, id, birthdate)
+	if err != nil {
+		return nil, contract.ErrDatabaseQuery
+	}
+
+	return updatedUser, nil
+}
+
+// UpdateCooperationStartDate updates a user's cooperation start date
+func (s *service) UpdateCooperationStartDate(ctx context.Context, id int, startDate string) (*contract.User, error) {
+	// Check if user exists
+	_, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, contract.ErrUserNotFound
+	}
+
+	// Update cooperation start date
+	updatedUser, err := s.userRepo.UpdateCooperationStartDate(ctx, id, startDate)
+	if err != nil {
+		return nil, contract.ErrDatabaseQuery
+	}
+
+	return updatedUser, nil
+}

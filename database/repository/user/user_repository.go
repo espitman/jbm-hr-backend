@@ -29,6 +29,12 @@ type Repository interface {
 	// UpdatePassword updates a user's password
 	UpdatePassword(ctx context.Context, id int, req *contract.UpdatePasswordInput) error
 
+	// UpdateBirthdate updates a user's birthdate
+	UpdateBirthdate(ctx context.Context, id int, birthdate string) (*contract.User, error)
+
+	// UpdateCooperationStartDate updates a user's cooperation start date
+	UpdateCooperationStartDate(ctx context.Context, id int, startDate string) (*contract.User, error)
+
 	// Delete deletes a user by their ID
 	Delete(ctx context.Context, id int) error
 }

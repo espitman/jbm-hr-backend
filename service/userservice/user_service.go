@@ -37,4 +37,10 @@ type Service interface {
 
 	// UpdateAvatar updates only the avatar of a user
 	UpdateAvatar(ctx context.Context, id int, avatar string) (*contract.User, error)
+
+	// UpdateBirthdate updates a user's birthdate
+	UpdateBirthdate(ctx context.Context, id int, birthdate string) (*contract.User, error)
+
+	// UpdateCooperationStartDate updates a user's cooperation start date
+	UpdateCooperationStartDate(ctx context.Context, id int, startDate string) (*contract.User, error)
 }

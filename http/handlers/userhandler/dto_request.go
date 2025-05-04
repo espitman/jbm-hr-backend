@@ -34,3 +34,13 @@ type AdminLoginRequest struct {
 type UpdateUserAvatarRequest struct {
 	Avatar string `json:"avatar" validate:"required,url"`
 }
+
+// UpdateUserBirthdateRequest represents the request body for updating a user's birthdate
+type UpdateUserBirthdateRequest struct {
+	Birthdate string `json:"birthdate" validate:"required,datetime=2006-01-02"`
+}
+
+// UpdateUserCooperationStartDateRequest represents the request body for updating a user's cooperation start date
+type UpdateUserCooperationStartDateRequest struct {
+	CooperationStartDate string `json:"cooperation_start_date" validate:"required,datetime=2006-01-02"`
+}
