@@ -57,6 +57,7 @@ func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.User, error) {
 		WithDepartment(func(q *ent.DepartmentQuery) {
 			q.Select("id", "title", "icon", "short_name")
 		}).
+		Order(ent.Asc(entUser.FieldID)).
 		All(ctx)
 	if err != nil {
 		return nil, err
