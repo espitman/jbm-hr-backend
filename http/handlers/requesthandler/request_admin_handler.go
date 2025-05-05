@@ -43,10 +43,7 @@ func (h *AdminHandler) GetRequest(c echo.Context) error {
 		return dto.InternalServerErrorJSON(c, "failed to get request")
 	}
 
-	return dto.SuccessJSON(c, &GetRequestResponse{
-		Response: *dto.NewSuccessResponse("request retrieved successfully"),
-		Data:     *request,
-	})
+	return dto.SuccessJSON(c, *request)
 }
 
 // GetRequests handles listing requests with optional filters
