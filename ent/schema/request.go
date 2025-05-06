@@ -30,6 +30,8 @@ func (Request) Fields() []ent.Field {
 				"confirmation_letter",  // نامه تاییدیه
 				"embassy_letter",       // نامه سفارت
 				"development_learning", // توسعه و یادگیری
+				"marriage_gift",        // هدیه ازدواج
+				"childbirth_gift",      // هدیه تولد فرزند
 			),
 		field.String("description").
 			Optional(),
