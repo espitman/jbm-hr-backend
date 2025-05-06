@@ -10,6 +10,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/requestmeta"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/schema"
 	"github.com/espitman/jbm-hr-backend/ent/user"
@@ -117,6 +118,16 @@ func init() {
 	request.DefaultUpdatedAt = requestDescUpdatedAt.Default.(func() time.Time)
 	// request.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	request.UpdateDefaultUpdatedAt = requestDescUpdatedAt.UpdateDefault.(func() time.Time)
+	requestmetaFields := schema.RequestMeta{}.Fields()
+	_ = requestmetaFields
+	// requestmetaDescKey is the schema descriptor for key field.
+	requestmetaDescKey := requestmetaFields[1].Descriptor()
+	// requestmeta.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	requestmeta.KeyValidator = requestmetaDescKey.Validators[0].(func(string) error)
+	// requestmetaDescValue is the schema descriptor for value field.
+	requestmetaDescValue := requestmetaFields[2].Descriptor()
+	// requestmeta.ValueValidator is a validator for the "value" field. It is called by the builders before save.
+	requestmeta.ValueValidator = requestmetaDescValue.Validators[0].(func(string) error)
 	resumeFields := schema.Resume{}.Fields()
 	_ = resumeFields
 	// resumeDescIntroducedName is the schema descriptor for introduced_name field.

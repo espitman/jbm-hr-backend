@@ -52,12 +52,30 @@ func convertToContractRequest(entReq *ent.Request) *contract.Request {
 		}
 	}
 
+	// Convert metadata
+	if entReq.Edges.Meta != nil {
+		req.Meta = make([]contract.RequestMeta, len(entReq.Edges.Meta))
+		for i, meta := range entReq.Edges.Meta {
+			req.Meta[i] = contract.RequestMeta{
+				Key:   meta.Key,
+				Value: meta.Value,
+			}
+		}
+	}
+
 	return req
 }
 
 // Create creates a new request
 func (r *EntRepository) Create(ctx context.Context, req *contract.CreateRequestInput) (*contract.Request, error) {
-	entReq, err := r.client.Request.
+	// Start a transaction
+	tx, err := r.client.Tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the request
+	entReq, err := tx.Request.
 		Create().
 		SetUserID(req.UserID).
 		SetFullName(req.FullName).
@@ -68,8 +86,33 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateRequestI
 		SetUpdatedAt(time.Now()).
 		Save(ctx)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
+
+	// Create metadata if provided
+	if req.Meta != nil {
+		metaBuilders := make([]*ent.RequestMetaCreate, len(req.Meta))
+		for i, meta := range req.Meta {
+			metaBuilders[i] = tx.RequestMeta.
+				Create().
+				SetRequestID(entReq.ID).
+				SetKey(meta.Key).
+				SetValue(meta.Value)
+		}
+		_, err = tx.RequestMeta.CreateBulk(metaBuilders...).Save(ctx)
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	// Return the created request with all its relations
 	return r.GetByID(ctx, entReq.ID)
 }
 
@@ -93,6 +136,7 @@ func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.Request,
 		WithUser(func(q *ent.UserQuery) {
 			q.Select(user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldAvatar)
 		}).
+		WithMeta().
 		Where(entrequest.ID(id)).
 		Only(ctx)
 	if err != nil {
@@ -107,6 +151,7 @@ func (r *EntRepository) GetByFilter(ctx context.Context, filter *contract.Reques
 		WithUser(func(q *ent.UserQuery) {
 			q.Select(user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldAvatar)
 		}).
+		WithMeta().
 		Order(ent.Desc(entrequest.FieldID))
 
 	if filter.UserID != 0 {

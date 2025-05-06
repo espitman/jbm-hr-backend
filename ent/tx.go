@@ -22,6 +22,8 @@ type Tx struct {
 	OTP *OTPClient
 	// Request is the client for interacting with the Request builders.
 	Request *RequestClient
+	// RequestMeta is the client for interacting with the RequestMeta builders.
+	RequestMeta *RequestMetaClient
 	// Resume is the client for interacting with the Resume builders.
 	Resume *ResumeClient
 	// User is the client for interacting with the User builders.
@@ -162,6 +164,7 @@ func (tx *Tx) init() {
 	tx.HRTeam = NewHRTeamClient(tx.config)
 	tx.OTP = NewOTPClient(tx.config)
 	tx.Request = NewRequestClient(tx.config)
+	tx.RequestMeta = NewRequestMetaClient(tx.config)
 	tx.Resume = NewResumeClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

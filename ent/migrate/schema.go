@@ -102,6 +102,27 @@ var (
 			},
 		},
 	}
+	// RequestMetaColumns holds the columns for the "request_meta" table.
+	RequestMetaColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "key", Type: field.TypeString},
+		{Name: "value", Type: field.TypeString},
+		{Name: "request_id", Type: field.TypeInt},
+	}
+	// RequestMetaTable holds the schema information for the "request_meta" table.
+	RequestMetaTable = &schema.Table{
+		Name:       "request_meta",
+		Columns:    RequestMetaColumns,
+		PrimaryKey: []*schema.Column{RequestMetaColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "request_meta_requests_meta",
+				Columns:    []*schema.Column{RequestMetaColumns[3]},
+				RefColumns: []*schema.Column{RequestsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// ResumesColumns holds the columns for the "resumes" table.
 	ResumesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -163,6 +184,7 @@ var (
 		HrTeamsTable,
 		OtPsTable,
 		RequestsTable,
+		RequestMetaTable,
 		ResumesTable,
 		UsersTable,
 	}
@@ -171,6 +193,7 @@ var (
 func init() {
 	OtPsTable.ForeignKeys[0].RefTable = UsersTable
 	RequestsTable.ForeignKeys[0].RefTable = UsersTable
+	RequestMetaTable.ForeignKeys[0].RefTable = RequestsTable
 	ResumesTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = DepartmentsTable
 }

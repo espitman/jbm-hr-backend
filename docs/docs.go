@@ -2280,6 +2280,12 @@ const docTemplate = `{
                     "description": "employment, payroll_stamped, salary_deduction, introduction_letter, good_conduct_letter, confirmation_letter, embassy_letter",
                     "type": "string"
                 },
+                "meta": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/contract.RequestMeta"
+                    }
+                },
                 "status": {
                     "description": "pending, doing, done, rejected",
                     "type": "string"
@@ -2292,6 +2298,21 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "contract.RequestMeta": {
+            "type": "object",
+            "required": [
+                "key",
+                "value"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
                 }
             }
         },
@@ -2683,6 +2704,24 @@ const docTemplate = `{
                         "confirmation_letter",
                         "embassy_letter"
                     ]
+                },
+                "meta": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "key",
+                            "value"
+                        ],
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 }
             }
         },

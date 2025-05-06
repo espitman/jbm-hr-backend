@@ -54,5 +54,6 @@ func (Request) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
+		edge.To("meta", RequestMeta.Type),
 	}
 }

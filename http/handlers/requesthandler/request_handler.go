@@ -48,11 +48,24 @@ func (h *Handler) CreateRequest(c echo.Context) error {
 	}
 	userID := claims.UserID
 
+	// Convert metadata to contract format
+	var meta []contract.RequestMeta
+	if req.Meta != nil {
+		meta = make([]contract.RequestMeta, len(req.Meta))
+		for i, m := range req.Meta {
+			meta[i] = contract.RequestMeta{
+				Key:   m.Key,
+				Value: m.Value,
+			}
+		}
+	}
+
 	request, err := h.requestService.CreateRequest(c.Request().Context(), &contract.CreateRequestInput{
 		UserID:      userID,
 		FullName:    req.FullName,
 		Kind:        req.Kind,
 		Description: req.Description,
+		Meta:        meta,
 	})
 	if err != nil {
 		return dto.InternalServerErrorJSON(c, "failed to create request")

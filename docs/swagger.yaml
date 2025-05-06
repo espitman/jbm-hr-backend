@@ -100,6 +100,10 @@ definitions:
         description: employment, payroll_stamped, salary_deduction, introduction_letter,
           good_conduct_letter, confirmation_letter, embassy_letter
         type: string
+      meta:
+        items:
+          $ref: '#/definitions/contract.RequestMeta'
+        type: array
       status:
         description: pending, doing, done, rejected
         type: string
@@ -109,6 +113,16 @@ definitions:
         $ref: '#/definitions/contract.RequestUser'
       user_id:
         type: integer
+    type: object
+  contract.RequestMeta:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    required:
+    - key
+    - value
     type: object
   contract.RequestUser:
     properties:
@@ -369,6 +383,18 @@ definitions:
         - confirmation_letter
         - embassy_letter
         type: string
+      meta:
+        items:
+          properties:
+            key:
+              type: string
+            value:
+              type: string
+          required:
+          - key
+          - value
+          type: object
+        type: array
     required:
     - full_name
     - kind

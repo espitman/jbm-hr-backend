@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
 	"github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/requestmeta"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -130,6 +131,21 @@ func (ru *RequestUpdate) SetUser(u *User) *RequestUpdate {
 	return ru.SetUserID(u.ID)
 }
 
+// AddMetumIDs adds the "meta" edge to the RequestMeta entity by IDs.
+func (ru *RequestUpdate) AddMetumIDs(ids ...int) *RequestUpdate {
+	ru.mutation.AddMetumIDs(ids...)
+	return ru
+}
+
+// AddMeta adds the "meta" edges to the RequestMeta entity.
+func (ru *RequestUpdate) AddMeta(r ...*RequestMeta) *RequestUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ru.AddMetumIDs(ids...)
+}
+
 // Mutation returns the RequestMutation object of the builder.
 func (ru *RequestUpdate) Mutation() *RequestMutation {
 	return ru.mutation
@@ -139,6 +155,27 @@ func (ru *RequestUpdate) Mutation() *RequestMutation {
 func (ru *RequestUpdate) ClearUser() *RequestUpdate {
 	ru.mutation.ClearUser()
 	return ru
+}
+
+// ClearMeta clears all "meta" edges to the RequestMeta entity.
+func (ru *RequestUpdate) ClearMeta() *RequestUpdate {
+	ru.mutation.ClearMeta()
+	return ru
+}
+
+// RemoveMetumIDs removes the "meta" edge to RequestMeta entities by IDs.
+func (ru *RequestUpdate) RemoveMetumIDs(ids ...int) *RequestUpdate {
+	ru.mutation.RemoveMetumIDs(ids...)
+	return ru
+}
+
+// RemoveMeta removes "meta" edges to RequestMeta entities.
+func (ru *RequestUpdate) RemoveMeta(r ...*RequestMeta) *RequestUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ru.RemoveMetumIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -255,6 +292,51 @@ func (ru *RequestUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ru.mutation.MetaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   request.MetaTable,
+			Columns: []string{request.MetaColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(requestmeta.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedMetaIDs(); len(nodes) > 0 && !ru.mutation.MetaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   request.MetaTable,
+			Columns: []string{request.MetaColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(requestmeta.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.MetaIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   request.MetaTable,
+			Columns: []string{request.MetaColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(requestmeta.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -383,6 +465,21 @@ func (ruo *RequestUpdateOne) SetUser(u *User) *RequestUpdateOne {
 	return ruo.SetUserID(u.ID)
 }
 
+// AddMetumIDs adds the "meta" edge to the RequestMeta entity by IDs.
+func (ruo *RequestUpdateOne) AddMetumIDs(ids ...int) *RequestUpdateOne {
+	ruo.mutation.AddMetumIDs(ids...)
+	return ruo
+}
+
+// AddMeta adds the "meta" edges to the RequestMeta entity.
+func (ruo *RequestUpdateOne) AddMeta(r ...*RequestMeta) *RequestUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ruo.AddMetumIDs(ids...)
+}
+
 // Mutation returns the RequestMutation object of the builder.
 func (ruo *RequestUpdateOne) Mutation() *RequestMutation {
 	return ruo.mutation
@@ -392,6 +489,27 @@ func (ruo *RequestUpdateOne) Mutation() *RequestMutation {
 func (ruo *RequestUpdateOne) ClearUser() *RequestUpdateOne {
 	ruo.mutation.ClearUser()
 	return ruo
+}
+
+// ClearMeta clears all "meta" edges to the RequestMeta entity.
+func (ruo *RequestUpdateOne) ClearMeta() *RequestUpdateOne {
+	ruo.mutation.ClearMeta()
+	return ruo
+}
+
+// RemoveMetumIDs removes the "meta" edge to RequestMeta entities by IDs.
+func (ruo *RequestUpdateOne) RemoveMetumIDs(ids ...int) *RequestUpdateOne {
+	ruo.mutation.RemoveMetumIDs(ids...)
+	return ruo
+}
+
+// RemoveMeta removes "meta" edges to RequestMeta entities.
+func (ruo *RequestUpdateOne) RemoveMeta(r ...*RequestMeta) *RequestUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ruo.RemoveMetumIDs(ids...)
 }
 
 // Where appends a list predicates to the RequestUpdate builder.
@@ -538,6 +656,51 @@ func (ruo *RequestUpdateOne) sqlSave(ctx context.Context) (_node *Request, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.MetaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   request.MetaTable,
+			Columns: []string{request.MetaColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(requestmeta.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedMetaIDs(); len(nodes) > 0 && !ruo.mutation.MetaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   request.MetaTable,
+			Columns: []string{request.MetaColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(requestmeta.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.MetaIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   request.MetaTable,
+			Columns: []string{request.MetaColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(requestmeta.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

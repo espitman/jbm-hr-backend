@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -13,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
 	"github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/requestmeta"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -24,6 +26,7 @@ type RequestQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Request
 	withUser   *UserQuery
+	withMeta   *RequestMetaQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +78,28 @@ func (rq *RequestQuery) QueryUser() *UserQuery {
 			sqlgraph.From(request.Table, request.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, request.UserTable, request.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMeta chains the current query on the "meta" edge.
+func (rq *RequestQuery) QueryMeta() *RequestMetaQuery {
+	query := (&RequestMetaClient{config: rq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(request.Table, request.FieldID, selector),
+			sqlgraph.To(requestmeta.Table, requestmeta.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, request.MetaTable, request.MetaColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,6 +300,7 @@ func (rq *RequestQuery) Clone() *RequestQuery {
 		inters:     append([]Interceptor{}, rq.inters...),
 		predicates: append([]predicate.Request{}, rq.predicates...),
 		withUser:   rq.withUser.Clone(),
+		withMeta:   rq.withMeta.Clone(),
 		// clone intermediate query.
 		sql:  rq.sql.Clone(),
 		path: rq.path,
@@ -289,6 +315,17 @@ func (rq *RequestQuery) WithUser(opts ...func(*UserQuery)) *RequestQuery {
 		opt(query)
 	}
 	rq.withUser = query
+	return rq
+}
+
+// WithMeta tells the query-builder to eager-load the nodes that are connected to
+// the "meta" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RequestQuery) WithMeta(opts ...func(*RequestMetaQuery)) *RequestQuery {
+	query := (&RequestMetaClient{config: rq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withMeta = query
 	return rq
 }
 
@@ -370,8 +407,9 @@ func (rq *RequestQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Requ
 	var (
 		nodes       = []*Request{}
 		_spec       = rq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			rq.withUser != nil,
+			rq.withMeta != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -395,6 +433,13 @@ func (rq *RequestQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Requ
 	if query := rq.withUser; query != nil {
 		if err := rq.loadUser(ctx, query, nodes, nil,
 			func(n *Request, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := rq.withMeta; query != nil {
+		if err := rq.loadMeta(ctx, query, nodes,
+			func(n *Request) { n.Edges.Meta = []*RequestMeta{} },
+			func(n *Request, e *RequestMeta) { n.Edges.Meta = append(n.Edges.Meta, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -427,6 +472,36 @@ func (rq *RequestQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (rq *RequestQuery) loadMeta(ctx context.Context, query *RequestMetaQuery, nodes []*Request, init func(*Request), assign func(*Request, *RequestMeta)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Request)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(requestmeta.FieldRequestID)
+	}
+	query.Where(predicate.RequestMeta(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(request.MetaColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.RequestID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "request_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

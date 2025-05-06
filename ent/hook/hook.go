@@ -69,6 +69,18 @@ func (f RequestFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RequestMutation", m)
 }
 
+// The RequestMetaFunc type is an adapter to allow the use of ordinary
+// function as RequestMeta mutator.
+type RequestMetaFunc func(context.Context, *ent.RequestMetaMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RequestMetaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RequestMetaMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RequestMetaMutation", m)
+}
+
 // The ResumeFunc type is an adapter to allow the use of ordinary
 // function as Resume mutator.
 type ResumeFunc func(context.Context, *ent.ResumeMutation) (ent.Value, error)

@@ -42,9 +42,11 @@ type Request struct {
 type RequestEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// Meta holds the value of the meta edge.
+	Meta []*RequestMeta `json:"meta,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -56,6 +58,15 @@ func (e RequestEdges) UserOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
+}
+
+// MetaOrErr returns the Meta value or an error if the edge
+// was not loaded in eager-loading.
+func (e RequestEdges) MetaOrErr() ([]*RequestMeta, error) {
+	if e.loadedTypes[1] {
+		return e.Meta, nil
+	}
+	return nil, &NotLoadedError{edge: "meta"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -148,6 +159,11 @@ func (r *Request) Value(name string) (ent.Value, error) {
 // QueryUser queries the "user" edge of the Request entity.
 func (r *Request) QueryUser() *UserQuery {
 	return NewRequestClient(r.config).QueryUser(r)
+}
+
+// QueryMeta queries the "meta" edge of the Request entity.
+func (r *Request) QueryMeta() *RequestMetaQuery {
+	return NewRequestClient(r.config).QueryMeta(r)
 }
 
 // Update returns a builder for updating this Request.

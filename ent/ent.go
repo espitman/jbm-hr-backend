@@ -17,6 +17,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/requestmeta"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -79,13 +80,14 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			album.Table:      album.ValidColumn,
-			department.Table: department.ValidColumn,
-			hrteam.Table:     hrteam.ValidColumn,
-			otp.Table:        otp.ValidColumn,
-			request.Table:    request.ValidColumn,
-			resume.Table:     resume.ValidColumn,
-			user.Table:       user.ValidColumn,
+			album.Table:       album.ValidColumn,
+			department.Table:  department.ValidColumn,
+			hrteam.Table:      hrteam.ValidColumn,
+			otp.Table:         otp.ValidColumn,
+			request.Table:     request.ValidColumn,
+			requestmeta.Table: requestmeta.ValidColumn,
+			resume.Table:      resume.ValidColumn,
+			user.Table:        user.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

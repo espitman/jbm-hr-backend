@@ -20,6 +20,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/requestmeta"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -39,6 +40,8 @@ type Client struct {
 	OTP *OTPClient
 	// Request is the client for interacting with the Request builders.
 	Request *RequestClient
+	// RequestMeta is the client for interacting with the RequestMeta builders.
+	RequestMeta *RequestMetaClient
 	// Resume is the client for interacting with the Resume builders.
 	Resume *ResumeClient
 	// User is the client for interacting with the User builders.
@@ -59,6 +62,7 @@ func (c *Client) init() {
 	c.HRTeam = NewHRTeamClient(c.config)
 	c.OTP = NewOTPClient(c.config)
 	c.Request = NewRequestClient(c.config)
+	c.RequestMeta = NewRequestMetaClient(c.config)
 	c.Resume = NewResumeClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -151,15 +155,16 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:        ctx,
-		config:     cfg,
-		Album:      NewAlbumClient(cfg),
-		Department: NewDepartmentClient(cfg),
-		HRTeam:     NewHRTeamClient(cfg),
-		OTP:        NewOTPClient(cfg),
-		Request:    NewRequestClient(cfg),
-		Resume:     NewResumeClient(cfg),
-		User:       NewUserClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Album:       NewAlbumClient(cfg),
+		Department:  NewDepartmentClient(cfg),
+		HRTeam:      NewHRTeamClient(cfg),
+		OTP:         NewOTPClient(cfg),
+		Request:     NewRequestClient(cfg),
+		RequestMeta: NewRequestMetaClient(cfg),
+		Resume:      NewResumeClient(cfg),
+		User:        NewUserClient(cfg),
 	}, nil
 }
 
@@ -177,15 +182,16 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:        ctx,
-		config:     cfg,
-		Album:      NewAlbumClient(cfg),
-		Department: NewDepartmentClient(cfg),
-		HRTeam:     NewHRTeamClient(cfg),
-		OTP:        NewOTPClient(cfg),
-		Request:    NewRequestClient(cfg),
-		Resume:     NewResumeClient(cfg),
-		User:       NewUserClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Album:       NewAlbumClient(cfg),
+		Department:  NewDepartmentClient(cfg),
+		HRTeam:      NewHRTeamClient(cfg),
+		OTP:         NewOTPClient(cfg),
+		Request:     NewRequestClient(cfg),
+		RequestMeta: NewRequestMetaClient(cfg),
+		Resume:      NewResumeClient(cfg),
+		User:        NewUserClient(cfg),
 	}, nil
 }
 
@@ -215,7 +221,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.Department, c.HRTeam, c.OTP, c.Request, c.Resume, c.User,
+		c.Album, c.Department, c.HRTeam, c.OTP, c.Request, c.RequestMeta, c.Resume,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -225,7 +232,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.Department, c.HRTeam, c.OTP, c.Request, c.Resume, c.User,
+		c.Album, c.Department, c.HRTeam, c.OTP, c.Request, c.RequestMeta, c.Resume,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -244,6 +252,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.OTP.mutate(ctx, m)
 	case *RequestMutation:
 		return c.Request.mutate(ctx, m)
+	case *RequestMetaMutation:
+		return c.RequestMeta.mutate(ctx, m)
 	case *ResumeMutation:
 		return c.Resume.mutate(ctx, m)
 	case *UserMutation:
@@ -941,6 +951,22 @@ func (c *RequestClient) QueryUser(r *Request) *UserQuery {
 	return query
 }
 
+// QueryMeta queries the meta edge of a Request.
+func (c *RequestClient) QueryMeta(r *Request) *RequestMetaQuery {
+	query := (&RequestMetaClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(request.Table, request.FieldID, id),
+			sqlgraph.To(requestmeta.Table, requestmeta.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, request.MetaTable, request.MetaColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *RequestClient) Hooks() []Hook {
 	return c.hooks.Request
@@ -963,6 +989,155 @@ func (c *RequestClient) mutate(ctx context.Context, m *RequestMutation) (Value, 
 		return (&RequestDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Request mutation op: %q", m.Op())
+	}
+}
+
+// RequestMetaClient is a client for the RequestMeta schema.
+type RequestMetaClient struct {
+	config
+}
+
+// NewRequestMetaClient returns a client for the RequestMeta from the given config.
+func NewRequestMetaClient(c config) *RequestMetaClient {
+	return &RequestMetaClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `requestmeta.Hooks(f(g(h())))`.
+func (c *RequestMetaClient) Use(hooks ...Hook) {
+	c.hooks.RequestMeta = append(c.hooks.RequestMeta, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `requestmeta.Intercept(f(g(h())))`.
+func (c *RequestMetaClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RequestMeta = append(c.inters.RequestMeta, interceptors...)
+}
+
+// Create returns a builder for creating a RequestMeta entity.
+func (c *RequestMetaClient) Create() *RequestMetaCreate {
+	mutation := newRequestMetaMutation(c.config, OpCreate)
+	return &RequestMetaCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RequestMeta entities.
+func (c *RequestMetaClient) CreateBulk(builders ...*RequestMetaCreate) *RequestMetaCreateBulk {
+	return &RequestMetaCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RequestMetaClient) MapCreateBulk(slice any, setFunc func(*RequestMetaCreate, int)) *RequestMetaCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RequestMetaCreateBulk{err: fmt.Errorf("calling to RequestMetaClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RequestMetaCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RequestMetaCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RequestMeta.
+func (c *RequestMetaClient) Update() *RequestMetaUpdate {
+	mutation := newRequestMetaMutation(c.config, OpUpdate)
+	return &RequestMetaUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RequestMetaClient) UpdateOne(rm *RequestMeta) *RequestMetaUpdateOne {
+	mutation := newRequestMetaMutation(c.config, OpUpdateOne, withRequestMeta(rm))
+	return &RequestMetaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RequestMetaClient) UpdateOneID(id int) *RequestMetaUpdateOne {
+	mutation := newRequestMetaMutation(c.config, OpUpdateOne, withRequestMetaID(id))
+	return &RequestMetaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RequestMeta.
+func (c *RequestMetaClient) Delete() *RequestMetaDelete {
+	mutation := newRequestMetaMutation(c.config, OpDelete)
+	return &RequestMetaDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RequestMetaClient) DeleteOne(rm *RequestMeta) *RequestMetaDeleteOne {
+	return c.DeleteOneID(rm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RequestMetaClient) DeleteOneID(id int) *RequestMetaDeleteOne {
+	builder := c.Delete().Where(requestmeta.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RequestMetaDeleteOne{builder}
+}
+
+// Query returns a query builder for RequestMeta.
+func (c *RequestMetaClient) Query() *RequestMetaQuery {
+	return &RequestMetaQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRequestMeta},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RequestMeta entity by its id.
+func (c *RequestMetaClient) Get(ctx context.Context, id int) (*RequestMeta, error) {
+	return c.Query().Where(requestmeta.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RequestMetaClient) GetX(ctx context.Context, id int) *RequestMeta {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRequest queries the request edge of a RequestMeta.
+func (c *RequestMetaClient) QueryRequest(rm *RequestMeta) *RequestQuery {
+	query := (&RequestClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := rm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(requestmeta.Table, requestmeta.FieldID, id),
+			sqlgraph.To(request.Table, request.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, requestmeta.RequestTable, requestmeta.RequestColumn),
+		)
+		fromV = sqlgraph.Neighbors(rm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RequestMetaClient) Hooks() []Hook {
+	return c.hooks.RequestMeta
+}
+
+// Interceptors returns the client interceptors.
+func (c *RequestMetaClient) Interceptors() []Interceptor {
+	return c.inters.RequestMeta
+}
+
+func (c *RequestMetaClient) mutate(ctx context.Context, m *RequestMetaMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RequestMetaCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RequestMetaUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RequestMetaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RequestMetaDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown RequestMeta mutation op: %q", m.Op())
 	}
 }
 
@@ -1315,9 +1490,10 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, Department, HRTeam, OTP, Request, Resume, User []ent.Hook
+		Album, Department, HRTeam, OTP, Request, RequestMeta, Resume, User []ent.Hook
 	}
 	inters struct {
-		Album, Department, HRTeam, OTP, Request, Resume, User []ent.Interceptor
+		Album, Department, HRTeam, OTP, Request, RequestMeta, Resume,
+		User []ent.Interceptor
 	}
 )

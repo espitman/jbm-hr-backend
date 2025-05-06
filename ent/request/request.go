@@ -31,6 +31,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
+	// EdgeMeta holds the string denoting the meta edge name in mutations.
+	EdgeMeta = "meta"
 	// Table holds the table name of the request in the database.
 	Table = "requests"
 	// UserTable is the table that holds the user relation/edge.
@@ -40,6 +42,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
+	// MetaTable is the table that holds the meta relation/edge.
+	MetaTable = "request_meta"
+	// MetaInverseTable is the table name for the RequestMeta entity.
+	// It exists in this package in order to avoid circular dependency with the "requestmeta" package.
+	MetaInverseTable = "request_meta"
+	// MetaColumn is the table column denoting the meta relation/edge.
+	MetaColumn = "request_id"
 )
 
 // Columns holds all SQL columns for request fields.
@@ -180,10 +189,31 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByMetaCount orders the results by meta count.
+func ByMetaCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMetaStep(), opts...)
+	}
+}
+
+// ByMeta orders the results by meta terms.
+func ByMeta(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMetaStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
+}
+func newMetaStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MetaInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MetaTable, MetaColumn),
 	)
 }

@@ -21,6 +21,9 @@ type OTP func(*sql.Selector)
 // Request is the predicate function for request builders.
 type Request func(*sql.Selector)
 
+// RequestMeta is the predicate function for requestmeta builders.
+type RequestMeta func(*sql.Selector)
+
 // Resume is the predicate function for resume builders.
 type Resume func(*sql.Selector)
 

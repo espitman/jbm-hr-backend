@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/requestmeta"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -98,6 +99,21 @@ func (rc *RequestCreate) SetNillableUpdatedAt(t *time.Time) *RequestCreate {
 // SetUser sets the "user" edge to the User entity.
 func (rc *RequestCreate) SetUser(u *User) *RequestCreate {
 	return rc.SetUserID(u.ID)
+}
+
+// AddMetumIDs adds the "meta" edge to the RequestMeta entity by IDs.
+func (rc *RequestCreate) AddMetumIDs(ids ...int) *RequestCreate {
+	rc.mutation.AddMetumIDs(ids...)
+	return rc
+}
+
+// AddMeta adds the "meta" edges to the RequestMeta entity.
+func (rc *RequestCreate) AddMeta(r ...*RequestMeta) *RequestCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return rc.AddMetumIDs(ids...)
 }
 
 // Mutation returns the RequestMutation object of the builder.
@@ -252,6 +268,22 @@ func (rc *RequestCreate) createSpec() (*Request, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.MetaIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   request.MetaTable,
+			Columns: []string{request.MetaColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(requestmeta.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

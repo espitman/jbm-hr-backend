@@ -17,6 +17,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
 	"github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/requestmeta"
 	"github.com/espitman/jbm-hr-backend/ent/resume"
 	"github.com/espitman/jbm-hr-backend/ent/user"
 )
@@ -30,13 +31,14 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAlbum      = "Album"
-	TypeDepartment = "Department"
-	TypeHRTeam     = "HRTeam"
-	TypeOTP        = "OTP"
-	TypeRequest    = "Request"
-	TypeResume     = "Resume"
-	TypeUser       = "User"
+	TypeAlbum       = "Album"
+	TypeDepartment  = "Department"
+	TypeHRTeam      = "HRTeam"
+	TypeOTP         = "OTP"
+	TypeRequest     = "Request"
+	TypeRequestMeta = "RequestMeta"
+	TypeResume      = "Resume"
+	TypeUser        = "User"
 )
 
 // AlbumMutation represents an operation that mutates the Album nodes in the graph.
@@ -2534,6 +2536,9 @@ type RequestMutation struct {
 	clearedFields map[string]struct{}
 	user          *int
 	cleareduser   bool
+	meta          map[int]struct{}
+	removedmeta   map[int]struct{}
+	clearedmeta   bool
 	done          bool
 	oldValue      func(context.Context) (*Request, error)
 	predicates    []predicate.Request
@@ -2929,6 +2934,60 @@ func (m *RequestMutation) ResetUser() {
 	m.cleareduser = false
 }
 
+// AddMetumIDs adds the "meta" edge to the RequestMeta entity by ids.
+func (m *RequestMutation) AddMetumIDs(ids ...int) {
+	if m.meta == nil {
+		m.meta = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.meta[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMeta clears the "meta" edge to the RequestMeta entity.
+func (m *RequestMutation) ClearMeta() {
+	m.clearedmeta = true
+}
+
+// MetaCleared reports if the "meta" edge to the RequestMeta entity was cleared.
+func (m *RequestMutation) MetaCleared() bool {
+	return m.clearedmeta
+}
+
+// RemoveMetumIDs removes the "meta" edge to the RequestMeta entity by IDs.
+func (m *RequestMutation) RemoveMetumIDs(ids ...int) {
+	if m.removedmeta == nil {
+		m.removedmeta = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.meta, ids[i])
+		m.removedmeta[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMeta returns the removed IDs of the "meta" edge to the RequestMeta entity.
+func (m *RequestMutation) RemovedMetaIDs() (ids []int) {
+	for id := range m.removedmeta {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MetaIDs returns the "meta" edge IDs in the mutation.
+func (m *RequestMutation) MetaIDs() (ids []int) {
+	for id := range m.meta {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMeta resets all changes to the "meta" edge.
+func (m *RequestMutation) ResetMeta() {
+	m.meta = nil
+	m.clearedmeta = false
+	m.removedmeta = nil
+}
+
 // Where appends a list predicates to the RequestMutation builder.
 func (m *RequestMutation) Where(ps ...predicate.Request) {
 	m.predicates = append(m.predicates, ps...)
@@ -3176,9 +3235,12 @@ func (m *RequestMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RequestMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.user != nil {
 		edges = append(edges, request.EdgeUser)
+	}
+	if m.meta != nil {
+		edges = append(edges, request.EdgeMeta)
 	}
 	return edges
 }
@@ -3191,27 +3253,47 @@ func (m *RequestMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
+	case request.EdgeMeta:
+		ids := make([]ent.Value, 0, len(m.meta))
+		for id := range m.meta {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RequestMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removedmeta != nil {
+		edges = append(edges, request.EdgeMeta)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *RequestMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case request.EdgeMeta:
+		ids := make([]ent.Value, 0, len(m.removedmeta))
+		for id := range m.removedmeta {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RequestMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareduser {
 		edges = append(edges, request.EdgeUser)
+	}
+	if m.clearedmeta {
+		edges = append(edges, request.EdgeMeta)
 	}
 	return edges
 }
@@ -3222,6 +3304,8 @@ func (m *RequestMutation) EdgeCleared(name string) bool {
 	switch name {
 	case request.EdgeUser:
 		return m.cleareduser
+	case request.EdgeMeta:
+		return m.clearedmeta
 	}
 	return false
 }
@@ -3244,8 +3328,502 @@ func (m *RequestMutation) ResetEdge(name string) error {
 	case request.EdgeUser:
 		m.ResetUser()
 		return nil
+	case request.EdgeMeta:
+		m.ResetMeta()
+		return nil
 	}
 	return fmt.Errorf("unknown Request edge %s", name)
+}
+
+// RequestMetaMutation represents an operation that mutates the RequestMeta nodes in the graph.
+type RequestMetaMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int
+	key            *string
+	value          *string
+	clearedFields  map[string]struct{}
+	request        *int
+	clearedrequest bool
+	done           bool
+	oldValue       func(context.Context) (*RequestMeta, error)
+	predicates     []predicate.RequestMeta
+}
+
+var _ ent.Mutation = (*RequestMetaMutation)(nil)
+
+// requestmetaOption allows management of the mutation configuration using functional options.
+type requestmetaOption func(*RequestMetaMutation)
+
+// newRequestMetaMutation creates new mutation for the RequestMeta entity.
+func newRequestMetaMutation(c config, op Op, opts ...requestmetaOption) *RequestMetaMutation {
+	m := &RequestMetaMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRequestMeta,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRequestMetaID sets the ID field of the mutation.
+func withRequestMetaID(id int) requestmetaOption {
+	return func(m *RequestMetaMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RequestMeta
+		)
+		m.oldValue = func(ctx context.Context) (*RequestMeta, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RequestMeta.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRequestMeta sets the old RequestMeta of the mutation.
+func withRequestMeta(node *RequestMeta) requestmetaOption {
+	return func(m *RequestMetaMutation) {
+		m.oldValue = func(context.Context) (*RequestMeta, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RequestMetaMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RequestMetaMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RequestMetaMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RequestMetaMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RequestMeta.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetRequestID sets the "request_id" field.
+func (m *RequestMetaMutation) SetRequestID(i int) {
+	m.request = &i
+}
+
+// RequestID returns the value of the "request_id" field in the mutation.
+func (m *RequestMetaMutation) RequestID() (r int, exists bool) {
+	v := m.request
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRequestID returns the old "request_id" field's value of the RequestMeta entity.
+// If the RequestMeta object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RequestMetaMutation) OldRequestID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRequestID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRequestID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRequestID: %w", err)
+	}
+	return oldValue.RequestID, nil
+}
+
+// ResetRequestID resets all changes to the "request_id" field.
+func (m *RequestMetaMutation) ResetRequestID() {
+	m.request = nil
+}
+
+// SetKey sets the "key" field.
+func (m *RequestMetaMutation) SetKey(s string) {
+	m.key = &s
+}
+
+// Key returns the value of the "key" field in the mutation.
+func (m *RequestMetaMutation) Key() (r string, exists bool) {
+	v := m.key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKey returns the old "key" field's value of the RequestMeta entity.
+// If the RequestMeta object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RequestMetaMutation) OldKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKey: %w", err)
+	}
+	return oldValue.Key, nil
+}
+
+// ResetKey resets all changes to the "key" field.
+func (m *RequestMetaMutation) ResetKey() {
+	m.key = nil
+}
+
+// SetValue sets the "value" field.
+func (m *RequestMetaMutation) SetValue(s string) {
+	m.value = &s
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *RequestMetaMutation) Value() (r string, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the RequestMeta entity.
+// If the RequestMeta object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RequestMetaMutation) OldValue(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *RequestMetaMutation) ResetValue() {
+	m.value = nil
+}
+
+// ClearRequest clears the "request" edge to the Request entity.
+func (m *RequestMetaMutation) ClearRequest() {
+	m.clearedrequest = true
+	m.clearedFields[requestmeta.FieldRequestID] = struct{}{}
+}
+
+// RequestCleared reports if the "request" edge to the Request entity was cleared.
+func (m *RequestMetaMutation) RequestCleared() bool {
+	return m.clearedrequest
+}
+
+// RequestIDs returns the "request" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// RequestID instead. It exists only for internal usage by the builders.
+func (m *RequestMetaMutation) RequestIDs() (ids []int) {
+	if id := m.request; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRequest resets all changes to the "request" edge.
+func (m *RequestMetaMutation) ResetRequest() {
+	m.request = nil
+	m.clearedrequest = false
+}
+
+// Where appends a list predicates to the RequestMetaMutation builder.
+func (m *RequestMetaMutation) Where(ps ...predicate.RequestMeta) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RequestMetaMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RequestMetaMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RequestMeta, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RequestMetaMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RequestMetaMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RequestMeta).
+func (m *RequestMetaMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RequestMetaMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.request != nil {
+		fields = append(fields, requestmeta.FieldRequestID)
+	}
+	if m.key != nil {
+		fields = append(fields, requestmeta.FieldKey)
+	}
+	if m.value != nil {
+		fields = append(fields, requestmeta.FieldValue)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RequestMetaMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case requestmeta.FieldRequestID:
+		return m.RequestID()
+	case requestmeta.FieldKey:
+		return m.Key()
+	case requestmeta.FieldValue:
+		return m.Value()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RequestMetaMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case requestmeta.FieldRequestID:
+		return m.OldRequestID(ctx)
+	case requestmeta.FieldKey:
+		return m.OldKey(ctx)
+	case requestmeta.FieldValue:
+		return m.OldValue(ctx)
+	}
+	return nil, fmt.Errorf("unknown RequestMeta field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RequestMetaMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case requestmeta.FieldRequestID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRequestID(v)
+		return nil
+	case requestmeta.FieldKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKey(v)
+		return nil
+	case requestmeta.FieldValue:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RequestMeta field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RequestMetaMutation) AddedFields() []string {
+	var fields []string
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RequestMetaMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RequestMetaMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown RequestMeta numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RequestMetaMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RequestMetaMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RequestMetaMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown RequestMeta nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RequestMetaMutation) ResetField(name string) error {
+	switch name {
+	case requestmeta.FieldRequestID:
+		m.ResetRequestID()
+		return nil
+	case requestmeta.FieldKey:
+		m.ResetKey()
+		return nil
+	case requestmeta.FieldValue:
+		m.ResetValue()
+		return nil
+	}
+	return fmt.Errorf("unknown RequestMeta field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RequestMetaMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.request != nil {
+		edges = append(edges, requestmeta.EdgeRequest)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RequestMetaMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case requestmeta.EdgeRequest:
+		if id := m.request; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RequestMetaMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RequestMetaMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RequestMetaMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedrequest {
+		edges = append(edges, requestmeta.EdgeRequest)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RequestMetaMutation) EdgeCleared(name string) bool {
+	switch name {
+	case requestmeta.EdgeRequest:
+		return m.clearedrequest
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RequestMetaMutation) ClearEdge(name string) error {
+	switch name {
+	case requestmeta.EdgeRequest:
+		m.ClearRequest()
+		return nil
+	}
+	return fmt.Errorf("unknown RequestMeta unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RequestMetaMutation) ResetEdge(name string) error {
+	switch name {
+	case requestmeta.EdgeRequest:
+		m.ResetRequest()
+		return nil
+	}
+	return fmt.Errorf("unknown RequestMeta edge %s", name)
 }
 
 // ResumeMutation represents an operation that mutates the Resume nodes in the graph.
