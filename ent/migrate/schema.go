@@ -119,7 +119,7 @@ var (
 				Symbol:     "request_meta_requests_meta",
 				Columns:    []*schema.Column{RequestMetaColumns[3]},
 				RefColumns: []*schema.Column{RequestsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
