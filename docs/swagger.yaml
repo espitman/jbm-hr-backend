@@ -105,8 +105,23 @@ definitions:
         type: string
       updated_at:
         type: string
+      user:
+        $ref: '#/definitions/contract.RequestUser'
       user_id:
         type: integer
+    type: object
+  contract.RequestUser:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
     type: object
   contract.Resume:
     properties:

@@ -1,15 +1,25 @@
 package contract
 
+// RequestUser represents minimal user information for request responses
+type RequestUser struct {
+	ID        int    `json:"id"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Avatar    string `json:"avatar"`
+}
+
 // Request represents a request in the system
 type Request struct {
-	ID          int     `json:"id"`
-	UserID      int     `json:"user_id"`
-	FullName    string  `json:"full_name"`
-	Kind        string  `json:"kind"` // employment, payroll_stamped, salary_deduction, introduction_letter, good_conduct_letter, confirmation_letter, embassy_letter
-	Description *string `json:"description,omitempty"`
-	Status      string  `json:"status"` // pending, doing, done, rejected
-	CreatedAt   string  `json:"created_at"`
-	UpdatedAt   string  `json:"updated_at"`
+	ID          int         `json:"id"`
+	UserID      int         `json:"user_id"`
+	User        RequestUser `json:"user,omitempty"`
+	FullName    string      `json:"full_name"`
+	Kind        string      `json:"kind"` // employment, payroll_stamped, salary_deduction, introduction_letter, good_conduct_letter, confirmation_letter, embassy_letter
+	Description *string     `json:"description,omitempty"`
+	Status      string      `json:"status"` // pending, doing, done, rejected
+	CreatedAt   string      `json:"created_at"`
+	UpdatedAt   string      `json:"updated_at"`
 }
 
 // CreateRequestInput represents the input for creating a new request

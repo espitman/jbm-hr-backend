@@ -7,6 +7,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/ent"
 	entrequest "github.com/espitman/jbm-hr-backend/ent/request"
+	"github.com/espitman/jbm-hr-backend/ent/user"
 )
 
 // EntRepository implements the Repository interface using Ent
@@ -30,7 +31,7 @@ func convertToContractRequest(entReq *ent.Request) *contract.Request {
 	if entReq.Description != "" {
 		description = &entReq.Description
 	}
-	return &contract.Request{
+	req := &contract.Request{
 		ID:          entReq.ID,
 		UserID:      entReq.UserID,
 		FullName:    entReq.FullName,
@@ -40,6 +41,18 @@ func convertToContractRequest(entReq *ent.Request) *contract.Request {
 		CreatedAt:   entReq.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:   entReq.UpdatedAt.Format(time.RFC3339),
 	}
+
+	if entReq.Edges.User != nil {
+		req.User = contract.RequestUser{
+			ID:        entReq.Edges.User.ID,
+			Email:     entReq.Edges.User.Email,
+			FirstName: entReq.Edges.User.FirstName,
+			LastName:  entReq.Edges.User.LastName,
+			Avatar:    entReq.Edges.User.Avatar,
+		}
+	}
+
+	return req
 }
 
 // Create creates a new request
@@ -57,7 +70,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateRequestI
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractRequest(entReq), nil
+	return r.GetByID(ctx, entReq.ID)
 }
 
 // Update updates an existing request
@@ -71,12 +84,17 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractRequest(entReq), nil
+	return r.GetByID(ctx, entReq.ID)
 }
 
 // GetByID retrieves a request by its ID
 func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.Request, error) {
-	entReq, err := r.client.Request.Get(ctx, id)
+	entReq, err := r.client.Request.Query().
+		WithUser(func(q *ent.UserQuery) {
+			q.Select(user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldAvatar)
+		}).
+		Where(entrequest.ID(id)).
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +103,11 @@ func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.Request,
 
 // GetByFilter retrieves requests based on filter criteria
 func (r *EntRepository) GetByFilter(ctx context.Context, filter *contract.RequestFilter) ([]*contract.Request, error) {
-	query := r.client.Request.Query()
+	query := r.client.Request.Query().
+		WithUser(func(q *ent.UserQuery) {
+			q.Select(user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldAvatar)
+		}).
+		Order(ent.Desc(entrequest.FieldID))
 
 	if filter.UserID != 0 {
 		query = query.Where(entrequest.UserID(filter.UserID))
