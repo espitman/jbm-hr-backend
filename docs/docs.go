@@ -2702,7 +2702,8 @@ const docTemplate = `{
                         "introduction_letter",
                         "good_conduct_letter",
                         "confirmation_letter",
-                        "embassy_letter"
+                        "embassy_letter",
+                        "development_learning"
                     ]
                 },
                 "meta": {

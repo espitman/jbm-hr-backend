@@ -3,7 +3,7 @@ package requesthandler
 // CreateRequestRequest represents the request for creating a request
 type CreateRequestRequest struct {
 	FullName    string  `json:"full_name" validate:"required"`
-	Kind        string  `json:"kind" validate:"required,oneof=employment payroll_stamped salary_deduction introduction_letter good_conduct_letter confirmation_letter embassy_letter"`
+	Kind        string  `json:"kind" validate:"required,oneof=employment payroll_stamped salary_deduction introduction_letter good_conduct_letter confirmation_letter embassy_letter development_learning"`
 	Description *string `json:"description,omitempty"`
 	Meta        []struct {
 		Key   string `json:"key" validate:"required"`

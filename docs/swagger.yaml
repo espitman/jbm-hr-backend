@@ -382,6 +382,7 @@ definitions:
         - good_conduct_letter
         - confirmation_letter
         - embassy_letter
+        - development_learning
         type: string
       meta:
         items:
