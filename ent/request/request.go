@@ -89,16 +89,18 @@ type Kind string
 
 // Kind values.
 const (
-	KindEmployment          Kind = "employment"
-	KindPayrollStamped      Kind = "payroll_stamped"
-	KindSalaryDeduction     Kind = "salary_deduction"
-	KindIntroductionLetter  Kind = "introduction_letter"
-	KindGoodConductLetter   Kind = "good_conduct_letter"
-	KindConfirmationLetter  Kind = "confirmation_letter"
-	KindEmbassyLetter       Kind = "embassy_letter"
-	KindDevelopmentLearning Kind = "development_learning"
-	KindMarriageGift        Kind = "marriage_gift"
-	KindChildbirthGift      Kind = "childbirth_gift"
+	KindEmployment             Kind = "employment"
+	KindPayrollStamped         Kind = "payroll_stamped"
+	KindSalaryDeduction        Kind = "salary_deduction"
+	KindIntroductionLetter     Kind = "introduction_letter"
+	KindGoodConductLetter      Kind = "good_conduct_letter"
+	KindConfirmationLetter     Kind = "confirmation_letter"
+	KindEmbassyLetter          Kind = "embassy_letter"
+	KindDevelopmentLearning    Kind = "development_learning"
+	KindMarriageGift           Kind = "marriage_gift"
+	KindChildbirthGift         Kind = "childbirth_gift"
+	KindTravelCredit           Kind = "travel_credit"
+	KindSupplementaryInsurance Kind = "supplementary_insurance"
 )
 
 func (k Kind) String() string {
@@ -108,7 +110,7 @@ func (k Kind) String() string {
 // KindValidator is a validator for the "kind" field enum values. It is called by the builders before save.
 func KindValidator(k Kind) error {
 	switch k {
-	case KindEmployment, KindPayrollStamped, KindSalaryDeduction, KindIntroductionLetter, KindGoodConductLetter, KindConfirmationLetter, KindEmbassyLetter, KindDevelopmentLearning, KindMarriageGift, KindChildbirthGift:
+	case KindEmployment, KindPayrollStamped, KindSalaryDeduction, KindIntroductionLetter, KindGoodConductLetter, KindConfirmationLetter, KindEmbassyLetter, KindDevelopmentLearning, KindMarriageGift, KindChildbirthGift, KindTravelCredit, KindSupplementaryInsurance:
 		return nil
 	default:
 		return fmt.Errorf("request: invalid enum value for kind field: %q", k)

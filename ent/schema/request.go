@@ -22,16 +22,18 @@ func (Request) Fields() []ent.Field {
 			NotEmpty(),
 		field.Enum("kind").
 			Values(
-				"employment",           // اشتغال به کار
-				"payroll_stamped",      // فیش حقوقی مهر شده
-				"salary_deduction",     // کسر از حقوق
-				"introduction_letter",  // معرفی نامه
-				"good_conduct_letter",  // نامه حسن انجام کار
-				"confirmation_letter",  // نامه تاییدیه
-				"embassy_letter",       // نامه سفارت
-				"development_learning", // توسعه و یادگیری
-				"marriage_gift",        // هدیه ازدواج
-				"childbirth_gift",      // هدیه تولد فرزند
+				"employment",              // اشتغال به کار
+				"payroll_stamped",         // فیش حقوقی مهر شده
+				"salary_deduction",        // کسر از حقوق
+				"introduction_letter",     // معرفی نامه
+				"good_conduct_letter",     // نامه حسن انجام کار
+				"confirmation_letter",     // نامه تاییدیه
+				"embassy_letter",          // نامه سفارت
+				"development_learning",    // توسعه و یادگیری
+				"marriage_gift",           // هدیه ازدواج
+				"childbirth_gift",         // هدیه تولد فرزند
+				"travel_credit",           // اعتبار سفر
+				"supplementary_insurance", // بیمه تکمیلی
 			),
 		field.String("description").
 			Optional(),
