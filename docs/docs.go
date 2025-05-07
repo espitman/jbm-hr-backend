@@ -2703,25 +2703,16 @@ const docTemplate = `{
                         "good_conduct_letter",
                         "confirmation_letter",
                         "embassy_letter",
-                        "development_learning"
+                        "development_learning",
+                        "marriage_gift",
+                        "childbirth_gift",
+                        "travel_credit"
                     ]
                 },
                 "meta": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "required": [
-                            "key",
-                            "value"
-                        ],
-                        "properties": {
-                            "key": {
-                                "type": "string"
-                            },
-                            "value": {
-                                "type": "string"
-                            }
-                        }
+                        "$ref": "#/definitions/requesthandler.RequestMeta"
                     }
                 }
             }
@@ -2803,6 +2794,21 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "requesthandler.RequestMeta": {
+            "type": "object",
+            "required": [
+                "key",
+                "value"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
                 }
             }
         },

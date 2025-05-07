@@ -33,7 +33,7 @@ type Request struct {
 type CreateRequestInput struct {
 	UserID      int           `json:"user_id" validate:"required"`
 	FullName    string        `json:"full_name" validate:"required"`
-	Kind        string        `json:"kind" validate:"required,oneof=employment payroll_stamped salary_deduction introduction_letter good_conduct_letter confirmation_letter embassy_letter development_learning marriage_gift childbirth_gift"`
+	Kind        string        `json:"kind" validate:"required,oneof=employment payroll_stamped salary_deduction introduction_letter good_conduct_letter confirmation_letter embassy_letter development_learning marriage_gift childbirth_gift travel_credit"`
 	Description *string       `json:"description,omitempty"`
 	Meta        []RequestMeta `json:"meta,omitempty"`
 }

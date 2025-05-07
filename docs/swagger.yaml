@@ -383,18 +383,13 @@ definitions:
         - confirmation_letter
         - embassy_letter
         - development_learning
+        - marriage_gift
+        - childbirth_gift
+        - travel_credit
         type: string
       meta:
         items:
-          properties:
-            key:
-              type: string
-            value:
-              type: string
-          required:
-          - key
-          - value
-          type: object
+          $ref: '#/definitions/requesthandler.RequestMeta'
         type: array
     required:
     - full_name
@@ -451,6 +446,16 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  requesthandler.RequestMeta:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    required:
+    - key
+    - value
     type: object
   requesthandler.UpdateRequestStatusRequest:
     properties:
