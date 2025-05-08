@@ -661,15 +661,15 @@ func (c *DigikalaCodeClient) GetX(ctx context.Context, id int) *DigikalaCode {
 	return obj
 }
 
-// QueryUsedBy queries the used_by edge of a DigikalaCode.
-func (c *DigikalaCodeClient) QueryUsedBy(dc *DigikalaCode) *UserQuery {
+// QueryAssignedTo queries the assigned_to edge of a DigikalaCode.
+func (c *DigikalaCodeClient) QueryAssignedTo(dc *DigikalaCode) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := dc.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(digikalacode.Table, digikalacode.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, digikalacode.UsedByTable, digikalacode.UsedByColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, digikalacode.AssignedToTable, digikalacode.AssignedToColumn),
 		)
 		fromV = sqlgraph.Neighbors(dc.driver.Dialect(), step)
 		return fromV, nil

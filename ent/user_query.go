@@ -720,7 +720,7 @@ func (uq *UserQuery) loadDigikalaCodes(ctx context.Context, query *DigikalaCodeQ
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(digikalacode.FieldUsedByUserID)
+		query.ctx.AppendFieldOnce(digikalacode.FieldAssignToUserID)
 	}
 	query.Where(predicate.DigikalaCode(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.DigikalaCodesColumn), fks...))
@@ -730,10 +730,10 @@ func (uq *UserQuery) loadDigikalaCodes(ctx context.Context, query *DigikalaCodeQ
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.UsedByUserID
+		fk := n.AssignToUserID
 		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "used_by_user_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "assign_to_user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -70,9 +70,14 @@ func CreatedAt(v time.Time) predicate.DigikalaCode {
 	return predicate.DigikalaCode(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UsedByUserID applies equality check predicate on the "used_by_user_id" field. It's identical to UsedByUserIDEQ.
-func UsedByUserID(v int) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldEQ(FieldUsedByUserID, v))
+// AssignToUserID applies equality check predicate on the "assign_to_user_id" field. It's identical to AssignToUserIDEQ.
+func AssignToUserID(v int) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldEQ(FieldAssignToUserID, v))
+}
+
+// AssignAt applies equality check predicate on the "assign_at" field. It's identical to AssignAtEQ.
+func AssignAt(v time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldEQ(FieldAssignAt, v))
 }
 
 // UsedAt applies equality check predicate on the "used_at" field. It's identical to UsedAtEQ.
@@ -195,34 +200,84 @@ func CreatedAtLTE(v time.Time) predicate.DigikalaCode {
 	return predicate.DigikalaCode(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// UsedByUserIDEQ applies the EQ predicate on the "used_by_user_id" field.
-func UsedByUserIDEQ(v int) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldEQ(FieldUsedByUserID, v))
+// AssignToUserIDEQ applies the EQ predicate on the "assign_to_user_id" field.
+func AssignToUserIDEQ(v int) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldEQ(FieldAssignToUserID, v))
 }
 
-// UsedByUserIDNEQ applies the NEQ predicate on the "used_by_user_id" field.
-func UsedByUserIDNEQ(v int) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldNEQ(FieldUsedByUserID, v))
+// AssignToUserIDNEQ applies the NEQ predicate on the "assign_to_user_id" field.
+func AssignToUserIDNEQ(v int) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldNEQ(FieldAssignToUserID, v))
 }
 
-// UsedByUserIDIn applies the In predicate on the "used_by_user_id" field.
-func UsedByUserIDIn(vs ...int) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldIn(FieldUsedByUserID, vs...))
+// AssignToUserIDIn applies the In predicate on the "assign_to_user_id" field.
+func AssignToUserIDIn(vs ...int) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldIn(FieldAssignToUserID, vs...))
 }
 
-// UsedByUserIDNotIn applies the NotIn predicate on the "used_by_user_id" field.
-func UsedByUserIDNotIn(vs ...int) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldNotIn(FieldUsedByUserID, vs...))
+// AssignToUserIDNotIn applies the NotIn predicate on the "assign_to_user_id" field.
+func AssignToUserIDNotIn(vs ...int) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldNotIn(FieldAssignToUserID, vs...))
 }
 
-// UsedByUserIDIsNil applies the IsNil predicate on the "used_by_user_id" field.
-func UsedByUserIDIsNil() predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldIsNull(FieldUsedByUserID))
+// AssignToUserIDIsNil applies the IsNil predicate on the "assign_to_user_id" field.
+func AssignToUserIDIsNil() predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldIsNull(FieldAssignToUserID))
 }
 
-// UsedByUserIDNotNil applies the NotNil predicate on the "used_by_user_id" field.
-func UsedByUserIDNotNil() predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldNotNull(FieldUsedByUserID))
+// AssignToUserIDNotNil applies the NotNil predicate on the "assign_to_user_id" field.
+func AssignToUserIDNotNil() predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldNotNull(FieldAssignToUserID))
+}
+
+// AssignAtEQ applies the EQ predicate on the "assign_at" field.
+func AssignAtEQ(v time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldEQ(FieldAssignAt, v))
+}
+
+// AssignAtNEQ applies the NEQ predicate on the "assign_at" field.
+func AssignAtNEQ(v time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldNEQ(FieldAssignAt, v))
+}
+
+// AssignAtIn applies the In predicate on the "assign_at" field.
+func AssignAtIn(vs ...time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldIn(FieldAssignAt, vs...))
+}
+
+// AssignAtNotIn applies the NotIn predicate on the "assign_at" field.
+func AssignAtNotIn(vs ...time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldNotIn(FieldAssignAt, vs...))
+}
+
+// AssignAtGT applies the GT predicate on the "assign_at" field.
+func AssignAtGT(v time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldGT(FieldAssignAt, v))
+}
+
+// AssignAtGTE applies the GTE predicate on the "assign_at" field.
+func AssignAtGTE(v time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldGTE(FieldAssignAt, v))
+}
+
+// AssignAtLT applies the LT predicate on the "assign_at" field.
+func AssignAtLT(v time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldLT(FieldAssignAt, v))
+}
+
+// AssignAtLTE applies the LTE predicate on the "assign_at" field.
+func AssignAtLTE(v time.Time) predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldLTE(FieldAssignAt, v))
+}
+
+// AssignAtIsNil applies the IsNil predicate on the "assign_at" field.
+func AssignAtIsNil() predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldIsNull(FieldAssignAt))
+}
+
+// AssignAtNotNil applies the NotNil predicate on the "assign_at" field.
+func AssignAtNotNil() predicate.DigikalaCode {
+	return predicate.DigikalaCode(sql.FieldNotNull(FieldAssignAt))
 }
 
 // UsedAtEQ applies the EQ predicate on the "used_at" field.
@@ -275,21 +330,21 @@ func UsedAtNotNil() predicate.DigikalaCode {
 	return predicate.DigikalaCode(sql.FieldNotNull(FieldUsedAt))
 }
 
-// HasUsedBy applies the HasEdge predicate on the "used_by" edge.
-func HasUsedBy() predicate.DigikalaCode {
+// HasAssignedTo applies the HasEdge predicate on the "assigned_to" edge.
+func HasAssignedTo() predicate.DigikalaCode {
 	return predicate.DigikalaCode(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UsedByTable, UsedByColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, AssignedToTable, AssignedToColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUsedByWith applies the HasEdge predicate on the "used_by" edge with a given conditions (other predicates).
-func HasUsedByWith(preds ...predicate.User) predicate.DigikalaCode {
+// HasAssignedToWith applies the HasEdge predicate on the "assigned_to" edge with a given conditions (other predicates).
+func HasAssignedToWith(preds ...predicate.User) predicate.DigikalaCode {
 	return predicate.DigikalaCode(func(s *sql.Selector) {
-		step := newUsedByStep()
+		step := newAssignedToStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

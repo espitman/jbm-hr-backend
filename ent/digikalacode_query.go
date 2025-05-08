@@ -19,11 +19,11 @@ import (
 // DigikalaCodeQuery is the builder for querying DigikalaCode entities.
 type DigikalaCodeQuery struct {
 	config
-	ctx        *QueryContext
-	order      []digikalacode.OrderOption
-	inters     []Interceptor
-	predicates []predicate.DigikalaCode
-	withUsedBy *UserQuery
+	ctx            *QueryContext
+	order          []digikalacode.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.DigikalaCode
+	withAssignedTo *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -60,8 +60,8 @@ func (dcq *DigikalaCodeQuery) Order(o ...digikalacode.OrderOption) *DigikalaCode
 	return dcq
 }
 
-// QueryUsedBy chains the current query on the "used_by" edge.
-func (dcq *DigikalaCodeQuery) QueryUsedBy() *UserQuery {
+// QueryAssignedTo chains the current query on the "assigned_to" edge.
+func (dcq *DigikalaCodeQuery) QueryAssignedTo() *UserQuery {
 	query := (&UserClient{config: dcq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := dcq.prepareQuery(ctx); err != nil {
@@ -74,7 +74,7 @@ func (dcq *DigikalaCodeQuery) QueryUsedBy() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(digikalacode.Table, digikalacode.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, digikalacode.UsedByTable, digikalacode.UsedByColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, digikalacode.AssignedToTable, digikalacode.AssignedToColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(dcq.driver.Dialect(), step)
 		return fromU, nil
@@ -269,26 +269,26 @@ func (dcq *DigikalaCodeQuery) Clone() *DigikalaCodeQuery {
 		return nil
 	}
 	return &DigikalaCodeQuery{
-		config:     dcq.config,
-		ctx:        dcq.ctx.Clone(),
-		order:      append([]digikalacode.OrderOption{}, dcq.order...),
-		inters:     append([]Interceptor{}, dcq.inters...),
-		predicates: append([]predicate.DigikalaCode{}, dcq.predicates...),
-		withUsedBy: dcq.withUsedBy.Clone(),
+		config:         dcq.config,
+		ctx:            dcq.ctx.Clone(),
+		order:          append([]digikalacode.OrderOption{}, dcq.order...),
+		inters:         append([]Interceptor{}, dcq.inters...),
+		predicates:     append([]predicate.DigikalaCode{}, dcq.predicates...),
+		withAssignedTo: dcq.withAssignedTo.Clone(),
 		// clone intermediate query.
 		sql:  dcq.sql.Clone(),
 		path: dcq.path,
 	}
 }
 
-// WithUsedBy tells the query-builder to eager-load the nodes that are connected to
-// the "used_by" edge. The optional arguments are used to configure the query builder of the edge.
-func (dcq *DigikalaCodeQuery) WithUsedBy(opts ...func(*UserQuery)) *DigikalaCodeQuery {
+// WithAssignedTo tells the query-builder to eager-load the nodes that are connected to
+// the "assigned_to" edge. The optional arguments are used to configure the query builder of the edge.
+func (dcq *DigikalaCodeQuery) WithAssignedTo(opts ...func(*UserQuery)) *DigikalaCodeQuery {
 	query := (&UserClient{config: dcq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	dcq.withUsedBy = query
+	dcq.withAssignedTo = query
 	return dcq
 }
 
@@ -371,7 +371,7 @@ func (dcq *DigikalaCodeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 		nodes       = []*DigikalaCode{}
 		_spec       = dcq.querySpec()
 		loadedTypes = [1]bool{
-			dcq.withUsedBy != nil,
+			dcq.withAssignedTo != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -392,20 +392,20 @@ func (dcq *DigikalaCodeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := dcq.withUsedBy; query != nil {
-		if err := dcq.loadUsedBy(ctx, query, nodes, nil,
-			func(n *DigikalaCode, e *User) { n.Edges.UsedBy = e }); err != nil {
+	if query := dcq.withAssignedTo; query != nil {
+		if err := dcq.loadAssignedTo(ctx, query, nodes, nil,
+			func(n *DigikalaCode, e *User) { n.Edges.AssignedTo = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (dcq *DigikalaCodeQuery) loadUsedBy(ctx context.Context, query *UserQuery, nodes []*DigikalaCode, init func(*DigikalaCode), assign func(*DigikalaCode, *User)) error {
+func (dcq *DigikalaCodeQuery) loadAssignedTo(ctx context.Context, query *UserQuery, nodes []*DigikalaCode, init func(*DigikalaCode), assign func(*DigikalaCode, *User)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*DigikalaCode)
 	for i := range nodes {
-		fk := nodes[i].UsedByUserID
+		fk := nodes[i].AssignToUserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -422,7 +422,7 @@ func (dcq *DigikalaCodeQuery) loadUsedBy(ctx context.Context, query *UserQuery, 
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "used_by_user_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "assign_to_user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -456,8 +456,8 @@ func (dcq *DigikalaCodeQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if dcq.withUsedBy != nil {
-			_spec.Node.AddColumnOnce(digikalacode.FieldUsedByUserID)
+		if dcq.withAssignedTo != nil {
+			_spec.Node.AddColumnOnce(digikalacode.FieldAssignToUserID)
 		}
 	}
 	if ps := dcq.predicates; len(ps) > 0 {

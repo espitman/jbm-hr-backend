@@ -1317,19 +1317,20 @@ func (m *DepartmentMutation) ResetEdge(name string) error {
 // DigikalaCodeMutation represents an operation that mutates the DigikalaCode nodes in the graph.
 type DigikalaCodeMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int
-	code           *string
-	used           *bool
-	created_at     *time.Time
-	used_at        *time.Time
-	clearedFields  map[string]struct{}
-	used_by        *int
-	clearedused_by bool
-	done           bool
-	oldValue       func(context.Context) (*DigikalaCode, error)
-	predicates     []predicate.DigikalaCode
+	op                 Op
+	typ                string
+	id                 *int
+	code               *string
+	used               *bool
+	created_at         *time.Time
+	assign_at          *time.Time
+	used_at            *time.Time
+	clearedFields      map[string]struct{}
+	assigned_to        *int
+	clearedassigned_to bool
+	done               bool
+	oldValue           func(context.Context) (*DigikalaCode, error)
+	predicates         []predicate.DigikalaCode
 }
 
 var _ ent.Mutation = (*DigikalaCodeMutation)(nil)
@@ -1538,53 +1539,102 @@ func (m *DigikalaCodeMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetUsedByUserID sets the "used_by_user_id" field.
-func (m *DigikalaCodeMutation) SetUsedByUserID(i int) {
-	m.used_by = &i
+// SetAssignToUserID sets the "assign_to_user_id" field.
+func (m *DigikalaCodeMutation) SetAssignToUserID(i int) {
+	m.assigned_to = &i
 }
 
-// UsedByUserID returns the value of the "used_by_user_id" field in the mutation.
-func (m *DigikalaCodeMutation) UsedByUserID() (r int, exists bool) {
-	v := m.used_by
+// AssignToUserID returns the value of the "assign_to_user_id" field in the mutation.
+func (m *DigikalaCodeMutation) AssignToUserID() (r int, exists bool) {
+	v := m.assigned_to
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUsedByUserID returns the old "used_by_user_id" field's value of the DigikalaCode entity.
+// OldAssignToUserID returns the old "assign_to_user_id" field's value of the DigikalaCode entity.
 // If the DigikalaCode object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DigikalaCodeMutation) OldUsedByUserID(ctx context.Context) (v int, err error) {
+func (m *DigikalaCodeMutation) OldAssignToUserID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUsedByUserID is only allowed on UpdateOne operations")
+		return v, errors.New("OldAssignToUserID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUsedByUserID requires an ID field in the mutation")
+		return v, errors.New("OldAssignToUserID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUsedByUserID: %w", err)
+		return v, fmt.Errorf("querying old value for OldAssignToUserID: %w", err)
 	}
-	return oldValue.UsedByUserID, nil
+	return oldValue.AssignToUserID, nil
 }
 
-// ClearUsedByUserID clears the value of the "used_by_user_id" field.
-func (m *DigikalaCodeMutation) ClearUsedByUserID() {
-	m.used_by = nil
-	m.clearedFields[digikalacode.FieldUsedByUserID] = struct{}{}
+// ClearAssignToUserID clears the value of the "assign_to_user_id" field.
+func (m *DigikalaCodeMutation) ClearAssignToUserID() {
+	m.assigned_to = nil
+	m.clearedFields[digikalacode.FieldAssignToUserID] = struct{}{}
 }
 
-// UsedByUserIDCleared returns if the "used_by_user_id" field was cleared in this mutation.
-func (m *DigikalaCodeMutation) UsedByUserIDCleared() bool {
-	_, ok := m.clearedFields[digikalacode.FieldUsedByUserID]
+// AssignToUserIDCleared returns if the "assign_to_user_id" field was cleared in this mutation.
+func (m *DigikalaCodeMutation) AssignToUserIDCleared() bool {
+	_, ok := m.clearedFields[digikalacode.FieldAssignToUserID]
 	return ok
 }
 
-// ResetUsedByUserID resets all changes to the "used_by_user_id" field.
-func (m *DigikalaCodeMutation) ResetUsedByUserID() {
-	m.used_by = nil
-	delete(m.clearedFields, digikalacode.FieldUsedByUserID)
+// ResetAssignToUserID resets all changes to the "assign_to_user_id" field.
+func (m *DigikalaCodeMutation) ResetAssignToUserID() {
+	m.assigned_to = nil
+	delete(m.clearedFields, digikalacode.FieldAssignToUserID)
+}
+
+// SetAssignAt sets the "assign_at" field.
+func (m *DigikalaCodeMutation) SetAssignAt(t time.Time) {
+	m.assign_at = &t
+}
+
+// AssignAt returns the value of the "assign_at" field in the mutation.
+func (m *DigikalaCodeMutation) AssignAt() (r time.Time, exists bool) {
+	v := m.assign_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAssignAt returns the old "assign_at" field's value of the DigikalaCode entity.
+// If the DigikalaCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DigikalaCodeMutation) OldAssignAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAssignAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAssignAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAssignAt: %w", err)
+	}
+	return oldValue.AssignAt, nil
+}
+
+// ClearAssignAt clears the value of the "assign_at" field.
+func (m *DigikalaCodeMutation) ClearAssignAt() {
+	m.assign_at = nil
+	m.clearedFields[digikalacode.FieldAssignAt] = struct{}{}
+}
+
+// AssignAtCleared returns if the "assign_at" field was cleared in this mutation.
+func (m *DigikalaCodeMutation) AssignAtCleared() bool {
+	_, ok := m.clearedFields[digikalacode.FieldAssignAt]
+	return ok
+}
+
+// ResetAssignAt resets all changes to the "assign_at" field.
+func (m *DigikalaCodeMutation) ResetAssignAt() {
+	m.assign_at = nil
+	delete(m.clearedFields, digikalacode.FieldAssignAt)
 }
 
 // SetUsedAt sets the "used_at" field.
@@ -1636,44 +1686,44 @@ func (m *DigikalaCodeMutation) ResetUsedAt() {
 	delete(m.clearedFields, digikalacode.FieldUsedAt)
 }
 
-// SetUsedByID sets the "used_by" edge to the User entity by id.
-func (m *DigikalaCodeMutation) SetUsedByID(id int) {
-	m.used_by = &id
+// SetAssignedToID sets the "assigned_to" edge to the User entity by id.
+func (m *DigikalaCodeMutation) SetAssignedToID(id int) {
+	m.assigned_to = &id
 }
 
-// ClearUsedBy clears the "used_by" edge to the User entity.
-func (m *DigikalaCodeMutation) ClearUsedBy() {
-	m.clearedused_by = true
-	m.clearedFields[digikalacode.FieldUsedByUserID] = struct{}{}
+// ClearAssignedTo clears the "assigned_to" edge to the User entity.
+func (m *DigikalaCodeMutation) ClearAssignedTo() {
+	m.clearedassigned_to = true
+	m.clearedFields[digikalacode.FieldAssignToUserID] = struct{}{}
 }
 
-// UsedByCleared reports if the "used_by" edge to the User entity was cleared.
-func (m *DigikalaCodeMutation) UsedByCleared() bool {
-	return m.UsedByUserIDCleared() || m.clearedused_by
+// AssignedToCleared reports if the "assigned_to" edge to the User entity was cleared.
+func (m *DigikalaCodeMutation) AssignedToCleared() bool {
+	return m.AssignToUserIDCleared() || m.clearedassigned_to
 }
 
-// UsedByID returns the "used_by" edge ID in the mutation.
-func (m *DigikalaCodeMutation) UsedByID() (id int, exists bool) {
-	if m.used_by != nil {
-		return *m.used_by, true
+// AssignedToID returns the "assigned_to" edge ID in the mutation.
+func (m *DigikalaCodeMutation) AssignedToID() (id int, exists bool) {
+	if m.assigned_to != nil {
+		return *m.assigned_to, true
 	}
 	return
 }
 
-// UsedByIDs returns the "used_by" edge IDs in the mutation.
+// AssignedToIDs returns the "assigned_to" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// UsedByID instead. It exists only for internal usage by the builders.
-func (m *DigikalaCodeMutation) UsedByIDs() (ids []int) {
-	if id := m.used_by; id != nil {
+// AssignedToID instead. It exists only for internal usage by the builders.
+func (m *DigikalaCodeMutation) AssignedToIDs() (ids []int) {
+	if id := m.assigned_to; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetUsedBy resets all changes to the "used_by" edge.
-func (m *DigikalaCodeMutation) ResetUsedBy() {
-	m.used_by = nil
-	m.clearedused_by = false
+// ResetAssignedTo resets all changes to the "assigned_to" edge.
+func (m *DigikalaCodeMutation) ResetAssignedTo() {
+	m.assigned_to = nil
+	m.clearedassigned_to = false
 }
 
 // Where appends a list predicates to the DigikalaCodeMutation builder.
@@ -1710,7 +1760,7 @@ func (m *DigikalaCodeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DigikalaCodeMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.code != nil {
 		fields = append(fields, digikalacode.FieldCode)
 	}
@@ -1720,8 +1770,11 @@ func (m *DigikalaCodeMutation) Fields() []string {
 	if m.created_at != nil {
 		fields = append(fields, digikalacode.FieldCreatedAt)
 	}
-	if m.used_by != nil {
-		fields = append(fields, digikalacode.FieldUsedByUserID)
+	if m.assigned_to != nil {
+		fields = append(fields, digikalacode.FieldAssignToUserID)
+	}
+	if m.assign_at != nil {
+		fields = append(fields, digikalacode.FieldAssignAt)
 	}
 	if m.used_at != nil {
 		fields = append(fields, digikalacode.FieldUsedAt)
@@ -1740,8 +1793,10 @@ func (m *DigikalaCodeMutation) Field(name string) (ent.Value, bool) {
 		return m.Used()
 	case digikalacode.FieldCreatedAt:
 		return m.CreatedAt()
-	case digikalacode.FieldUsedByUserID:
-		return m.UsedByUserID()
+	case digikalacode.FieldAssignToUserID:
+		return m.AssignToUserID()
+	case digikalacode.FieldAssignAt:
+		return m.AssignAt()
 	case digikalacode.FieldUsedAt:
 		return m.UsedAt()
 	}
@@ -1759,8 +1814,10 @@ func (m *DigikalaCodeMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldUsed(ctx)
 	case digikalacode.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case digikalacode.FieldUsedByUserID:
-		return m.OldUsedByUserID(ctx)
+	case digikalacode.FieldAssignToUserID:
+		return m.OldAssignToUserID(ctx)
+	case digikalacode.FieldAssignAt:
+		return m.OldAssignAt(ctx)
 	case digikalacode.FieldUsedAt:
 		return m.OldUsedAt(ctx)
 	}
@@ -1793,12 +1850,19 @@ func (m *DigikalaCodeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case digikalacode.FieldUsedByUserID:
+	case digikalacode.FieldAssignToUserID:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUsedByUserID(v)
+		m.SetAssignToUserID(v)
+		return nil
+	case digikalacode.FieldAssignAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAssignAt(v)
 		return nil
 	case digikalacode.FieldUsedAt:
 		v, ok := value.(time.Time)
@@ -1840,8 +1904,11 @@ func (m *DigikalaCodeMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *DigikalaCodeMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(digikalacode.FieldUsedByUserID) {
-		fields = append(fields, digikalacode.FieldUsedByUserID)
+	if m.FieldCleared(digikalacode.FieldAssignToUserID) {
+		fields = append(fields, digikalacode.FieldAssignToUserID)
+	}
+	if m.FieldCleared(digikalacode.FieldAssignAt) {
+		fields = append(fields, digikalacode.FieldAssignAt)
 	}
 	if m.FieldCleared(digikalacode.FieldUsedAt) {
 		fields = append(fields, digikalacode.FieldUsedAt)
@@ -1860,8 +1927,11 @@ func (m *DigikalaCodeMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *DigikalaCodeMutation) ClearField(name string) error {
 	switch name {
-	case digikalacode.FieldUsedByUserID:
-		m.ClearUsedByUserID()
+	case digikalacode.FieldAssignToUserID:
+		m.ClearAssignToUserID()
+		return nil
+	case digikalacode.FieldAssignAt:
+		m.ClearAssignAt()
 		return nil
 	case digikalacode.FieldUsedAt:
 		m.ClearUsedAt()
@@ -1883,8 +1953,11 @@ func (m *DigikalaCodeMutation) ResetField(name string) error {
 	case digikalacode.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case digikalacode.FieldUsedByUserID:
-		m.ResetUsedByUserID()
+	case digikalacode.FieldAssignToUserID:
+		m.ResetAssignToUserID()
+		return nil
+	case digikalacode.FieldAssignAt:
+		m.ResetAssignAt()
 		return nil
 	case digikalacode.FieldUsedAt:
 		m.ResetUsedAt()
@@ -1896,8 +1969,8 @@ func (m *DigikalaCodeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DigikalaCodeMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.used_by != nil {
-		edges = append(edges, digikalacode.EdgeUsedBy)
+	if m.assigned_to != nil {
+		edges = append(edges, digikalacode.EdgeAssignedTo)
 	}
 	return edges
 }
@@ -1906,8 +1979,8 @@ func (m *DigikalaCodeMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *DigikalaCodeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case digikalacode.EdgeUsedBy:
-		if id := m.used_by; id != nil {
+	case digikalacode.EdgeAssignedTo:
+		if id := m.assigned_to; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -1929,8 +2002,8 @@ func (m *DigikalaCodeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DigikalaCodeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedused_by {
-		edges = append(edges, digikalacode.EdgeUsedBy)
+	if m.clearedassigned_to {
+		edges = append(edges, digikalacode.EdgeAssignedTo)
 	}
 	return edges
 }
@@ -1939,8 +2012,8 @@ func (m *DigikalaCodeMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *DigikalaCodeMutation) EdgeCleared(name string) bool {
 	switch name {
-	case digikalacode.EdgeUsedBy:
-		return m.clearedused_by
+	case digikalacode.EdgeAssignedTo:
+		return m.clearedassigned_to
 	}
 	return false
 }
@@ -1949,8 +2022,8 @@ func (m *DigikalaCodeMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *DigikalaCodeMutation) ClearEdge(name string) error {
 	switch name {
-	case digikalacode.EdgeUsedBy:
-		m.ClearUsedBy()
+	case digikalacode.EdgeAssignedTo:
+		m.ClearAssignedTo()
 		return nil
 	}
 	return fmt.Errorf("unknown DigikalaCode unique edge %s", name)
@@ -1960,8 +2033,8 @@ func (m *DigikalaCodeMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *DigikalaCodeMutation) ResetEdge(name string) error {
 	switch name {
-	case digikalacode.EdgeUsedBy:
-		m.ResetUsedBy()
+	case digikalacode.EdgeAssignedTo:
+		m.ResetAssignedTo()
 		return nil
 	}
 	return fmt.Errorf("unknown DigikalaCode edge %s", name)

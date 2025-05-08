@@ -20,7 +20,9 @@ func (DigikalaCode) Fields() []ent.Field {
 		field.Bool("used").
 			Default(false),
 		field.Time("created_at"),
-		field.Int("used_by_user_id").
+		field.Int("assign_to_user_id").
+			Optional(),
+		field.Time("assign_at").
 			Optional(),
 		field.Time("used_at").
 			Optional(),
@@ -30,9 +32,9 @@ func (DigikalaCode) Fields() []ent.Field {
 // Edges of the DigikalaCode.
 func (DigikalaCode) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("used_by", User.Type).
+		edge.From("assigned_to", User.Type).
 			Ref("digikala_codes").
-			Field("used_by_user_id").
+			Field("assign_to_user_id").
 			Unique(),
 	}
 }

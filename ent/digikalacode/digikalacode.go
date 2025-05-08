@@ -18,21 +18,23 @@ const (
 	FieldUsed = "used"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// FieldUsedByUserID holds the string denoting the used_by_user_id field in the database.
-	FieldUsedByUserID = "used_by_user_id"
+	// FieldAssignToUserID holds the string denoting the assign_to_user_id field in the database.
+	FieldAssignToUserID = "assign_to_user_id"
+	// FieldAssignAt holds the string denoting the assign_at field in the database.
+	FieldAssignAt = "assign_at"
 	// FieldUsedAt holds the string denoting the used_at field in the database.
 	FieldUsedAt = "used_at"
-	// EdgeUsedBy holds the string denoting the used_by edge name in mutations.
-	EdgeUsedBy = "used_by"
+	// EdgeAssignedTo holds the string denoting the assigned_to edge name in mutations.
+	EdgeAssignedTo = "assigned_to"
 	// Table holds the table name of the digikalacode in the database.
 	Table = "digikala_codes"
-	// UsedByTable is the table that holds the used_by relation/edge.
-	UsedByTable = "digikala_codes"
-	// UsedByInverseTable is the table name for the User entity.
+	// AssignedToTable is the table that holds the assigned_to relation/edge.
+	AssignedToTable = "digikala_codes"
+	// AssignedToInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
-	UsedByInverseTable = "users"
-	// UsedByColumn is the table column denoting the used_by relation/edge.
-	UsedByColumn = "used_by_user_id"
+	AssignedToInverseTable = "users"
+	// AssignedToColumn is the table column denoting the assigned_to relation/edge.
+	AssignedToColumn = "assign_to_user_id"
 )
 
 // Columns holds all SQL columns for digikalacode fields.
@@ -41,7 +43,8 @@ var Columns = []string{
 	FieldCode,
 	FieldUsed,
 	FieldCreatedAt,
-	FieldUsedByUserID,
+	FieldAssignToUserID,
+	FieldAssignAt,
 	FieldUsedAt,
 }
 
@@ -85,9 +88,14 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
-// ByUsedByUserID orders the results by the used_by_user_id field.
-func ByUsedByUserID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUsedByUserID, opts...).ToFunc()
+// ByAssignToUserID orders the results by the assign_to_user_id field.
+func ByAssignToUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAssignToUserID, opts...).ToFunc()
+}
+
+// ByAssignAt orders the results by the assign_at field.
+func ByAssignAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAssignAt, opts...).ToFunc()
 }
 
 // ByUsedAt orders the results by the used_at field.
@@ -95,16 +103,16 @@ func ByUsedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUsedAt, opts...).ToFunc()
 }
 
-// ByUsedByField orders the results by used_by field.
-func ByUsedByField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByAssignedToField orders the results by assigned_to field.
+func ByAssignedToField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUsedByStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newAssignedToStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newUsedByStep() *sqlgraph.Step {
+func newAssignedToStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UsedByInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, UsedByTable, UsedByColumn),
+		sqlgraph.To(AssignedToInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, AssignedToTable, AssignedToColumn),
 	)
 }

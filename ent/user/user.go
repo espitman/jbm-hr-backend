@@ -80,7 +80,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "digikalacode" package.
 	DigikalaCodesInverseTable = "digikala_codes"
 	// DigikalaCodesColumn is the table column denoting the digikala_codes relation/edge.
-	DigikalaCodesColumn = "used_by_user_id"
+	DigikalaCodesColumn = "assign_to_user_id"
 )
 
 // Columns holds all SQL columns for user fields.

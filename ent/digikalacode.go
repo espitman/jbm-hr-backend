@@ -24,8 +24,10 @@ type DigikalaCode struct {
 	Used bool `json:"used,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UsedByUserID holds the value of the "used_by_user_id" field.
-	UsedByUserID int `json:"used_by_user_id,omitempty"`
+	// AssignToUserID holds the value of the "assign_to_user_id" field.
+	AssignToUserID int `json:"assign_to_user_id,omitempty"`
+	// AssignAt holds the value of the "assign_at" field.
+	AssignAt time.Time `json:"assign_at,omitempty"`
 	// UsedAt holds the value of the "used_at" field.
 	UsedAt time.Time `json:"used_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -36,22 +38,22 @@ type DigikalaCode struct {
 
 // DigikalaCodeEdges holds the relations/edges for other nodes in the graph.
 type DigikalaCodeEdges struct {
-	// UsedBy holds the value of the used_by edge.
-	UsedBy *User `json:"used_by,omitempty"`
+	// AssignedTo holds the value of the assigned_to edge.
+	AssignedTo *User `json:"assigned_to,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// UsedByOrErr returns the UsedBy value or an error if the edge
+// AssignedToOrErr returns the AssignedTo value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e DigikalaCodeEdges) UsedByOrErr() (*User, error) {
-	if e.UsedBy != nil {
-		return e.UsedBy, nil
+func (e DigikalaCodeEdges) AssignedToOrErr() (*User, error) {
+	if e.AssignedTo != nil {
+		return e.AssignedTo, nil
 	} else if e.loadedTypes[0] {
 		return nil, &NotFoundError{label: user.Label}
 	}
-	return nil, &NotLoadedError{edge: "used_by"}
+	return nil, &NotLoadedError{edge: "assigned_to"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -61,11 +63,11 @@ func (*DigikalaCode) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case digikalacode.FieldUsed:
 			values[i] = new(sql.NullBool)
-		case digikalacode.FieldID, digikalacode.FieldUsedByUserID:
+		case digikalacode.FieldID, digikalacode.FieldAssignToUserID:
 			values[i] = new(sql.NullInt64)
 		case digikalacode.FieldCode:
 			values[i] = new(sql.NullString)
-		case digikalacode.FieldCreatedAt, digikalacode.FieldUsedAt:
+		case digikalacode.FieldCreatedAt, digikalacode.FieldAssignAt, digikalacode.FieldUsedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -106,11 +108,17 @@ func (dc *DigikalaCode) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				dc.CreatedAt = value.Time
 			}
-		case digikalacode.FieldUsedByUserID:
+		case digikalacode.FieldAssignToUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field used_by_user_id", values[i])
+				return fmt.Errorf("unexpected type %T for field assign_to_user_id", values[i])
 			} else if value.Valid {
-				dc.UsedByUserID = int(value.Int64)
+				dc.AssignToUserID = int(value.Int64)
+			}
+		case digikalacode.FieldAssignAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field assign_at", values[i])
+			} else if value.Valid {
+				dc.AssignAt = value.Time
 			}
 		case digikalacode.FieldUsedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -131,9 +139,9 @@ func (dc *DigikalaCode) Value(name string) (ent.Value, error) {
 	return dc.selectValues.Get(name)
 }
 
-// QueryUsedBy queries the "used_by" edge of the DigikalaCode entity.
-func (dc *DigikalaCode) QueryUsedBy() *UserQuery {
-	return NewDigikalaCodeClient(dc.config).QueryUsedBy(dc)
+// QueryAssignedTo queries the "assigned_to" edge of the DigikalaCode entity.
+func (dc *DigikalaCode) QueryAssignedTo() *UserQuery {
+	return NewDigikalaCodeClient(dc.config).QueryAssignedTo(dc)
 }
 
 // Update returns a builder for updating this DigikalaCode.
@@ -168,8 +176,11 @@ func (dc *DigikalaCode) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(dc.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("used_by_user_id=")
-	builder.WriteString(fmt.Sprintf("%v", dc.UsedByUserID))
+	builder.WriteString("assign_to_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", dc.AssignToUserID))
+	builder.WriteString(", ")
+	builder.WriteString("assign_at=")
+	builder.WriteString(dc.AssignAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("used_at=")
 	builder.WriteString(dc.UsedAt.Format(time.ANSIC))
