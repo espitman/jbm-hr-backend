@@ -389,6 +389,8 @@ definitions:
         items:
           $ref: '#/definitions/contract.DigikalaCode'
         type: array
+      total:
+        type: integer
     type: object
   digikalacodehandler.GetDigikalaCodeResponse:
     properties:
@@ -1251,7 +1253,16 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all Digikala codes
+      description: Get a paginated list of all Digikala codes
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Page size (default: 10, max: 100)'
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -1265,7 +1276,7 @@ paths:
             $ref: '#/definitions/dto.Response'
       security:
       - BearerAuth: []
-      summary: List Digikala codes
+      summary: List all Digikala codes
       tags:
       - digikala-codes - admin
     post:

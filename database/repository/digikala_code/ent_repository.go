@@ -96,25 +96,37 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateDigikala
 	return convertToContractDigikalaCode(entDigikalaCode, true)
 }
 
-// GetAll retrieves all Digikala codes
-func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.DigikalaCode, error) {
+// GetAll retrieves all Digikala codes with pagination
+func (r *EntRepository) GetAll(ctx context.Context, page, pageSize int) ([]*contract.DigikalaCode, int, error) {
+	// Calculate offset
+	offset := (page - 1) * pageSize
+
+	// Get total count
+	total, err := r.client.DigikalaCode.Query().Count(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated results
 	entDigikalaCodes, err := r.client.DigikalaCode.Query().
 		WithAssignedTo().
 		Order(ent.Desc(entDigikalaCode.FieldID)).
+		Limit(pageSize).
+		Offset(offset).
 		All(ctx)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	codes := make([]*contract.DigikalaCode, len(entDigikalaCodes))
 	for i, code := range entDigikalaCodes {
 		contractCode, err := convertToContractDigikalaCode(code, false)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		codes[i] = contractCode
 	}
-	return codes, nil
+	return codes, total, nil
 }
 
 // GetByID retrieves a Digikala code by its ID

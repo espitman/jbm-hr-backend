@@ -52,25 +52,32 @@ func (h *DigikalaCodeAdminHandler) Create(c echo.Context) error {
 	return dto.SuccessJSON(c, digikalaCode)
 }
 
-// List handles retrieving all Digikala codes
-// @Summary List Digikala codes
-// @Description Get all Digikala codes
+// List handles the request to get all Digikala codes
+// @Summary List all Digikala codes
+// @Description Get a paginated list of all Digikala codes
 // @Tags digikala-codes - admin
 // @Accept json
 // @Produce json
+// @Param page query int false "Page number (default: 1)"
+// @Param page_size query int false "Page size (default: 10, max: 100)"
 // @Success 200 {object} ListDigikalaCodeResponse
 // @Failure 500 {object} dto.Response
 // @Security BearerAuth
 // @Router /api/v1/admin/digikala-codes [get]
 func (h *DigikalaCodeAdminHandler) List(c echo.Context) error {
-	digikalaCodes, err := h.digikalaCodeService.GetAll(c.Request().Context())
+	// Get pagination parameters from query
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	pageSize, _ := strconv.Atoi(c.QueryParam("page_size"))
+
+	// Get all Digikala codes
+	codes, total, err := h.digikalaCodeService.GetAll(c.Request().Context(), page, pageSize)
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
 	// Convert []*contract.DigikalaCode to []contract.DigikalaCode and remove code field
-	convertedCodes := make([]contract.DigikalaCode, len(digikalaCodes))
-	for i, code := range digikalaCodes {
+	convertedCodes := make([]contract.DigikalaCode, len(codes))
+	for i, code := range codes {
 		convertedCode := *code
 		convertedCode.Code = "" // Remove code from response
 		convertedCodes[i] = convertedCode
@@ -78,6 +85,7 @@ func (h *DigikalaCodeAdminHandler) List(c echo.Context) error {
 
 	return dto.SuccessJSON(c, DigikalaCodeListData{
 		Items: convertedCodes,
+		Total: total,
 	})
 }
 

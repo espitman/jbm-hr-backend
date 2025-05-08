@@ -20,6 +20,7 @@ type GetDigikalaCodeResponse struct {
 // DigikalaCodeListData represents the data structure for listing Digikala codes
 type DigikalaCodeListData struct {
 	Items []contract.DigikalaCode `json:"items"`
+	Total int                     `json:"total"`
 }
 
 // ListDigikalaCodeResponse represents the response for listing Digikala codes

@@ -397,7 +397,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get all Digikala codes",
+                "description": "Get a paginated list of all Digikala codes",
                 "consumes": [
                     "application/json"
                 ],
@@ -407,7 +407,21 @@ const docTemplate = `{
                 "tags": [
                     "digikala-codes - admin"
                 ],
-                "summary": "List Digikala codes",
+                "summary": "List all Digikala codes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size (default: 10, max: 100)",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2983,6 +2997,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/contract.DigikalaCode"
                     }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

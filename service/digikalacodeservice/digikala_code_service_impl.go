@@ -15,9 +15,7 @@ type service struct {
 
 // New creates a new Digikala code service
 func New(repo digikala_code.Repository) Service {
-	return &service{
-		repo: repo,
-	}
+	return &service{repo: repo}
 }
 
 // Create creates a new Digikala code
@@ -28,9 +26,20 @@ func (s *service) Create(ctx context.Context, req *contract.CreateDigikalaCodeIn
 	return s.repo.Create(ctx, req)
 }
 
-// GetAll retrieves all Digikala codes
-func (s *service) GetAll(ctx context.Context) ([]*contract.DigikalaCode, error) {
-	return s.repo.GetAll(ctx)
+// GetAll retrieves all Digikala codes with pagination
+func (s *service) GetAll(ctx context.Context, page, pageSize int) ([]*contract.DigikalaCode, int, error) {
+	// Validate pagination parameters
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 10 // Default page size
+	}
+	if pageSize > 100 {
+		pageSize = 100 // Maximum page size
+	}
+
+	return s.repo.GetAll(ctx, page, pageSize)
 }
 
 // GetByID retrieves a Digikala code by its ID
@@ -58,4 +67,9 @@ func (s *service) Assign(ctx context.Context, code string, req *contract.AssignD
 		return nil, fmt.Errorf("invalid user id")
 	}
 	return s.repo.Assign(ctx, code, req)
+}
+
+// Delete deletes a Digikala code by its ID
+func (s *service) Delete(ctx context.Context, id int) error {
+	return s.repo.Delete(ctx, id)
 }
