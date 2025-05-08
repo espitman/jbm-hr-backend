@@ -7,6 +7,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/ent"
 	entDigikalaCode "github.com/espitman/jbm-hr-backend/ent/digikalacode"
+	"github.com/espitman/jbm-hr-backend/utils/encryption"
 )
 
 // EntRepository implements the Repository interface using Ent
@@ -22,9 +23,15 @@ func NewEntRepository(client *ent.Client) *EntRepository {
 }
 
 // convertToContractDigikalaCode converts an ent.DigikalaCode to a contract.DigikalaCode
-func convertToContractDigikalaCode(entDigikalaCode *ent.DigikalaCode) *contract.DigikalaCode {
+func convertToContractDigikalaCode(entDigikalaCode *ent.DigikalaCode) (*contract.DigikalaCode, error) {
 	if entDigikalaCode == nil {
-		return nil
+		return nil, nil
+	}
+
+	// Decrypt the code
+	decryptedCode, err := encryption.Decrypt(entDigikalaCode.Code)
+	if err != nil {
+		return nil, err
 	}
 
 	var assignToUserID *int
@@ -51,26 +58,32 @@ func convertToContractDigikalaCode(entDigikalaCode *ent.DigikalaCode) *contract.
 
 	return &contract.DigikalaCode{
 		ID:             entDigikalaCode.ID,
-		Code:           entDigikalaCode.Code,
+		Code:           decryptedCode,
 		Used:           entDigikalaCode.Used,
 		CreatedAt:      entDigikalaCode.CreatedAt.Format(time.RFC3339),
 		AssignToUserID: assignToUserID,
 		AssignAt:       assignAt,
 		AssignedToUser: assignedToUser,
-	}
+	}, nil
 }
 
 // Create creates a new Digikala code
 func (r *EntRepository) Create(ctx context.Context, req *contract.CreateDigikalaCodeInput) (*contract.DigikalaCode, error) {
+	// Encrypt the code before storing
+	encryptedCode, err := encryption.Encrypt(req.Code)
+	if err != nil {
+		return nil, err
+	}
+
 	entDigikalaCode, err := r.client.DigikalaCode.
 		Create().
-		SetCode(req.Code).
+		SetCode(encryptedCode).
 		SetCreatedAt(time.Now()).
 		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDigikalaCode(entDigikalaCode), nil
+	return convertToContractDigikalaCode(entDigikalaCode)
 }
 
 // GetAll retrieves all Digikala codes
@@ -85,7 +98,11 @@ func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.DigikalaCode, e
 
 	codes := make([]*contract.DigikalaCode, len(entDigikalaCodes))
 	for i, code := range entDigikalaCodes {
-		codes[i] = convertToContractDigikalaCode(code)
+		contractCode, err := convertToContractDigikalaCode(code)
+		if err != nil {
+			return nil, err
+		}
+		codes[i] = contractCode
 	}
 	return codes, nil
 }
@@ -99,25 +116,37 @@ func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.Digikala
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDigikalaCode(entDigikalaCode), nil
+	return convertToContractDigikalaCode(entDigikalaCode)
 }
 
 // GetByCode retrieves a Digikala code by its code
 func (r *EntRepository) GetByCode(ctx context.Context, code string) (*contract.DigikalaCode, error) {
+	// Encrypt the code before querying
+	encryptedCode, err := encryption.Encrypt(code)
+	if err != nil {
+		return nil, err
+	}
+
 	entDigikalaCode, err := r.client.DigikalaCode.Query().
-		Where(entDigikalaCode.Code(code)).
+		Where(entDigikalaCode.Code(encryptedCode)).
 		WithAssignedTo().
 		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDigikalaCode(entDigikalaCode), nil
+	return convertToContractDigikalaCode(entDigikalaCode)
 }
 
 // Assign assigns a Digikala code to a user
 func (r *EntRepository) Assign(ctx context.Context, code string, req *contract.AssignDigikalaCodeInput) (*contract.DigikalaCode, error) {
+	// Encrypt the code before querying
+	encryptedCode, err := encryption.Encrypt(code)
+	if err != nil {
+		return nil, err
+	}
+
 	codeEntity, err := r.client.DigikalaCode.Query().
-		Where(entDigikalaCode.Code(code)).
+		Where(entDigikalaCode.Code(encryptedCode)).
 		Only(ctx)
 	if err != nil {
 		return nil, err
@@ -140,7 +169,7 @@ func (r *EntRepository) Assign(ctx context.Context, code string, req *contract.A
 		return nil, err
 	}
 
-	return convertToContractDigikalaCode(codeEntity), nil
+	return convertToContractDigikalaCode(codeEntity)
 }
 
 // Delete deletes a Digikala code by its ID

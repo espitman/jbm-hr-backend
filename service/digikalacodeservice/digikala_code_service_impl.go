@@ -2,6 +2,7 @@ package digikalacodeservice
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/database/repository/digikala_code"
@@ -21,6 +22,9 @@ func New(repo digikala_code.Repository) Service {
 
 // Create creates a new Digikala code
 func (s *service) Create(ctx context.Context, req *contract.CreateDigikalaCodeInput) (*contract.DigikalaCode, error) {
+	if req.Code == "" {
+		return nil, fmt.Errorf("code is required")
+	}
 	return s.repo.Create(ctx, req)
 }
 
@@ -31,15 +35,27 @@ func (s *service) GetAll(ctx context.Context) ([]*contract.DigikalaCode, error) 
 
 // GetByID retrieves a Digikala code by its ID
 func (s *service) GetByID(ctx context.Context, id int) (*contract.DigikalaCode, error) {
+	if id <= 0 {
+		return nil, fmt.Errorf("invalid id")
+	}
 	return s.repo.GetByID(ctx, id)
 }
 
 // GetByCode retrieves a Digikala code by its code
 func (s *service) GetByCode(ctx context.Context, code string) (*contract.DigikalaCode, error) {
+	if code == "" {
+		return nil, fmt.Errorf("code is required")
+	}
 	return s.repo.GetByCode(ctx, code)
 }
 
 // Assign assigns a Digikala code to a user
 func (s *service) Assign(ctx context.Context, code string, req *contract.AssignDigikalaCodeInput) (*contract.DigikalaCode, error) {
+	if code == "" {
+		return nil, fmt.Errorf("code is required")
+	}
+	if req.UserID <= 0 {
+		return nil, fmt.Errorf("invalid user id")
+	}
 	return s.repo.Assign(ctx, code, req)
 }
