@@ -51,8 +51,8 @@ func (s *service) GetByCode(ctx context.Context, code string) (*contract.Digikal
 
 // Assign assigns a Digikala code to a user
 func (s *service) Assign(ctx context.Context, code string, req *contract.AssignDigikalaCodeInput) (*contract.DigikalaCode, error) {
-	if code == "" {
-		return nil, fmt.Errorf("code is required")
+	if req.ID <= 0 {
+		return nil, fmt.Errorf("invalid id")
 	}
 	if req.UserID <= 0 {
 		return nil, fmt.Errorf("invalid user id")

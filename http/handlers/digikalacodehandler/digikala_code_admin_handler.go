@@ -140,21 +140,12 @@ func (h *DigikalaCodeAdminHandler) Assign(c echo.Context) error {
 		return dto.BadRequestJSON(c, "invalid input")
 	}
 
-	// Get existing Digikala code
-	digikalaCode, err := h.digikalaCodeService.GetByID(c.Request().Context(), id)
-	if err != nil {
-		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
-	}
-
-	if digikalaCode == nil {
-		return dto.ErrorJSON(c, http.StatusNotFound, "digikala code not found")
-	}
-
 	input := &contract.AssignDigikalaCodeInput{
+		ID:     id,
 		UserID: req.UserID,
 	}
 
-	updatedDigikalaCode, err := h.digikalaCodeService.Assign(c.Request().Context(), digikalaCode.Code, input)
+	updatedDigikalaCode, err := h.digikalaCodeService.Assign(c.Request().Context(), "", input)
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}

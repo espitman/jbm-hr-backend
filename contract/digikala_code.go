@@ -18,6 +18,7 @@ type CreateDigikalaCodeInput struct {
 
 // AssignDigikalaCodeInput represents the input for assigning a Digikala code to a user
 type AssignDigikalaCodeInput struct {
+	ID     int `json:"id" validate:"required"`
 	UserID int `json:"user_id" validate:"required"`
 }
 

@@ -148,14 +148,9 @@ func (r *EntRepository) GetByCode(ctx context.Context, code string) (*contract.D
 
 // Assign assigns a Digikala code to a user
 func (r *EntRepository) Assign(ctx context.Context, code string, req *contract.AssignDigikalaCodeInput) (*contract.DigikalaCode, error) {
-	// Encrypt the code before querying
-	encryptedCode, err := encryption.Encrypt(code)
-	if err != nil {
-		return nil, err
-	}
-
+	// Get the DigikalaCode by ID
 	codeEntity, err := r.client.DigikalaCode.Query().
-		Where(entDigikalaCode.Code(encryptedCode)).
+		Where(entDigikalaCode.ID(req.ID)).
 		Only(ctx)
 	if err != nil {
 		return nil, err
