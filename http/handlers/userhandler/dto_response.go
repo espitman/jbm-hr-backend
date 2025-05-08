@@ -1,6 +1,7 @@
 package userhandler
 
 import (
+	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/http/dto"
 )
 
@@ -119,4 +120,10 @@ type AdminLoginResponse struct {
 type UpdateUserResponse struct {
 	dto.Response
 	Data UserData `json:"data"`
+}
+
+// SearchUsersResponse represents the response for searching users
+type SearchUsersResponse struct {
+	Items []*contract.User `json:"items"`
+	Total int              `json:"total"`
 }

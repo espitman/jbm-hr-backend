@@ -345,3 +345,8 @@ func (s *service) UpdateCooperationStartDate(ctx context.Context, id int, startD
 
 	return updatedUser, nil
 }
+
+// SearchUsers searches users by term (full name, email, or phone)
+func (s *service) SearchUsers(ctx context.Context, term string) ([]*contract.User, error) {
+	return s.userRepo.SearchUsers(ctx, term)
+}

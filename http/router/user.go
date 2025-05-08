@@ -36,6 +36,7 @@ func (r *Router) registerUserAdminRoutes(group *echo.Group) {
 		users.PUT("/:id/avatar", r.userHandler.UpdateUserAvatar)
 		users.PUT("/:id/birthdate", r.userHandler.UpdateUserBirthdate)
 		users.PUT("/:id/cooperation-start-date", r.userHandler.UpdateUserCooperationStartDate)
+		users.GET("/search/:term", r.userHandler.SearchUsers)
 		// Add other admin routes here
 		// Example: users.GET("/all", r.userHandler.GetAllUsers)
 	}

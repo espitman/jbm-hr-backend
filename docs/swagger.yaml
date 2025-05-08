@@ -210,6 +210,35 @@ definitions:
     - phone
     - role
     type: object
+  contract.User:
+    properties:
+      avatar:
+        type: string
+      birthdate:
+        type: string
+      cooperation_start_date:
+        type: string
+      department_icon:
+        type: string
+      department_id:
+        type: integer
+      department_short_name:
+        type: string
+      department_title:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+    type: object
   departmenthandler.CreateDepartmentRequest:
     properties:
       color:
@@ -783,6 +812,15 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  userhandler.SearchUsersResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/contract.User'
+        type: array
+      total:
+        type: integer
     type: object
   userhandler.UpdateUserAvatarRequest:
     properties:
@@ -1823,6 +1861,35 @@ paths:
       security:
       - BearerAuth: []
       summary: Register a new user
+      tags:
+      - users - admin
+  /api/v1/admin/users/search/{term}:
+    get:
+      consumes:
+      - application/json
+      description: Search users by full name, email, or phone
+      parameters:
+      - description: Search term
+        in: path
+        name: term
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.SearchUsersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Search users
       tags:
       - users - admin
   /api/v1/albums:

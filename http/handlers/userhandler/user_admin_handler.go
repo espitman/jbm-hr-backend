@@ -497,3 +497,31 @@ func (h *UserHandler) UpdateUserCooperationStartDate(c echo.Context) error {
 		},
 	})
 }
+
+// SearchUsers handles searching users by term
+// @Summary Search users
+// @Description Search users by full name, email, or phone
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Param term path string true "Search term"
+// @Success 200 {object} SearchUsersResponse
+// @Failure 400 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/admin/users/search/{term} [get]
+func (h *UserHandler) SearchUsers(c echo.Context) error {
+	term := c.Param("term")
+	if term == "" {
+		return dto.BadRequestJSON(c, "search term is required")
+	}
+
+	users, err := h.userService.SearchUsers(c.Request().Context(), term)
+	if err != nil {
+		return dto.InternalServerErrorJSON(c, "failed to search users")
+	}
+
+	return dto.SuccessJSON(c, SearchUsersResponse{
+		Items: users,
+		Total: len(users),
+	})
+}

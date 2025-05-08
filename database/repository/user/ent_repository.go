@@ -249,3 +249,27 @@ func (r *EntRepository) UpdateCooperationStartDate(ctx context.Context, id int, 
 	}
 	return convertToContractUser(entUser), nil
 }
+
+// SearchUsers searches users by term (full name, email, or phone)
+func (r *EntRepository) SearchUsers(ctx context.Context, term string) ([]*contract.User, error) {
+	users, err := r.client.User.Query().
+		Where(
+			entUser.Or(
+				entUser.FirstNameHasPrefix(term),
+				entUser.LastNameHasPrefix(term),
+				entUser.EmailHasPrefix(term),
+				entUser.PhoneHasPrefix(term),
+			),
+		).
+		WithDepartment().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*contract.User, len(users))
+	for i, u := range users {
+		result[i] = convertToContractUser(u)
+	}
+	return result, nil
+}
