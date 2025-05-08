@@ -2,6 +2,7 @@ package digikala_code
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/espitman/jbm-hr-backend/contract"
@@ -154,6 +155,11 @@ func (r *EntRepository) Assign(ctx context.Context, code string, req *contract.A
 		Only(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	// Check if code is already used
+	if codeEntity.Used {
+		return nil, fmt.Errorf("digikala code is already used")
 	}
 
 	codeEntity, err = codeEntity.Update().
