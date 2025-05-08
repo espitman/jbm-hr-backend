@@ -9,6 +9,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/database"
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
 	"github.com/espitman/jbm-hr-backend/database/repository/department"
+	"github.com/espitman/jbm-hr-backend/database/repository/digikala_code"
 	"github.com/espitman/jbm-hr-backend/database/repository/hrteam"
 	"github.com/espitman/jbm-hr-backend/database/repository/otp"
 	"github.com/espitman/jbm-hr-backend/database/repository/request"
@@ -17,6 +18,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/digikalacodehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/requesthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/resumehandler"
@@ -26,6 +28,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
 	"github.com/espitman/jbm-hr-backend/service/departmentservice"
+	"github.com/espitman/jbm-hr-backend/service/digikalacodeservice"
 	"github.com/espitman/jbm-hr-backend/service/hrteamservice"
 	"github.com/espitman/jbm-hr-backend/service/requestservice"
 	"github.com/espitman/jbm-hr-backend/service/resumeservice"
@@ -86,6 +89,7 @@ func main() {
 	hrTeamRepo := hrteam.NewEntRepository(client)
 	resumeRepo := resume.NewRepository(client)
 	requestRepo := request.NewEntRepository(client)
+	digikalaCodeRepo := digikala_code.NewEntRepository(client)
 
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
@@ -94,6 +98,7 @@ func main() {
 	hrTeamService := hrteamservice.New(hrTeamRepo)
 	resumeService := resumeservice.New(resumeRepo)
 	requestService := requestservice.New(requestRepo)
+	digikalaCodeService := digikalacodeservice.New(digikalaCodeRepo)
 
 	// Initialize upload service
 	uploadService, err := uploadservice.New()
@@ -114,6 +119,7 @@ func main() {
 	resumeAdminHandler := resumehandler.NewResumeAdminHandler(resumeService)
 	requestHandler := requesthandler.NewHandler(requestService)
 	requestAdminHandler := requesthandler.NewAdminHandler(requestService)
+	digikalaCodeAdminHandler := digikalacodehandler.NewDigikalaCodeAdminHandler(digikalaCodeService)
 
 	// Initialize UI handler
 	webPath, _ := filepath.Abs("ui/web")
@@ -135,6 +141,7 @@ func main() {
 		resumeAdminHandler,
 		requestHandler,
 		requestAdminHandler,
+		digikalaCodeAdminHandler,
 	)
 	r.SetupRoutes()
 

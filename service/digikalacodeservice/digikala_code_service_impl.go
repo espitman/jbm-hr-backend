@@ -12,8 +12,8 @@ type service struct {
 	repo digikala_code.Repository
 }
 
-// NewService creates a new Digikala code service
-func NewService(repo digikala_code.Repository) Service {
+// New creates a new Digikala code service
+func New(repo digikala_code.Repository) Service {
 	return &service{
 		repo: repo,
 	}

@@ -71,6 +71,23 @@ definitions:
       title:
         type: string
     type: object
+  contract.DigikalaCode:
+    properties:
+      assign_at:
+        type: string
+      assign_to_user_id:
+        type: integer
+      assigned_to_user:
+        $ref: '#/definitions/contract.User'
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      used:
+        type: boolean
+    type: object
   contract.HRTeam:
     properties:
       display_order:
@@ -230,6 +247,8 @@ definitions:
         type: string
       first_name:
         type: string
+      full_name:
+        type: string
       id:
         type: integer
       last_name:
@@ -327,6 +346,63 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/contract.Department'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  digikalacodehandler.AssignDigikalaCodeRequest:
+    properties:
+      user_id:
+        type: integer
+    required:
+    - user_id
+    type: object
+  digikalacodehandler.AssignDigikalaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.DigikalaCode'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  digikalacodehandler.CreateDigikalaCodeRequest:
+    properties:
+      code:
+        type: string
+    required:
+    - code
+    type: object
+  digikalacodehandler.CreateDigikalaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.DigikalaCode'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  digikalacodehandler.DigikalaCodeListData:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/contract.DigikalaCode'
+        type: array
+    type: object
+  digikalacodehandler.GetDigikalaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.DigikalaCode'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  digikalacodehandler.ListDigikalaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/digikalacodehandler.DigikalaCodeListData'
       message:
         type: string
       success:
@@ -1171,6 +1247,134 @@ paths:
       summary: Update a department (admin only)
       tags:
       - departments - admin
+  /api/v1/admin/digikala-codes:
+    get:
+      consumes:
+      - application/json
+      description: Get all Digikala codes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/digikalacodehandler.ListDigikalaCodeResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: List Digikala codes
+      tags:
+      - digikala-codes - admin
+    post:
+      consumes:
+      - application/json
+      description: Create a new Digikala code
+      parameters:
+      - description: Create Digikala code input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/digikalacodehandler.CreateDigikalaCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/digikalacodehandler.CreateDigikalaCodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Create a Digikala code
+      tags:
+      - digikala-codes - admin
+  /api/v1/admin/digikala-codes/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a Digikala code by ID
+      parameters:
+      - description: Digikala code ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/digikalacodehandler.GetDigikalaCodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get a Digikala code
+      tags:
+      - digikala-codes - admin
+  /api/v1/admin/digikala-codes/{id}/assign:
+    put:
+      consumes:
+      - application/json
+      description: Assign a Digikala code to a user
+      parameters:
+      - description: Digikala code ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Assign Digikala code input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/digikalacodehandler.AssignDigikalaCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/digikalacodehandler.AssignDigikalaCodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Assign a Digikala code
+      tags:
+      - digikala-codes - admin
   /api/v1/admin/hr-team:
     post:
       consumes:
