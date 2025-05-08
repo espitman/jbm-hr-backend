@@ -100,7 +100,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateDigikala
 func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.DigikalaCode, error) {
 	entDigikalaCodes, err := r.client.DigikalaCode.Query().
 		WithAssignedTo().
-		Order(ent.Asc(entDigikalaCode.FieldID)).
+		Order(ent.Desc(entDigikalaCode.FieldID)).
 		All(ctx)
 	if err != nil {
 		return nil, err
