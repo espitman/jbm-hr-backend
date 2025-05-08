@@ -369,6 +369,10 @@ definitions:
     type: object
   requesthandler.CreateRequestRequest:
     properties:
+      dependents:
+        items:
+          $ref: '#/definitions/requesthandler.DependentInfo'
+        type: array
       description:
         type: string
       full_name:
@@ -386,6 +390,7 @@ definitions:
         - marriage_gift
         - childbirth_gift
         - travel_credit
+        - supplementary_insurance
         type: string
       meta:
         items:
@@ -404,6 +409,36 @@ definitions:
       success:
         type: boolean
     type: object
+  requesthandler.DependentInfo:
+    properties:
+      father_birth_date:
+        type: string
+      father_first_name:
+        type: string
+      father_last_name:
+        type: string
+      father_national_code:
+        type: string
+      identity_number:
+        type: string
+      national_code:
+        type: string
+      type:
+        enum:
+        - spouse
+        - father
+        - mother
+        - child
+        type: string
+    required:
+    - father_birth_date
+    - father_first_name
+    - father_last_name
+    - father_national_code
+    - identity_number
+    - national_code
+    - type
+    type: object
   requesthandler.GetRequestResponse:
     properties:
       data:
@@ -412,22 +447,6 @@ definitions:
         type: string
       success:
         type: boolean
-    type: object
-  requesthandler.GetRequestsRequest:
-    properties:
-      kind:
-        type: string
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      status:
-        type: string
-      userID:
-        type: integer
-    required:
-    - page
-    - pageSize
     type: object
   requesthandler.ListRequestResponse:
     properties:
@@ -1273,12 +1292,28 @@ paths:
       - application/json
       description: Get a list of requests with optional filters
       parameters:
-      - description: Request body
-        in: body
-        name: request
+      - description: Page number
+        in: query
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/requesthandler.GetRequestsRequest'
+        type: integer
+      - description: Number of items per page
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - description: Filter by kind
+        in: query
+        name: kind
+        type: string
+      - description: Filter by user ID
+        in: query
+        name: user_id
+        type: integer
       produces:
       - application/json
       responses:

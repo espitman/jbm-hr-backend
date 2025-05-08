@@ -643,13 +643,36 @@ const docTemplate = `{
                 "summary": "List requests",
                 "parameters": [
                     {
-                        "description": "Request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requesthandler.GetRequestsRequest"
-                        }
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items per page",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by status",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by kind",
+                        "name": "kind",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by user ID",
+                        "name": "user_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2687,6 +2710,12 @@ const docTemplate = `{
                 "kind"
             ],
             "properties": {
+                "dependents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/requesthandler.DependentInfo"
+                    }
+                },
                 "description": {
                     "type": "string"
                 },
@@ -2706,7 +2735,8 @@ const docTemplate = `{
                         "development_learning",
                         "marriage_gift",
                         "childbirth_gift",
-                        "travel_credit"
+                        "travel_credit",
+                        "supplementary_insurance"
                     ]
                 },
                 "meta": {
@@ -2731,6 +2761,47 @@ const docTemplate = `{
                 }
             }
         },
+        "requesthandler.DependentInfo": {
+            "type": "object",
+            "required": [
+                "father_birth_date",
+                "father_first_name",
+                "father_last_name",
+                "father_national_code",
+                "identity_number",
+                "national_code",
+                "type"
+            ],
+            "properties": {
+                "father_birth_date": {
+                    "type": "string"
+                },
+                "father_first_name": {
+                    "type": "string"
+                },
+                "father_last_name": {
+                    "type": "string"
+                },
+                "father_national_code": {
+                    "type": "string"
+                },
+                "identity_number": {
+                    "type": "string"
+                },
+                "national_code": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "spouse",
+                        "father",
+                        "mother",
+                        "child"
+                    ]
+                }
+            }
+        },
         "requesthandler.GetRequestResponse": {
             "type": "object",
             "properties": {
@@ -2742,30 +2813,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "requesthandler.GetRequestsRequest": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "kind": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer"
                 }
             }
         },

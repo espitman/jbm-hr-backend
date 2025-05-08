@@ -30,8 +30,57 @@ func (s *service) GetRequestByID(ctx context.Context, id int) (*contract.Request
 	return s.requestRepo.GetByID(ctx, id)
 }
 
-func (s *service) GetRequests(ctx context.Context, filter *contract.RequestFilter) ([]*contract.Request, error) {
-	return s.requestRepo.GetByFilter(ctx, filter)
+func (s *service) GetRequests(ctx context.Context, filter *contract.RequestFilter) ([]*contract.Request, int, error) {
+	// Create channels for results
+	type result struct {
+		requests []*contract.Request
+		err      error
+	}
+	type countResult struct {
+		count int
+		err   error
+	}
+
+	reqChan := make(chan result)
+	countChan := make(chan countResult)
+
+	// Get total count in a goroutine
+	go func() {
+		total, err := s.requestRepo.GetTotalCount(ctx, filter)
+		countChan <- countResult{count: total, err: err}
+	}()
+
+	// Get paginated results in a goroutine
+	go func() {
+		requests, err := s.requestRepo.GetByFilter(ctx, filter)
+		reqChan <- result{requests: requests, err: err}
+	}()
+
+	// Wait for both results
+	var requests []*contract.Request
+	var total int
+	var reqErr, countErr error
+
+	for i := 0; i < 2; i++ {
+		select {
+		case req := <-reqChan:
+			requests = req.requests
+			reqErr = req.err
+		case count := <-countChan:
+			total = count.count
+			countErr = count.err
+		}
+	}
+
+	// Check for errors
+	if reqErr != nil {
+		return nil, 0, reqErr
+	}
+	if countErr != nil {
+		return nil, 0, countErr
+	}
+
+	return requests, total, nil
 }
 
 func (s *service) DeleteRequest(ctx context.Context, id int) error {

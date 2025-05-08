@@ -52,7 +52,11 @@ func (h *AdminHandler) GetRequest(c echo.Context) error {
 // @Tags requests - admin
 // @Accept json
 // @Produce json
-// @Param request body GetRequestsRequest true "Request body"
+// @Param page query int true "Page number"
+// @Param page_size query int true "Number of items per page"
+// @Param status query string false "Filter by status"
+// @Param kind query string false "Filter by kind"
+// @Param user_id query int false "Filter by user ID"
 // @Success 200 {object} ListRequestResponse
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
@@ -63,10 +67,16 @@ func (h *AdminHandler) GetRequests(c echo.Context) error {
 		return dto.BadRequestJSON(c, "invalid query parameters")
 	}
 
-	requests, err := h.requestService.GetRequests(c.Request().Context(), &contract.RequestFilter{
-		UserID: req.UserID,
-		Kind:   req.Kind,
-		Status: req.Status,
+	if err := utils.ValidateStruct(req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	requests, total, err := h.requestService.GetRequests(c.Request().Context(), &contract.RequestFilter{
+		Page:     req.Page,
+		PageSize: req.PageSize,
+		UserID:   req.UserID,
+		Kind:     req.Kind,
+		Status:   req.Status,
 	})
 	if err != nil {
 		return dto.InternalServerErrorJSON(c, "failed to get requests")
@@ -74,7 +84,7 @@ func (h *AdminHandler) GetRequests(c echo.Context) error {
 
 	return dto.SuccessJSON(c, RequestListData{
 		Items: requests,
-		Total: len(requests),
+		Total: total,
 	})
 }
 

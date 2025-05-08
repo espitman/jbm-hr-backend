@@ -164,6 +164,12 @@ func (r *EntRepository) GetByFilter(ctx context.Context, filter *contract.Reques
 		query = query.Where(entrequest.StatusEQ(entrequest.Status(filter.Status)))
 	}
 
+	// Apply pagination
+	if filter.Page > 0 && filter.PageSize > 0 {
+		offset := (filter.Page - 1) * filter.PageSize
+		query = query.Limit(filter.PageSize).Offset(offset)
+	}
+
 	entReqs, err := query.All(ctx)
 	if err != nil {
 		return nil, err
@@ -174,6 +180,23 @@ func (r *EntRepository) GetByFilter(ctx context.Context, filter *contract.Reques
 		reqs[i] = convertToContractRequest(entReq)
 	}
 	return reqs, nil
+}
+
+// GetTotalCount returns the total number of requests matching the filter criteria
+func (r *EntRepository) GetTotalCount(ctx context.Context, filter *contract.RequestFilter) (int, error) {
+	query := r.client.Request.Query()
+
+	if filter.UserID != 0 {
+		query = query.Where(entrequest.UserID(filter.UserID))
+	}
+	if filter.Kind != "" {
+		query = query.Where(entrequest.KindEQ(entrequest.Kind(filter.Kind)))
+	}
+	if filter.Status != "" {
+		query = query.Where(entrequest.StatusEQ(entrequest.Status(filter.Status)))
+	}
+
+	return query.Count(ctx)
 }
 
 // Delete deletes a request by its ID

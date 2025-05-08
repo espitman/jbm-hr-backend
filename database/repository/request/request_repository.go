@@ -20,6 +20,9 @@ type Repository interface {
 	// GetByFilter retrieves requests based on filter criteria
 	GetByFilter(ctx context.Context, filter *contract.RequestFilter) ([]*contract.Request, error)
 
+	// GetTotalCount returns the total number of requests matching the filter criteria
+	GetTotalCount(ctx context.Context, filter *contract.RequestFilter) (int, error)
+
 	// Delete deletes a request by its ID
 	Delete(ctx context.Context, id int) error
 }

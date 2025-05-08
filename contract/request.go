@@ -46,7 +46,9 @@ type UpdateRequestInput struct {
 
 // RequestFilter represents the filter criteria for querying requests
 type RequestFilter struct {
-	UserID int    `json:"user_id,omitempty"`
-	Kind   string `json:"kind,omitempty"`
-	Status string `json:"status,omitempty"`
+	Page     int    `json:"page,omitempty"`
+	PageSize int    `json:"page_size,omitempty"`
+	UserID   int    `json:"user_id,omitempty"`
+	Kind     string `json:"kind,omitempty"`
+	Status   string `json:"status,omitempty"`
 }

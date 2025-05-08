@@ -18,7 +18,7 @@ type Service interface {
 	GetRequestByID(ctx context.Context, id int) (*contract.Request, error)
 
 	// GetRequests retrieves requests based on filter criteria
-	GetRequests(ctx context.Context, filter *contract.RequestFilter) ([]*contract.Request, error)
+	GetRequests(ctx context.Context, filter *contract.RequestFilter) ([]*contract.Request, int, error)
 
 	// DeleteRequest deletes a request by its ID
 	DeleteRequest(ctx context.Context, id int) error
