@@ -68,10 +68,12 @@ func (h *DigikalaCodeAdminHandler) List(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	// Convert []*contract.DigikalaCode to []contract.DigikalaCode
+	// Convert []*contract.DigikalaCode to []contract.DigikalaCode and remove code field
 	convertedCodes := make([]contract.DigikalaCode, len(digikalaCodes))
 	for i, code := range digikalaCodes {
-		convertedCodes[i] = *code
+		convertedCode := *code
+		convertedCode.Code = "" // Remove code from response
+		convertedCodes[i] = convertedCode
 	}
 
 	return dto.SuccessJSON(c, DigikalaCodeListData{
@@ -106,6 +108,9 @@ func (h *DigikalaCodeAdminHandler) Get(c echo.Context) error {
 	if digikalaCode == nil {
 		return dto.ErrorJSON(c, http.StatusNotFound, "digikala code not found")
 	}
+
+	// Remove code from response
+	digikalaCode.Code = ""
 
 	return dto.SuccessJSON(c, digikalaCode)
 }

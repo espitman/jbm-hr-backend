@@ -3,7 +3,7 @@ package contract
 // DigikalaCode represents a Digikala code in the system
 type DigikalaCode struct {
 	ID             int     `json:"id"`
-	Code           string  `json:"code"`
+	Code           string  `json:"code,omitempty"`
 	Used           bool    `json:"used"`
 	CreatedAt      string  `json:"created_at"`
 	AssignToUserID *int    `json:"assign_to_user_id,omitempty"`

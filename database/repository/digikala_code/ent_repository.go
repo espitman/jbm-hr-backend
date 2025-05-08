@@ -23,15 +23,19 @@ func NewEntRepository(client *ent.Client) *EntRepository {
 }
 
 // convertToContractDigikalaCode converts an ent.DigikalaCode to a contract.DigikalaCode
-func convertToContractDigikalaCode(entDigikalaCode *ent.DigikalaCode) (*contract.DigikalaCode, error) {
+func convertToContractDigikalaCode(entDigikalaCode *ent.DigikalaCode, includeCode bool) (*contract.DigikalaCode, error) {
 	if entDigikalaCode == nil {
 		return nil, nil
 	}
 
-	// Decrypt the code
-	decryptedCode, err := encryption.Decrypt(entDigikalaCode.Code)
-	if err != nil {
-		return nil, err
+	var code string
+	if includeCode {
+		// Decrypt the code only if it should be included
+		decryptedCode, err := encryption.Decrypt(entDigikalaCode.Code)
+		if err != nil {
+			return nil, err
+		}
+		code = decryptedCode
 	}
 
 	var assignToUserID *int
@@ -56,15 +60,20 @@ func convertToContractDigikalaCode(entDigikalaCode *ent.DigikalaCode) (*contract
 		assignAt = &assignAtStr
 	}
 
-	return &contract.DigikalaCode{
+	digikalaCode := &contract.DigikalaCode{
 		ID:             entDigikalaCode.ID,
-		Code:           decryptedCode,
 		Used:           entDigikalaCode.Used,
 		CreatedAt:      entDigikalaCode.CreatedAt.Format(time.RFC3339),
 		AssignToUserID: assignToUserID,
 		AssignAt:       assignAt,
 		AssignedToUser: assignedToUser,
-	}, nil
+	}
+
+	if includeCode {
+		digikalaCode.Code = code
+	}
+
+	return digikalaCode, nil
 }
 
 // Create creates a new Digikala code
@@ -83,7 +92,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateDigikala
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDigikalaCode(entDigikalaCode)
+	return convertToContractDigikalaCode(entDigikalaCode, true)
 }
 
 // GetAll retrieves all Digikala codes
@@ -98,7 +107,7 @@ func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.DigikalaCode, e
 
 	codes := make([]*contract.DigikalaCode, len(entDigikalaCodes))
 	for i, code := range entDigikalaCodes {
-		contractCode, err := convertToContractDigikalaCode(code)
+		contractCode, err := convertToContractDigikalaCode(code, false)
 		if err != nil {
 			return nil, err
 		}
@@ -116,7 +125,7 @@ func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.Digikala
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDigikalaCode(entDigikalaCode)
+	return convertToContractDigikalaCode(entDigikalaCode, false)
 }
 
 // GetByCode retrieves a Digikala code by its code
@@ -134,7 +143,7 @@ func (r *EntRepository) GetByCode(ctx context.Context, code string) (*contract.D
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractDigikalaCode(entDigikalaCode)
+	return convertToContractDigikalaCode(entDigikalaCode, true)
 }
 
 // Assign assigns a Digikala code to a user
@@ -169,7 +178,7 @@ func (r *EntRepository) Assign(ctx context.Context, code string, req *contract.A
 		return nil, err
 	}
 
-	return convertToContractDigikalaCode(codeEntity)
+	return convertToContractDigikalaCode(codeEntity, true)
 }
 
 // Delete deletes a Digikala code by its ID
