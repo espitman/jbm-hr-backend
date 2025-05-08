@@ -111,26 +111,6 @@ func (dcu *DigikalaCodeUpdate) ClearAssignAt() *DigikalaCodeUpdate {
 	return dcu
 }
 
-// SetUsedAt sets the "used_at" field.
-func (dcu *DigikalaCodeUpdate) SetUsedAt(t time.Time) *DigikalaCodeUpdate {
-	dcu.mutation.SetUsedAt(t)
-	return dcu
-}
-
-// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
-func (dcu *DigikalaCodeUpdate) SetNillableUsedAt(t *time.Time) *DigikalaCodeUpdate {
-	if t != nil {
-		dcu.SetUsedAt(*t)
-	}
-	return dcu
-}
-
-// ClearUsedAt clears the value of the "used_at" field.
-func (dcu *DigikalaCodeUpdate) ClearUsedAt() *DigikalaCodeUpdate {
-	dcu.mutation.ClearUsedAt()
-	return dcu
-}
-
 // SetAssignedToID sets the "assigned_to" edge to the User entity by ID.
 func (dcu *DigikalaCodeUpdate) SetAssignedToID(id int) *DigikalaCodeUpdate {
 	dcu.mutation.SetAssignedToID(id)
@@ -224,12 +204,6 @@ func (dcu *DigikalaCodeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if dcu.mutation.AssignAtCleared() {
 		_spec.ClearField(digikalacode.FieldAssignAt, field.TypeTime)
-	}
-	if value, ok := dcu.mutation.UsedAt(); ok {
-		_spec.SetField(digikalacode.FieldUsedAt, field.TypeTime, value)
-	}
-	if dcu.mutation.UsedAtCleared() {
-		_spec.ClearField(digikalacode.FieldUsedAt, field.TypeTime)
 	}
 	if dcu.mutation.AssignedToCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -362,26 +336,6 @@ func (dcuo *DigikalaCodeUpdateOne) ClearAssignAt() *DigikalaCodeUpdateOne {
 	return dcuo
 }
 
-// SetUsedAt sets the "used_at" field.
-func (dcuo *DigikalaCodeUpdateOne) SetUsedAt(t time.Time) *DigikalaCodeUpdateOne {
-	dcuo.mutation.SetUsedAt(t)
-	return dcuo
-}
-
-// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
-func (dcuo *DigikalaCodeUpdateOne) SetNillableUsedAt(t *time.Time) *DigikalaCodeUpdateOne {
-	if t != nil {
-		dcuo.SetUsedAt(*t)
-	}
-	return dcuo
-}
-
-// ClearUsedAt clears the value of the "used_at" field.
-func (dcuo *DigikalaCodeUpdateOne) ClearUsedAt() *DigikalaCodeUpdateOne {
-	dcuo.mutation.ClearUsedAt()
-	return dcuo
-}
-
 // SetAssignedToID sets the "assigned_to" edge to the User entity by ID.
 func (dcuo *DigikalaCodeUpdateOne) SetAssignedToID(id int) *DigikalaCodeUpdateOne {
 	dcuo.mutation.SetAssignedToID(id)
@@ -505,12 +459,6 @@ func (dcuo *DigikalaCodeUpdateOne) sqlSave(ctx context.Context) (_node *Digikala
 	}
 	if dcuo.mutation.AssignAtCleared() {
 		_spec.ClearField(digikalacode.FieldAssignAt, field.TypeTime)
-	}
-	if value, ok := dcuo.mutation.UsedAt(); ok {
-		_spec.SetField(digikalacode.FieldUsedAt, field.TypeTime, value)
-	}
-	if dcuo.mutation.UsedAtCleared() {
-		_spec.ClearField(digikalacode.FieldUsedAt, field.TypeTime)
 	}
 	if dcuo.mutation.AssignedToCleared() {
 		edge := &sqlgraph.EdgeSpec{

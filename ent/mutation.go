@@ -1324,7 +1324,6 @@ type DigikalaCodeMutation struct {
 	used               *bool
 	created_at         *time.Time
 	assign_at          *time.Time
-	used_at            *time.Time
 	clearedFields      map[string]struct{}
 	assigned_to        *int
 	clearedassigned_to bool
@@ -1637,55 +1636,6 @@ func (m *DigikalaCodeMutation) ResetAssignAt() {
 	delete(m.clearedFields, digikalacode.FieldAssignAt)
 }
 
-// SetUsedAt sets the "used_at" field.
-func (m *DigikalaCodeMutation) SetUsedAt(t time.Time) {
-	m.used_at = &t
-}
-
-// UsedAt returns the value of the "used_at" field in the mutation.
-func (m *DigikalaCodeMutation) UsedAt() (r time.Time, exists bool) {
-	v := m.used_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUsedAt returns the old "used_at" field's value of the DigikalaCode entity.
-// If the DigikalaCode object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DigikalaCodeMutation) OldUsedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUsedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUsedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUsedAt: %w", err)
-	}
-	return oldValue.UsedAt, nil
-}
-
-// ClearUsedAt clears the value of the "used_at" field.
-func (m *DigikalaCodeMutation) ClearUsedAt() {
-	m.used_at = nil
-	m.clearedFields[digikalacode.FieldUsedAt] = struct{}{}
-}
-
-// UsedAtCleared returns if the "used_at" field was cleared in this mutation.
-func (m *DigikalaCodeMutation) UsedAtCleared() bool {
-	_, ok := m.clearedFields[digikalacode.FieldUsedAt]
-	return ok
-}
-
-// ResetUsedAt resets all changes to the "used_at" field.
-func (m *DigikalaCodeMutation) ResetUsedAt() {
-	m.used_at = nil
-	delete(m.clearedFields, digikalacode.FieldUsedAt)
-}
-
 // SetAssignedToID sets the "assigned_to" edge to the User entity by id.
 func (m *DigikalaCodeMutation) SetAssignedToID(id int) {
 	m.assigned_to = &id
@@ -1760,7 +1710,7 @@ func (m *DigikalaCodeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DigikalaCodeMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 5)
 	if m.code != nil {
 		fields = append(fields, digikalacode.FieldCode)
 	}
@@ -1775,9 +1725,6 @@ func (m *DigikalaCodeMutation) Fields() []string {
 	}
 	if m.assign_at != nil {
 		fields = append(fields, digikalacode.FieldAssignAt)
-	}
-	if m.used_at != nil {
-		fields = append(fields, digikalacode.FieldUsedAt)
 	}
 	return fields
 }
@@ -1797,8 +1744,6 @@ func (m *DigikalaCodeMutation) Field(name string) (ent.Value, bool) {
 		return m.AssignToUserID()
 	case digikalacode.FieldAssignAt:
 		return m.AssignAt()
-	case digikalacode.FieldUsedAt:
-		return m.UsedAt()
 	}
 	return nil, false
 }
@@ -1818,8 +1763,6 @@ func (m *DigikalaCodeMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldAssignToUserID(ctx)
 	case digikalacode.FieldAssignAt:
 		return m.OldAssignAt(ctx)
-	case digikalacode.FieldUsedAt:
-		return m.OldUsedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown DigikalaCode field %s", name)
 }
@@ -1864,13 +1807,6 @@ func (m *DigikalaCodeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAssignAt(v)
 		return nil
-	case digikalacode.FieldUsedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUsedAt(v)
-		return nil
 	}
 	return fmt.Errorf("unknown DigikalaCode field %s", name)
 }
@@ -1910,9 +1846,6 @@ func (m *DigikalaCodeMutation) ClearedFields() []string {
 	if m.FieldCleared(digikalacode.FieldAssignAt) {
 		fields = append(fields, digikalacode.FieldAssignAt)
 	}
-	if m.FieldCleared(digikalacode.FieldUsedAt) {
-		fields = append(fields, digikalacode.FieldUsedAt)
-	}
 	return fields
 }
 
@@ -1932,9 +1865,6 @@ func (m *DigikalaCodeMutation) ClearField(name string) error {
 		return nil
 	case digikalacode.FieldAssignAt:
 		m.ClearAssignAt()
-		return nil
-	case digikalacode.FieldUsedAt:
-		m.ClearUsedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown DigikalaCode nullable field %s", name)
@@ -1958,9 +1888,6 @@ func (m *DigikalaCodeMutation) ResetField(name string) error {
 		return nil
 	case digikalacode.FieldAssignAt:
 		m.ResetAssignAt()
-		return nil
-	case digikalacode.FieldUsedAt:
-		m.ResetUsedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown DigikalaCode field %s", name)

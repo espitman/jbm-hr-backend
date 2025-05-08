@@ -24,8 +24,6 @@ func (DigikalaCode) Fields() []ent.Field {
 			Optional(),
 		field.Time("assign_at").
 			Optional(),
-		field.Time("used_at").
-			Optional(),
 	}
 }
 

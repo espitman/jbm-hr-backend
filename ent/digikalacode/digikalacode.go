@@ -22,8 +22,6 @@ const (
 	FieldAssignToUserID = "assign_to_user_id"
 	// FieldAssignAt holds the string denoting the assign_at field in the database.
 	FieldAssignAt = "assign_at"
-	// FieldUsedAt holds the string denoting the used_at field in the database.
-	FieldUsedAt = "used_at"
 	// EdgeAssignedTo holds the string denoting the assigned_to edge name in mutations.
 	EdgeAssignedTo = "assigned_to"
 	// Table holds the table name of the digikalacode in the database.
@@ -45,7 +43,6 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldAssignToUserID,
 	FieldAssignAt,
-	FieldUsedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -96,11 +93,6 @@ func ByAssignToUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByAssignAt orders the results by the assign_at field.
 func ByAssignAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAssignAt, opts...).ToFunc()
-}
-
-// ByUsedAt orders the results by the used_at field.
-func ByUsedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUsedAt, opts...).ToFunc()
 }
 
 // ByAssignedToField orders the results by assigned_to field.

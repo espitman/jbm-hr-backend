@@ -75,20 +75,6 @@ func (dcc *DigikalaCodeCreate) SetNillableAssignAt(t *time.Time) *DigikalaCodeCr
 	return dcc
 }
 
-// SetUsedAt sets the "used_at" field.
-func (dcc *DigikalaCodeCreate) SetUsedAt(t time.Time) *DigikalaCodeCreate {
-	dcc.mutation.SetUsedAt(t)
-	return dcc
-}
-
-// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
-func (dcc *DigikalaCodeCreate) SetNillableUsedAt(t *time.Time) *DigikalaCodeCreate {
-	if t != nil {
-		dcc.SetUsedAt(*t)
-	}
-	return dcc
-}
-
 // SetAssignedToID sets the "assigned_to" edge to the User entity by ID.
 func (dcc *DigikalaCodeCreate) SetAssignedToID(id int) *DigikalaCodeCreate {
 	dcc.mutation.SetAssignedToID(id)
@@ -206,10 +192,6 @@ func (dcc *DigikalaCodeCreate) createSpec() (*DigikalaCode, *sqlgraph.CreateSpec
 	if value, ok := dcc.mutation.AssignAt(); ok {
 		_spec.SetField(digikalacode.FieldAssignAt, field.TypeTime, value)
 		_node.AssignAt = value
-	}
-	if value, ok := dcc.mutation.UsedAt(); ok {
-		_spec.SetField(digikalacode.FieldUsedAt, field.TypeTime, value)
-		_node.UsedAt = value
 	}
 	if nodes := dcc.mutation.AssignedToIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

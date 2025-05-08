@@ -28,8 +28,6 @@ type DigikalaCode struct {
 	AssignToUserID int `json:"assign_to_user_id,omitempty"`
 	// AssignAt holds the value of the "assign_at" field.
 	AssignAt time.Time `json:"assign_at,omitempty"`
-	// UsedAt holds the value of the "used_at" field.
-	UsedAt time.Time `json:"used_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DigikalaCodeQuery when eager-loading is set.
 	Edges        DigikalaCodeEdges `json:"edges"`
@@ -67,7 +65,7 @@ func (*DigikalaCode) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case digikalacode.FieldCode:
 			values[i] = new(sql.NullString)
-		case digikalacode.FieldCreatedAt, digikalacode.FieldAssignAt, digikalacode.FieldUsedAt:
+		case digikalacode.FieldCreatedAt, digikalacode.FieldAssignAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -119,12 +117,6 @@ func (dc *DigikalaCode) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field assign_at", values[i])
 			} else if value.Valid {
 				dc.AssignAt = value.Time
-			}
-		case digikalacode.FieldUsedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field used_at", values[i])
-			} else if value.Valid {
-				dc.UsedAt = value.Time
 			}
 		default:
 			dc.selectValues.Set(columns[i], values[i])
@@ -181,9 +173,6 @@ func (dc *DigikalaCode) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("assign_at=")
 	builder.WriteString(dc.AssignAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("used_at=")
-	builder.WriteString(dc.UsedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

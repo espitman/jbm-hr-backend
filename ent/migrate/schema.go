@@ -45,7 +45,6 @@ var (
 		{Name: "used", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "assign_at", Type: field.TypeTime, Nullable: true},
-		{Name: "used_at", Type: field.TypeTime, Nullable: true},
 		{Name: "assign_to_user_id", Type: field.TypeInt, Nullable: true},
 	}
 	// DigikalaCodesTable holds the schema information for the "digikala_codes" table.
@@ -56,7 +55,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "digikala_codes_users_digikala_codes",
-				Columns:    []*schema.Column{DigikalaCodesColumns[6]},
+				Columns:    []*schema.Column{DigikalaCodesColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

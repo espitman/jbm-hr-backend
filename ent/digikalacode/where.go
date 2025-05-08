@@ -80,11 +80,6 @@ func AssignAt(v time.Time) predicate.DigikalaCode {
 	return predicate.DigikalaCode(sql.FieldEQ(FieldAssignAt, v))
 }
 
-// UsedAt applies equality check predicate on the "used_at" field. It's identical to UsedAtEQ.
-func UsedAt(v time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldEQ(FieldUsedAt, v))
-}
-
 // CodeEQ applies the EQ predicate on the "code" field.
 func CodeEQ(v string) predicate.DigikalaCode {
 	return predicate.DigikalaCode(sql.FieldEQ(FieldCode, v))
@@ -278,56 +273,6 @@ func AssignAtIsNil() predicate.DigikalaCode {
 // AssignAtNotNil applies the NotNil predicate on the "assign_at" field.
 func AssignAtNotNil() predicate.DigikalaCode {
 	return predicate.DigikalaCode(sql.FieldNotNull(FieldAssignAt))
-}
-
-// UsedAtEQ applies the EQ predicate on the "used_at" field.
-func UsedAtEQ(v time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldEQ(FieldUsedAt, v))
-}
-
-// UsedAtNEQ applies the NEQ predicate on the "used_at" field.
-func UsedAtNEQ(v time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldNEQ(FieldUsedAt, v))
-}
-
-// UsedAtIn applies the In predicate on the "used_at" field.
-func UsedAtIn(vs ...time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldIn(FieldUsedAt, vs...))
-}
-
-// UsedAtNotIn applies the NotIn predicate on the "used_at" field.
-func UsedAtNotIn(vs ...time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldNotIn(FieldUsedAt, vs...))
-}
-
-// UsedAtGT applies the GT predicate on the "used_at" field.
-func UsedAtGT(v time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldGT(FieldUsedAt, v))
-}
-
-// UsedAtGTE applies the GTE predicate on the "used_at" field.
-func UsedAtGTE(v time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldGTE(FieldUsedAt, v))
-}
-
-// UsedAtLT applies the LT predicate on the "used_at" field.
-func UsedAtLT(v time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldLT(FieldUsedAt, v))
-}
-
-// UsedAtLTE applies the LTE predicate on the "used_at" field.
-func UsedAtLTE(v time.Time) predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldLTE(FieldUsedAt, v))
-}
-
-// UsedAtIsNil applies the IsNil predicate on the "used_at" field.
-func UsedAtIsNil() predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldIsNull(FieldUsedAt))
-}
-
-// UsedAtNotNil applies the NotNil predicate on the "used_at" field.
-func UsedAtNotNil() predicate.DigikalaCode {
-	return predicate.DigikalaCode(sql.FieldNotNull(FieldUsedAt))
 }
 
 // HasAssignedTo applies the HasEdge predicate on the "assigned_to" edge.
