@@ -216,4 +216,8 @@ func init() {
 	userDescLastName := userFields[3].Descriptor()
 	// user.LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
 	user.LastNameValidator = userDescLastName.Validators[0].(func(string) error)
+	// userDescFullName is the schema descriptor for full_name field.
+	userDescFullName := userFields[4].Descriptor()
+	// user.FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
+	user.FullNameValidator = userDescFullName.Validators[0].(func(string) error)
 }

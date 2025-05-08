@@ -22,6 +22,8 @@ const (
 	FieldFirstName = "first_name"
 	// FieldLastName holds the string denoting the last_name field in the database.
 	FieldLastName = "last_name"
+	// FieldFullName holds the string denoting the full_name field in the database.
+	FieldFullName = "full_name"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
 	// FieldAvatar holds the string denoting the avatar field in the database.
@@ -79,6 +81,7 @@ var Columns = []string{
 	FieldPhone,
 	FieldFirstName,
 	FieldLastName,
+	FieldFullName,
 	FieldRole,
 	FieldAvatar,
 	FieldPassword,
@@ -116,6 +119,8 @@ var (
 	FirstNameValidator func(string) error
 	// LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
 	LastNameValidator func(string) error
+	// FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
+	FullNameValidator func(string) error
 )
 
 // Role defines the type for the "role" enum field.
@@ -170,6 +175,11 @@ func ByFirstName(opts ...sql.OrderTermOption) OrderOption {
 // ByLastName orders the results by the last_name field.
 func ByLastName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastName, opts...).ToFunc()
+}
+
+// ByFullName orders the results by the full_name field.
+func ByFullName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFullName, opts...).ToFunc()
 }
 
 // ByRole orders the results by the role field.

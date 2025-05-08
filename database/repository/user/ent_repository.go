@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/espitman/jbm-hr-backend/contract"
@@ -52,6 +53,7 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		Phone:                entUser.Phone,
 		FirstName:            entUser.FirstName,
 		LastName:             entUser.LastName,
+		FullName:             entUser.FullName,
 		Role:                 string(entUser.Role),
 		Avatar:               entUser.Avatar,
 		Password:             entUser.Password,
@@ -119,6 +121,7 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateUserInpu
 		SetPhone(req.Phone).
 		SetFirstName(req.FirstName).
 		SetLastName(req.LastName).
+		SetFullName(fmt.Sprintf("%s %s", req.FirstName, req.LastName)).
 		SetRole(entUser.Role(req.Role)).
 		SetAvatar(req.Avatar)
 
@@ -155,6 +158,7 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 		SetPhone(req.Phone).
 		SetFirstName(req.FirstName).
 		SetLastName(req.LastName).
+		SetFullName(fmt.Sprintf("%s %s", req.FirstName, req.LastName)).
 		SetRole(entUser.Role(req.Role)).
 		SetAvatar(req.Avatar)
 
@@ -255,8 +259,7 @@ func (r *EntRepository) SearchUsers(ctx context.Context, term string) ([]*contra
 	users, err := r.client.User.Query().
 		Where(
 			entUser.Or(
-				entUser.FirstNameHasPrefix(term),
-				entUser.LastNameHasPrefix(term),
+				entUser.FullNameHasPrefix(term),
 				entUser.EmailHasPrefix(term),
 				entUser.PhoneHasPrefix(term),
 			),
