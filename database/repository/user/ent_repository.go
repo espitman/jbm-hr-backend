@@ -159,31 +159,12 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 		SetFirstName(req.FirstName).
 		SetLastName(req.LastName).
 		SetFullName(fmt.Sprintf("%s %s", req.FirstName, req.LastName)).
-		SetRole(entUser.Role(req.Role)).
-		SetAvatar(req.Avatar)
+		SetRole(entUser.Role(req.Role))
 
 	if req.DepartmentID != nil {
 		update = update.SetDepartmentID(*req.DepartmentID)
 	} else {
 		update = update.ClearDepartment()
-	}
-	if req.Birthdate != nil {
-		birthdate, err := time.Parse("2006-01-02", *req.Birthdate)
-		if err != nil {
-			return nil, err
-		}
-		update = update.SetBirthdate(birthdate)
-	} else {
-		update = update.ClearBirthdate()
-	}
-	if req.CooperationStartDate != nil {
-		startDate, err := time.Parse("2006-01-02", *req.CooperationStartDate)
-		if err != nil {
-			return nil, err
-		}
-		update = update.SetCooperationStartDate(startDate)
-	} else {
-		update = update.ClearCooperationStartDate()
 	}
 
 	entUser, err := update.Save(ctx)
