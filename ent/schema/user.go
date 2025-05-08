@@ -66,5 +66,9 @@ func (User) Edges() []ent.Edge {
 		edge.From("department", Department.Type).
 			Ref("users").
 			Unique(),
+		edge.To("digikala_codes", DigikalaCode.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
 	}
 }

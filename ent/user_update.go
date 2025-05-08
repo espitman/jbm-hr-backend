@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
 	"github.com/espitman/jbm-hr-backend/ent/request"
@@ -260,6 +261,21 @@ func (uu *UserUpdate) SetDepartment(d *Department) *UserUpdate {
 	return uu.SetDepartmentID(d.ID)
 }
 
+// AddDigikalaCodeIDs adds the "digikala_codes" edge to the DigikalaCode entity by IDs.
+func (uu *UserUpdate) AddDigikalaCodeIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddDigikalaCodeIDs(ids...)
+	return uu
+}
+
+// AddDigikalaCodes adds the "digikala_codes" edges to the DigikalaCode entity.
+func (uu *UserUpdate) AddDigikalaCodes(d ...*DigikalaCode) *UserUpdate {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uu.AddDigikalaCodeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -332,6 +348,27 @@ func (uu *UserUpdate) RemoveRequests(r ...*Request) *UserUpdate {
 func (uu *UserUpdate) ClearDepartment() *UserUpdate {
 	uu.mutation.ClearDepartment()
 	return uu
+}
+
+// ClearDigikalaCodes clears all "digikala_codes" edges to the DigikalaCode entity.
+func (uu *UserUpdate) ClearDigikalaCodes() *UserUpdate {
+	uu.mutation.ClearDigikalaCodes()
+	return uu
+}
+
+// RemoveDigikalaCodeIDs removes the "digikala_codes" edge to DigikalaCode entities by IDs.
+func (uu *UserUpdate) RemoveDigikalaCodeIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveDigikalaCodeIDs(ids...)
+	return uu
+}
+
+// RemoveDigikalaCodes removes "digikala_codes" edges to DigikalaCode entities.
+func (uu *UserUpdate) RemoveDigikalaCodes(d ...*DigikalaCode) *UserUpdate {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uu.RemoveDigikalaCodeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -614,6 +651,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.DigikalaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DigikalaCodesTable,
+			Columns: []string{user.DigikalaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedDigikalaCodesIDs(); len(nodes) > 0 && !uu.mutation.DigikalaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DigikalaCodesTable,
+			Columns: []string{user.DigikalaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.DigikalaCodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DigikalaCodesTable,
+			Columns: []string{user.DigikalaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -862,6 +944,21 @@ func (uuo *UserUpdateOne) SetDepartment(d *Department) *UserUpdateOne {
 	return uuo.SetDepartmentID(d.ID)
 }
 
+// AddDigikalaCodeIDs adds the "digikala_codes" edge to the DigikalaCode entity by IDs.
+func (uuo *UserUpdateOne) AddDigikalaCodeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddDigikalaCodeIDs(ids...)
+	return uuo
+}
+
+// AddDigikalaCodes adds the "digikala_codes" edges to the DigikalaCode entity.
+func (uuo *UserUpdateOne) AddDigikalaCodes(d ...*DigikalaCode) *UserUpdateOne {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uuo.AddDigikalaCodeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -934,6 +1031,27 @@ func (uuo *UserUpdateOne) RemoveRequests(r ...*Request) *UserUpdateOne {
 func (uuo *UserUpdateOne) ClearDepartment() *UserUpdateOne {
 	uuo.mutation.ClearDepartment()
 	return uuo
+}
+
+// ClearDigikalaCodes clears all "digikala_codes" edges to the DigikalaCode entity.
+func (uuo *UserUpdateOne) ClearDigikalaCodes() *UserUpdateOne {
+	uuo.mutation.ClearDigikalaCodes()
+	return uuo
+}
+
+// RemoveDigikalaCodeIDs removes the "digikala_codes" edge to DigikalaCode entities by IDs.
+func (uuo *UserUpdateOne) RemoveDigikalaCodeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveDigikalaCodeIDs(ids...)
+	return uuo
+}
+
+// RemoveDigikalaCodes removes "digikala_codes" edges to DigikalaCode entities.
+func (uuo *UserUpdateOne) RemoveDigikalaCodes(d ...*DigikalaCode) *UserUpdateOne {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uuo.RemoveDigikalaCodeIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1239,6 +1357,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(department.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.DigikalaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DigikalaCodesTable,
+			Columns: []string{user.DigikalaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedDigikalaCodesIDs(); len(nodes) > 0 && !uuo.mutation.DigikalaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DigikalaCodesTable,
+			Columns: []string{user.DigikalaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.DigikalaCodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DigikalaCodesTable,
+			Columns: []string{user.DigikalaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

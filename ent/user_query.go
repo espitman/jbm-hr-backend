@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/predicate"
 	"github.com/espitman/jbm-hr-backend/ent/request"
@@ -23,15 +24,16 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx            *QueryContext
-	order          []user.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.User
-	withOtps       *OTPQuery
-	withResumes    *ResumeQuery
-	withRequests   *RequestQuery
-	withDepartment *DepartmentQuery
-	withFKs        bool
+	ctx               *QueryContext
+	order             []user.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.User
+	withOtps          *OTPQuery
+	withResumes       *ResumeQuery
+	withRequests      *RequestQuery
+	withDepartment    *DepartmentQuery
+	withDigikalaCodes *DigikalaCodeQuery
+	withFKs           bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -149,6 +151,28 @@ func (uq *UserQuery) QueryDepartment() *DepartmentQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(department.Table, department.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, user.DepartmentTable, user.DepartmentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDigikalaCodes chains the current query on the "digikala_codes" edge.
+func (uq *UserQuery) QueryDigikalaCodes() *DigikalaCodeQuery {
+	query := (&DigikalaCodeClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(digikalacode.Table, digikalacode.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.DigikalaCodesTable, user.DigikalaCodesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -343,15 +367,16 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:         uq.config,
-		ctx:            uq.ctx.Clone(),
-		order:          append([]user.OrderOption{}, uq.order...),
-		inters:         append([]Interceptor{}, uq.inters...),
-		predicates:     append([]predicate.User{}, uq.predicates...),
-		withOtps:       uq.withOtps.Clone(),
-		withResumes:    uq.withResumes.Clone(),
-		withRequests:   uq.withRequests.Clone(),
-		withDepartment: uq.withDepartment.Clone(),
+		config:            uq.config,
+		ctx:               uq.ctx.Clone(),
+		order:             append([]user.OrderOption{}, uq.order...),
+		inters:            append([]Interceptor{}, uq.inters...),
+		predicates:        append([]predicate.User{}, uq.predicates...),
+		withOtps:          uq.withOtps.Clone(),
+		withResumes:       uq.withResumes.Clone(),
+		withRequests:      uq.withRequests.Clone(),
+		withDepartment:    uq.withDepartment.Clone(),
+		withDigikalaCodes: uq.withDigikalaCodes.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -399,6 +424,17 @@ func (uq *UserQuery) WithDepartment(opts ...func(*DepartmentQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withDepartment = query
+	return uq
+}
+
+// WithDigikalaCodes tells the query-builder to eager-load the nodes that are connected to
+// the "digikala_codes" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithDigikalaCodes(opts ...func(*DigikalaCodeQuery)) *UserQuery {
+	query := (&DigikalaCodeClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withDigikalaCodes = query
 	return uq
 }
 
@@ -481,11 +517,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		nodes       = []*User{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			uq.withOtps != nil,
 			uq.withResumes != nil,
 			uq.withRequests != nil,
 			uq.withDepartment != nil,
+			uq.withDigikalaCodes != nil,
 		}
 	)
 	if uq.withDepartment != nil {
@@ -536,6 +573,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if query := uq.withDepartment; query != nil {
 		if err := uq.loadDepartment(ctx, query, nodes, nil,
 			func(n *User, e *Department) { n.Edges.Department = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withDigikalaCodes; query != nil {
+		if err := uq.loadDigikalaCodes(ctx, query, nodes,
+			func(n *User) { n.Edges.DigikalaCodes = []*DigikalaCode{} },
+			func(n *User, e *DigikalaCode) { n.Edges.DigikalaCodes = append(n.Edges.DigikalaCodes, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -662,6 +706,36 @@ func (uq *UserQuery) loadDepartment(ctx context.Context, query *DepartmentQuery,
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (uq *UserQuery) loadDigikalaCodes(ctx context.Context, query *DigikalaCodeQuery, nodes []*User, init func(*User), assign func(*User, *DigikalaCode)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(digikalacode.FieldUsedByUserID)
+	}
+	query.Where(predicate.DigikalaCode(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.DigikalaCodesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UsedByUserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "used_by_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

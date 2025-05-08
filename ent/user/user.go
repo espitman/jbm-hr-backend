@@ -42,6 +42,8 @@ const (
 	EdgeRequests = "requests"
 	// EdgeDepartment holds the string denoting the department edge name in mutations.
 	EdgeDepartment = "department"
+	// EdgeDigikalaCodes holds the string denoting the digikala_codes edge name in mutations.
+	EdgeDigikalaCodes = "digikala_codes"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OtpsTable is the table that holds the otps relation/edge.
@@ -72,6 +74,13 @@ const (
 	DepartmentInverseTable = "departments"
 	// DepartmentColumn is the table column denoting the department relation/edge.
 	DepartmentColumn = "department_users"
+	// DigikalaCodesTable is the table that holds the digikala_codes relation/edge.
+	DigikalaCodesTable = "digikala_codes"
+	// DigikalaCodesInverseTable is the table name for the DigikalaCode entity.
+	// It exists in this package in order to avoid circular dependency with the "digikalacode" package.
+	DigikalaCodesInverseTable = "digikala_codes"
+	// DigikalaCodesColumn is the table column denoting the digikala_codes relation/edge.
+	DigikalaCodesColumn = "used_by_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -255,6 +264,20 @@ func ByDepartmentField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newDepartmentStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByDigikalaCodesCount orders the results by digikala_codes count.
+func ByDigikalaCodesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDigikalaCodesStep(), opts...)
+	}
+}
+
+// ByDigikalaCodes orders the results by digikala_codes terms.
+func ByDigikalaCodes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDigikalaCodesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOtpsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -281,5 +304,12 @@ func newDepartmentStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DepartmentInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, DepartmentTable, DepartmentColumn),
+	)
+}
+func newDigikalaCodesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DigikalaCodesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DigikalaCodesTable, DigikalaCodesColumn),
 	)
 }

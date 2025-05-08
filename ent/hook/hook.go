@@ -33,6 +33,18 @@ func (f DepartmentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DepartmentMutation", m)
 }
 
+// The DigikalaCodeFunc type is an adapter to allow the use of ordinary
+// function as DigikalaCode mutator.
+type DigikalaCodeFunc func(context.Context, *ent.DigikalaCodeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DigikalaCodeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.DigikalaCodeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DigikalaCodeMutation", m)
+}
+
 // The HRTeamFunc type is an adapter to allow the use of ordinary
 // function as HRTeam mutator.
 type HRTeamFunc func(context.Context, *ent.HRTeamMutation) (ent.Value, error)

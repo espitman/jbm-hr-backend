@@ -7,6 +7,7 @@ import (
 
 	"github.com/espitman/jbm-hr-backend/ent/album"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/request"
@@ -60,6 +61,16 @@ func init() {
 	departmentDescDisplayOrder := departmentFields[6].Descriptor()
 	// department.DefaultDisplayOrder holds the default value on creation for the display_order field.
 	department.DefaultDisplayOrder = departmentDescDisplayOrder.Default.(int)
+	digikalacodeFields := schema.DigikalaCode{}.Fields()
+	_ = digikalacodeFields
+	// digikalacodeDescCode is the schema descriptor for code field.
+	digikalacodeDescCode := digikalacodeFields[0].Descriptor()
+	// digikalacode.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	digikalacode.CodeValidator = digikalacodeDescCode.Validators[0].(func(string) error)
+	// digikalacodeDescUsed is the schema descriptor for used field.
+	digikalacodeDescUsed := digikalacodeFields[1].Descriptor()
+	// digikalacode.DefaultUsed holds the default value on creation for the used field.
+	digikalacode.DefaultUsed = digikalacodeDescUsed.Default.(bool)
 	hrteamFields := schema.HRTeam{}.Fields()
 	_ = hrteamFields
 	// hrteamDescFullName is the schema descriptor for full_name field.

@@ -38,6 +38,29 @@ var (
 		Columns:    DepartmentsColumns,
 		PrimaryKey: []*schema.Column{DepartmentsColumns[0]},
 	}
+	// DigikalaCodesColumns holds the columns for the "digikala_codes" table.
+	DigikalaCodesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "code", Type: field.TypeString, Unique: true},
+		{Name: "used", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "used_by_user_id", Type: field.TypeInt, Nullable: true},
+	}
+	// DigikalaCodesTable holds the schema information for the "digikala_codes" table.
+	DigikalaCodesTable = &schema.Table{
+		Name:       "digikala_codes",
+		Columns:    DigikalaCodesColumns,
+		PrimaryKey: []*schema.Column{DigikalaCodesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "digikala_codes_users_digikala_codes",
+				Columns:    []*schema.Column{DigikalaCodesColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// HrTeamsColumns holds the columns for the "hr_teams" table.
 	HrTeamsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -182,6 +205,7 @@ var (
 	Tables = []*schema.Table{
 		AlbumsTable,
 		DepartmentsTable,
+		DigikalaCodesTable,
 		HrTeamsTable,
 		OtPsTable,
 		RequestsTable,
@@ -192,6 +216,7 @@ var (
 )
 
 func init() {
+	DigikalaCodesTable.ForeignKeys[0].RefTable = UsersTable
 	OtPsTable.ForeignKeys[0].RefTable = UsersTable
 	RequestsTable.ForeignKeys[0].RefTable = UsersTable
 	RequestMetaTable.ForeignKeys[0].RefTable = RequestsTable

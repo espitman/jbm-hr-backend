@@ -17,6 +17,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/espitman/jbm-hr-backend/ent/album"
 	"github.com/espitman/jbm-hr-backend/ent/department"
+	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
 	"github.com/espitman/jbm-hr-backend/ent/request"
@@ -34,6 +35,8 @@ type Client struct {
 	Album *AlbumClient
 	// Department is the client for interacting with the Department builders.
 	Department *DepartmentClient
+	// DigikalaCode is the client for interacting with the DigikalaCode builders.
+	DigikalaCode *DigikalaCodeClient
 	// HRTeam is the client for interacting with the HRTeam builders.
 	HRTeam *HRTeamClient
 	// OTP is the client for interacting with the OTP builders.
@@ -59,6 +62,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Album = NewAlbumClient(c.config)
 	c.Department = NewDepartmentClient(c.config)
+	c.DigikalaCode = NewDigikalaCodeClient(c.config)
 	c.HRTeam = NewHRTeamClient(c.config)
 	c.OTP = NewOTPClient(c.config)
 	c.Request = NewRequestClient(c.config)
@@ -155,16 +159,17 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Album:       NewAlbumClient(cfg),
-		Department:  NewDepartmentClient(cfg),
-		HRTeam:      NewHRTeamClient(cfg),
-		OTP:         NewOTPClient(cfg),
-		Request:     NewRequestClient(cfg),
-		RequestMeta: NewRequestMetaClient(cfg),
-		Resume:      NewResumeClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:          ctx,
+		config:       cfg,
+		Album:        NewAlbumClient(cfg),
+		Department:   NewDepartmentClient(cfg),
+		DigikalaCode: NewDigikalaCodeClient(cfg),
+		HRTeam:       NewHRTeamClient(cfg),
+		OTP:          NewOTPClient(cfg),
+		Request:      NewRequestClient(cfg),
+		RequestMeta:  NewRequestMetaClient(cfg),
+		Resume:       NewResumeClient(cfg),
+		User:         NewUserClient(cfg),
 	}, nil
 }
 
@@ -182,16 +187,17 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Album:       NewAlbumClient(cfg),
-		Department:  NewDepartmentClient(cfg),
-		HRTeam:      NewHRTeamClient(cfg),
-		OTP:         NewOTPClient(cfg),
-		Request:     NewRequestClient(cfg),
-		RequestMeta: NewRequestMetaClient(cfg),
-		Resume:      NewResumeClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:          ctx,
+		config:       cfg,
+		Album:        NewAlbumClient(cfg),
+		Department:   NewDepartmentClient(cfg),
+		DigikalaCode: NewDigikalaCodeClient(cfg),
+		HRTeam:       NewHRTeamClient(cfg),
+		OTP:          NewOTPClient(cfg),
+		Request:      NewRequestClient(cfg),
+		RequestMeta:  NewRequestMetaClient(cfg),
+		Resume:       NewResumeClient(cfg),
+		User:         NewUserClient(cfg),
 	}, nil
 }
 
@@ -221,8 +227,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.Department, c.HRTeam, c.OTP, c.Request, c.RequestMeta, c.Resume,
-		c.User,
+		c.Album, c.Department, c.DigikalaCode, c.HRTeam, c.OTP, c.Request,
+		c.RequestMeta, c.Resume, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -232,8 +238,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.Department, c.HRTeam, c.OTP, c.Request, c.RequestMeta, c.Resume,
-		c.User,
+		c.Album, c.Department, c.DigikalaCode, c.HRTeam, c.OTP, c.Request,
+		c.RequestMeta, c.Resume, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -246,6 +252,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Album.mutate(ctx, m)
 	case *DepartmentMutation:
 		return c.Department.mutate(ctx, m)
+	case *DigikalaCodeMutation:
+		return c.DigikalaCode.mutate(ctx, m)
 	case *HRTeamMutation:
 		return c.HRTeam.mutate(ctx, m)
 	case *OTPMutation:
@@ -542,6 +550,155 @@ func (c *DepartmentClient) mutate(ctx context.Context, m *DepartmentMutation) (V
 		return (&DepartmentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Department mutation op: %q", m.Op())
+	}
+}
+
+// DigikalaCodeClient is a client for the DigikalaCode schema.
+type DigikalaCodeClient struct {
+	config
+}
+
+// NewDigikalaCodeClient returns a client for the DigikalaCode from the given config.
+func NewDigikalaCodeClient(c config) *DigikalaCodeClient {
+	return &DigikalaCodeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `digikalacode.Hooks(f(g(h())))`.
+func (c *DigikalaCodeClient) Use(hooks ...Hook) {
+	c.hooks.DigikalaCode = append(c.hooks.DigikalaCode, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `digikalacode.Intercept(f(g(h())))`.
+func (c *DigikalaCodeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DigikalaCode = append(c.inters.DigikalaCode, interceptors...)
+}
+
+// Create returns a builder for creating a DigikalaCode entity.
+func (c *DigikalaCodeClient) Create() *DigikalaCodeCreate {
+	mutation := newDigikalaCodeMutation(c.config, OpCreate)
+	return &DigikalaCodeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DigikalaCode entities.
+func (c *DigikalaCodeClient) CreateBulk(builders ...*DigikalaCodeCreate) *DigikalaCodeCreateBulk {
+	return &DigikalaCodeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DigikalaCodeClient) MapCreateBulk(slice any, setFunc func(*DigikalaCodeCreate, int)) *DigikalaCodeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DigikalaCodeCreateBulk{err: fmt.Errorf("calling to DigikalaCodeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DigikalaCodeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DigikalaCodeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DigikalaCode.
+func (c *DigikalaCodeClient) Update() *DigikalaCodeUpdate {
+	mutation := newDigikalaCodeMutation(c.config, OpUpdate)
+	return &DigikalaCodeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DigikalaCodeClient) UpdateOne(dc *DigikalaCode) *DigikalaCodeUpdateOne {
+	mutation := newDigikalaCodeMutation(c.config, OpUpdateOne, withDigikalaCode(dc))
+	return &DigikalaCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DigikalaCodeClient) UpdateOneID(id int) *DigikalaCodeUpdateOne {
+	mutation := newDigikalaCodeMutation(c.config, OpUpdateOne, withDigikalaCodeID(id))
+	return &DigikalaCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DigikalaCode.
+func (c *DigikalaCodeClient) Delete() *DigikalaCodeDelete {
+	mutation := newDigikalaCodeMutation(c.config, OpDelete)
+	return &DigikalaCodeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DigikalaCodeClient) DeleteOne(dc *DigikalaCode) *DigikalaCodeDeleteOne {
+	return c.DeleteOneID(dc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DigikalaCodeClient) DeleteOneID(id int) *DigikalaCodeDeleteOne {
+	builder := c.Delete().Where(digikalacode.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DigikalaCodeDeleteOne{builder}
+}
+
+// Query returns a query builder for DigikalaCode.
+func (c *DigikalaCodeClient) Query() *DigikalaCodeQuery {
+	return &DigikalaCodeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDigikalaCode},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DigikalaCode entity by its id.
+func (c *DigikalaCodeClient) Get(ctx context.Context, id int) (*DigikalaCode, error) {
+	return c.Query().Where(digikalacode.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DigikalaCodeClient) GetX(ctx context.Context, id int) *DigikalaCode {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUsedBy queries the used_by edge of a DigikalaCode.
+func (c *DigikalaCodeClient) QueryUsedBy(dc *DigikalaCode) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(digikalacode.Table, digikalacode.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, digikalacode.UsedByTable, digikalacode.UsedByColumn),
+		)
+		fromV = sqlgraph.Neighbors(dc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DigikalaCodeClient) Hooks() []Hook {
+	return c.hooks.DigikalaCode
+}
+
+// Interceptors returns the client interceptors.
+func (c *DigikalaCodeClient) Interceptors() []Interceptor {
+	return c.inters.DigikalaCode
+}
+
+func (c *DigikalaCodeClient) mutate(ctx context.Context, m *DigikalaCodeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DigikalaCodeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DigikalaCodeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DigikalaCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DigikalaCodeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown DigikalaCode mutation op: %q", m.Op())
 	}
 }
 
@@ -1462,6 +1619,22 @@ func (c *UserClient) QueryDepartment(u *User) *DepartmentQuery {
 	return query
 }
 
+// QueryDigikalaCodes queries the digikala_codes edge of a User.
+func (c *UserClient) QueryDigikalaCodes(u *User) *DigikalaCodeQuery {
+	query := (&DigikalaCodeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(digikalacode.Table, digikalacode.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.DigikalaCodesTable, user.DigikalaCodesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -1490,10 +1663,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, Department, HRTeam, OTP, Request, RequestMeta, Resume, User []ent.Hook
+		Album, Department, DigikalaCode, HRTeam, OTP, Request, RequestMeta, Resume,
+		User []ent.Hook
 	}
 	inters struct {
-		Album, Department, HRTeam, OTP, Request, RequestMeta, Resume,
+		Album, Department, DigikalaCode, HRTeam, OTP, Request, RequestMeta, Resume,
 		User []ent.Interceptor
 	}
 )
