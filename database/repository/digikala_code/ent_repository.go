@@ -159,6 +159,7 @@ func (r *EntRepository) Assign(ctx context.Context, code string, req *contract.A
 	codeEntity, err = codeEntity.Update().
 		SetAssignToUserID(req.UserID).
 		SetAssignAt(time.Now()).
+		SetUsed(true).
 		Save(ctx)
 	if err != nil {
 		return nil, err
