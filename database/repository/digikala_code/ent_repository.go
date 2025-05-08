@@ -143,34 +143,6 @@ func (r *EntRepository) Assign(ctx context.Context, code string, req *contract.A
 	return convertToContractDigikalaCode(codeEntity), nil
 }
 
-// Use marks a Digikala code as used
-func (r *EntRepository) Use(ctx context.Context, req *contract.UseDigikalaCodeInput) (*contract.DigikalaCode, error) {
-	codeEntity, err := r.client.DigikalaCode.Query().
-		Where(entDigikalaCode.Code(req.Code)).
-		Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	codeEntity, err = codeEntity.Update().
-		SetUsed(true).
-		Save(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// Reload with edges
-	codeEntity, err = r.client.DigikalaCode.Query().
-		Where(entDigikalaCode.ID(codeEntity.ID)).
-		WithAssignedTo().
-		Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return convertToContractDigikalaCode(codeEntity), nil
-}
-
 // Delete deletes a Digikala code by its ID
 func (r *EntRepository) Delete(ctx context.Context, id int) error {
 	return r.client.DigikalaCode.DeleteOneID(id).Exec(ctx)

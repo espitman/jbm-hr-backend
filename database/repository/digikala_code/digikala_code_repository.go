@@ -23,9 +23,6 @@ type Repository interface {
 	// Assign assigns a Digikala code to a user
 	Assign(ctx context.Context, code string, req *contract.AssignDigikalaCodeInput) (*contract.DigikalaCode, error)
 
-	// Use marks a Digikala code as used
-	Use(ctx context.Context, req *contract.UseDigikalaCodeInput) (*contract.DigikalaCode, error)
-
 	// Delete deletes a Digikala code by its ID
 	Delete(ctx context.Context, id int) error
 }
