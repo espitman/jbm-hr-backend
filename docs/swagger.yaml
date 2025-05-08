@@ -1263,6 +1263,14 @@ paths:
         in: query
         name: page_size
         type: integer
+      - description: Filter by used status
+        in: query
+        name: used
+        type: boolean
+      - description: Filter by assigned user ID
+        in: query
+        name: user_id
+        type: integer
       produces:
       - application/json
       responses:

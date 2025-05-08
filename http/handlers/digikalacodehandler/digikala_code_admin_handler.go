@@ -60,6 +60,8 @@ func (h *DigikalaCodeAdminHandler) Create(c echo.Context) error {
 // @Produce json
 // @Param page query int false "Page number (default: 1)"
 // @Param page_size query int false "Page size (default: 10, max: 100)"
+// @Param used query bool false "Filter by used status"
+// @Param user_id query int false "Filter by assigned user ID"
 // @Success 200 {object} ListDigikalaCodeResponse
 // @Failure 500 {object} dto.Response
 // @Security BearerAuth
@@ -69,8 +71,24 @@ func (h *DigikalaCodeAdminHandler) List(c echo.Context) error {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	pageSize, _ := strconv.Atoi(c.QueryParam("page_size"))
 
+	// Get filter parameters
+	var used *bool
+	if usedStr := c.QueryParam("used"); usedStr != "" {
+		usedBool, err := strconv.ParseBool(usedStr)
+		if err == nil {
+			used = &usedBool
+		}
+	}
+
+	var userID *int
+	if userIDStr := c.QueryParam("user_id"); userIDStr != "" {
+		if id, err := strconv.Atoi(userIDStr); err == nil {
+			userID = &id
+		}
+	}
+
 	// Get all Digikala codes
-	codes, total, err := h.digikalaCodeService.GetAll(c.Request().Context(), page, pageSize)
+	codes, total, err := h.digikalaCodeService.GetAll(c.Request().Context(), page, pageSize, used, userID)
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}

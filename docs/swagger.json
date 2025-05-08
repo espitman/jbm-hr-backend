@@ -413,6 +413,18 @@
                         "description": "Page size (default: 10, max: 100)",
                         "name": "page_size",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Filter by used status",
+                        "name": "used",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by assigned user ID",
+                        "name": "user_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {

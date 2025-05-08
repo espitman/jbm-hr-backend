@@ -97,18 +97,29 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateDigikala
 }
 
 // GetAll retrieves all Digikala codes with pagination
-func (r *EntRepository) GetAll(ctx context.Context, page, pageSize int) ([]*contract.DigikalaCode, int, error) {
+func (r *EntRepository) GetAll(ctx context.Context, page, pageSize int, used *bool, userID *int) ([]*contract.DigikalaCode, int, error) {
 	// Calculate offset
 	offset := (page - 1) * pageSize
 
-	// Get total count
-	total, err := r.client.DigikalaCode.Query().Count(ctx)
+	// Build query
+	query := r.client.DigikalaCode.Query()
+
+	// Apply filters
+	if used != nil {
+		query = query.Where(entDigikalaCode.Used(*used))
+	}
+	if userID != nil {
+		query = query.Where(entDigikalaCode.AssignToUserID(*userID))
+	}
+
+	// Get total count with filters
+	total, err := query.Clone().Count(ctx)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	// Get paginated results
-	entDigikalaCodes, err := r.client.DigikalaCode.Query().
+	entDigikalaCodes, err := query.
 		WithAssignedTo().
 		Order(ent.Desc(entDigikalaCode.FieldID)).
 		Limit(pageSize).

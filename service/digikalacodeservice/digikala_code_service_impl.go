@@ -27,7 +27,7 @@ func (s *service) Create(ctx context.Context, req *contract.CreateDigikalaCodeIn
 }
 
 // GetAll retrieves all Digikala codes with pagination
-func (s *service) GetAll(ctx context.Context, page, pageSize int) ([]*contract.DigikalaCode, int, error) {
+func (s *service) GetAll(ctx context.Context, page, pageSize int, used *bool, userID *int) ([]*contract.DigikalaCode, int, error) {
 	// Validate pagination parameters
 	if page < 1 {
 		page = 1
@@ -39,7 +39,7 @@ func (s *service) GetAll(ctx context.Context, page, pageSize int) ([]*contract.D
 		pageSize = 100 // Maximum page size
 	}
 
-	return s.repo.GetAll(ctx, page, pageSize)
+	return s.repo.GetAll(ctx, page, pageSize, used, userID)
 }
 
 // GetByID retrieves a Digikala code by its ID
