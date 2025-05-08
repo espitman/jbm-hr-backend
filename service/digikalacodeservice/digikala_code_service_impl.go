@@ -1,4 +1,4 @@
-package digikala_code
+package digikalacodeservice
 
 import (
 	"context"
@@ -6,24 +6,6 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/database/repository/digikala_code"
 )
-
-// Service defines the interface for Digikala code operations
-type Service interface {
-	// Create creates a new Digikala code
-	Create(ctx context.Context, req *contract.CreateDigikalaCodeInput) (*contract.DigikalaCode, error)
-
-	// GetAll retrieves all Digikala codes
-	GetAll(ctx context.Context) ([]*contract.DigikalaCode, error)
-
-	// GetByID retrieves a Digikala code by its ID
-	GetByID(ctx context.Context, id int) (*contract.DigikalaCode, error)
-
-	// GetByCode retrieves a Digikala code by its code
-	GetByCode(ctx context.Context, code string) (*contract.DigikalaCode, error)
-
-	// Assign assigns a Digikala code to a user
-	Assign(ctx context.Context, code string, req *contract.AssignDigikalaCodeInput) (*contract.DigikalaCode, error)
-}
 
 // service implements the Service interface
 type service struct {
