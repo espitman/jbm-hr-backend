@@ -7,6 +7,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/ent"
 	entAlibabaCode "github.com/espitman/jbm-hr-backend/ent/alibabacode"
+	"github.com/espitman/jbm-hr-backend/utils/encryption"
 )
 
 // EntRepository implements the Repository interface using Ent
@@ -22,9 +23,9 @@ func NewEntRepository(client *ent.Client) *EntRepository {
 }
 
 // convertToContractAlibabaCode converts an ent.AlibabaCode to a contract.AlibabaCode
-func convertToContractAlibabaCode(entCode *ent.AlibabaCode) *contract.AlibabaCode {
+func convertToContractAlibabaCode(entCode *ent.AlibabaCode, includeCode bool) (*contract.AlibabaCode, error) {
 	if entCode == nil {
-		return nil
+		return nil, nil
 	}
 	var assignToUserID *int
 	if entCode.Edges.AssignedToUser != nil {
@@ -35,15 +36,26 @@ func convertToContractAlibabaCode(entCode *ent.AlibabaCode) *contract.AlibabaCod
 		assignAtStr := entCode.AssignAt.Format(time.RFC3339)
 		assignAt = &assignAtStr
 	}
+
+	var code string
+	if includeCode {
+		// Decrypt the code only if it should be included
+		decryptedCode, err := encryption.Decrypt(entCode.Code)
+		if err != nil {
+			return nil, err
+		}
+		code = decryptedCode
+	}
+
 	return &contract.AlibabaCode{
 		ID:             entCode.ID,
-		Code:           entCode.Code,
+		Code:           code,
 		Used:           entCode.Used,
 		CreatedAt:      entCode.CreatedAt.Format(time.RFC3339),
 		AssignToUserID: assignToUserID,
 		AssignAt:       assignAt,
 		Type:           string(entCode.Type),
-	}
+	}, nil
 }
 
 // GetAll retrieves all Alibaba codes
@@ -71,7 +83,11 @@ func (r *EntRepository) GetAll(ctx context.Context, filters *contract.AlibabaCod
 
 	codes := make([]*contract.AlibabaCode, len(entCodes))
 	for i, entCode := range entCodes {
-		codes[i] = convertToContractAlibabaCode(entCode)
+		contractCode, err := convertToContractAlibabaCode(entCode, false)
+		if err != nil {
+			return nil, err
+		}
+		codes[i] = contractCode
 	}
 	return codes, nil
 }
@@ -85,32 +101,44 @@ func (r *EntRepository) GetByID(ctx context.Context, id int) (*contract.AlibabaC
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractAlibabaCode(entCode), nil
+	return convertToContractAlibabaCode(entCode, false)
 }
 
 // GetByCode retrieves an Alibaba code by its code
 func (r *EntRepository) GetByCode(ctx context.Context, code string) (*contract.AlibabaCode, error) {
+	// Encrypt the code before querying
+	encryptedCode, err := encryption.Encrypt(code)
+	if err != nil {
+		return nil, err
+	}
+
 	entCode, err := r.client.AlibabaCode.Query().
-		Where(entAlibabaCode.Code(code)).
+		Where(entAlibabaCode.Code(encryptedCode)).
 		WithAssignedToUser().
 		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractAlibabaCode(entCode), nil
+	return convertToContractAlibabaCode(entCode, true)
 }
 
 // Create creates a new Alibaba code
 func (r *EntRepository) Create(ctx context.Context, req *contract.CreateAlibabaCodeInput) (*contract.AlibabaCode, error) {
+	// Encrypt the code before storing
+	encryptedCode, err := encryption.Encrypt(req.Code)
+	if err != nil {
+		return nil, err
+	}
+
 	entCode, err := r.client.AlibabaCode.
 		Create().
-		SetCode(req.Code).
+		SetCode(encryptedCode).
 		SetType(entAlibabaCode.Type(req.Type)).
 		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractAlibabaCode(entCode), nil
+	return convertToContractAlibabaCode(entCode, true)
 }
 
 // Update updates an existing Alibaba code
@@ -134,7 +162,7 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 	if err != nil {
 		return nil, err
 	}
-	return convertToContractAlibabaCode(entCode), nil
+	return convertToContractAlibabaCode(entCode, false)
 }
 
 // Delete deletes an Alibaba code by its ID
