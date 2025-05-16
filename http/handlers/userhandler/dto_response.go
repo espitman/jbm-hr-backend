@@ -96,6 +96,8 @@ type UserData struct {
 	Department           *DepartmentDTO `json:"department,omitempty"`
 	Birthdate            *string        `json:"birthdate,omitempty"`
 	CooperationStartDate *string        `json:"cooperation_start_date,omitempty"`
+	PersonnelNumber      string         `json:"personnel_number,omitempty"`
+	NationalCode         string         `json:"national_code,omitempty"`
 }
 
 // ListUsersData represents the data structure for list users response

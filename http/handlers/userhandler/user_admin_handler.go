@@ -129,6 +129,8 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 			),
 			Birthdate:            user.Birthdate,
 			CooperationStartDate: user.CooperationStartDate,
+			PersonnelNumber:      user.PersonnelNumber,
+			NationalCode:         user.NationalCode,
 		}
 	}
 
@@ -230,6 +232,8 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 		),
 		Birthdate:            user.Birthdate,
 		CooperationStartDate: user.CooperationStartDate,
+		PersonnelNumber:      user.PersonnelNumber,
+		NationalCode:         user.NationalCode,
 	})
 }
 

@@ -169,6 +169,12 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 		SetFullName(fmt.Sprintf("%s %s", req.FirstName, req.LastName)).
 		SetRole(entUser.Role(req.Role))
 
+	if req.PersonnelNumber != "" {
+		update = update.SetPersonnelNumber(req.PersonnelNumber)
+	}
+	if req.NationalCode != "" {
+		update = update.SetNationalCode(req.NationalCode)
+	}
 	if req.DepartmentID != nil {
 		update = update.SetDepartmentID(*req.DepartmentID)
 	} else {
