@@ -2754,6 +2754,12 @@ const docTemplate = `{
                 "last_name": {
                     "type": "string"
                 },
+                "national_code": {
+                    "type": "string"
+                },
+                "personnel_number": {
+                    "type": "string"
+                },
                 "phone": {
                     "type": "string"
                 },
@@ -2803,6 +2809,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "last_name": {
+                    "type": "string"
+                },
+                "national_code": {
+                    "type": "string"
+                },
+                "personnel_number": {
                     "type": "string"
                 },
                 "phone": {
@@ -3713,6 +3725,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "last_name": {
+                    "type": "string"
+                },
+                "national_code": {
+                    "type": "string"
+                },
+                "personnel_number": {
                     "type": "string"
                 },
                 "phone": {

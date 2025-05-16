@@ -17,6 +17,8 @@ type User struct {
 	DepartmentShortName  *string `json:"department_short_name,omitempty"`
 	Birthdate            *string `json:"birthdate,omitempty"`
 	CooperationStartDate *string `json:"cooperation_start_date,omitempty"`
+	PersonnelNumber      string  `json:"personnel_number,omitempty"`
+	NationalCode         string  `json:"national_code,omitempty"`
 }
 
 // CreateUserInput represents the input for creating a new user
@@ -30,6 +32,8 @@ type CreateUserInput struct {
 	DepartmentID         *int    `json:"department_id,omitempty"`
 	Birthdate            *string `json:"birthdate,omitempty"`
 	CooperationStartDate *string `json:"cooperation_start_date,omitempty"`
+	PersonnelNumber      string  `json:"personnel_number,omitempty"`
+	NationalCode         string  `json:"national_code,omitempty"`
 }
 
 // UpdateUserInput represents the input for updating a user
@@ -43,6 +47,8 @@ type UpdateUserInput struct {
 	DepartmentID         *int    `json:"department_id,omitempty"`
 	Birthdate            *string `json:"birthdate,omitempty"`
 	CooperationStartDate *string `json:"cooperation_start_date,omitempty"`
+	PersonnelNumber      string  `json:"personnel_number,omitempty"`
+	NationalCode         string  `json:"national_code,omitempty"`
 }
 
 // RegisterUserInput represents the input for registering a new user
@@ -56,6 +62,8 @@ type RegisterUserInput struct {
 	DepartmentID         *int    `json:"department_id,omitempty"`
 	Birthdate            *string `json:"birthdate,omitempty"`
 	CooperationStartDate *string `json:"cooperation_start_date,omitempty"`
+	PersonnelNumber      string  `json:"personnel_number,omitempty"`
+	NationalCode         string  `json:"national_code,omitempty"`
 }
 
 // UpdatePasswordInput represents the input for updating a user's password

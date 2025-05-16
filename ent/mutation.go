@@ -5723,22 +5723,9 @@ func (m *UserMutation) OldPersonnelNumber(ctx context.Context) (v string, err er
 	return oldValue.PersonnelNumber, nil
 }
 
-// ClearPersonnelNumber clears the value of the "personnel_number" field.
-func (m *UserMutation) ClearPersonnelNumber() {
-	m.personnel_number = nil
-	m.clearedFields[user.FieldPersonnelNumber] = struct{}{}
-}
-
-// PersonnelNumberCleared returns if the "personnel_number" field was cleared in this mutation.
-func (m *UserMutation) PersonnelNumberCleared() bool {
-	_, ok := m.clearedFields[user.FieldPersonnelNumber]
-	return ok
-}
-
 // ResetPersonnelNumber resets all changes to the "personnel_number" field.
 func (m *UserMutation) ResetPersonnelNumber() {
 	m.personnel_number = nil
-	delete(m.clearedFields, user.FieldPersonnelNumber)
 }
 
 // SetNationalCode sets the "national_code" field.
@@ -5772,22 +5759,9 @@ func (m *UserMutation) OldNationalCode(ctx context.Context) (v string, err error
 	return oldValue.NationalCode, nil
 }
 
-// ClearNationalCode clears the value of the "national_code" field.
-func (m *UserMutation) ClearNationalCode() {
-	m.national_code = nil
-	m.clearedFields[user.FieldNationalCode] = struct{}{}
-}
-
-// NationalCodeCleared returns if the "national_code" field was cleared in this mutation.
-func (m *UserMutation) NationalCodeCleared() bool {
-	_, ok := m.clearedFields[user.FieldNationalCode]
-	return ok
-}
-
 // ResetNationalCode resets all changes to the "national_code" field.
 func (m *UserMutation) ResetNationalCode() {
 	m.national_code = nil
-	delete(m.clearedFields, user.FieldNationalCode)
 }
 
 // SetBirthdate sets the "birthdate" field.
@@ -6408,12 +6382,6 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldPassword) {
 		fields = append(fields, user.FieldPassword)
 	}
-	if m.FieldCleared(user.FieldPersonnelNumber) {
-		fields = append(fields, user.FieldPersonnelNumber)
-	}
-	if m.FieldCleared(user.FieldNationalCode) {
-		fields = append(fields, user.FieldNationalCode)
-	}
 	if m.FieldCleared(user.FieldBirthdate) {
 		fields = append(fields, user.FieldBirthdate)
 	}
@@ -6439,12 +6407,6 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldPassword:
 		m.ClearPassword()
-		return nil
-	case user.FieldPersonnelNumber:
-		m.ClearPersonnelNumber()
-		return nil
-	case user.FieldNationalCode:
-		m.ClearNationalCode()
 		return nil
 	case user.FieldBirthdate:
 		m.ClearBirthdate()

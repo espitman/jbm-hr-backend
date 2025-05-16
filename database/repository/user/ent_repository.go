@@ -63,6 +63,8 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		DepartmentShortName:  departmentShortName,
 		Birthdate:            birthdate,
 		CooperationStartDate: cooperationStartDate,
+		PersonnelNumber:      entUser.PersonnelNumber,
+		NationalCode:         entUser.NationalCode,
 	}
 }
 
@@ -125,6 +127,12 @@ func (r *EntRepository) Create(ctx context.Context, req *contract.CreateUserInpu
 		SetRole(entUser.Role(req.Role)).
 		SetAvatar(req.Avatar)
 
+	if req.PersonnelNumber != "" {
+		create = create.SetPersonnelNumber(req.PersonnelNumber)
+	}
+	if req.NationalCode != "" {
+		create = create.SetNationalCode(req.NationalCode)
+	}
 	if req.DepartmentID != nil {
 		create = create.SetDepartmentID(*req.DepartmentID)
 	}

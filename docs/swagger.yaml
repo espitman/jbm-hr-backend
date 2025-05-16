@@ -213,6 +213,10 @@ definitions:
         type: string
       last_name:
         type: string
+      national_code:
+        type: string
+      personnel_number:
+        type: string
       phone:
         type: string
       role:
@@ -252,6 +256,10 @@ definitions:
       id:
         type: integer
       last_name:
+        type: string
+      national_code:
+        type: string
+      personnel_number:
         type: string
       phone:
         type: string
@@ -852,6 +860,10 @@ definitions:
       first_name:
         type: string
       last_name:
+        type: string
+      national_code:
+        type: string
+      personnel_number:
         type: string
       phone:
         type: string

@@ -132,6 +132,8 @@ func (s *service) RegisterUser(ctx context.Context, input *contract.RegisterUser
 		DepartmentID:         input.DepartmentID,
 		Birthdate:            input.Birthdate,
 		CooperationStartDate: input.CooperationStartDate,
+		PersonnelNumber:      input.PersonnelNumber,
+		NationalCode:         input.NationalCode,
 	}
 
 	// Create the user using the repository

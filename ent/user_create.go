@@ -103,25 +103,9 @@ func (uc *UserCreate) SetPersonnelNumber(s string) *UserCreate {
 	return uc
 }
 
-// SetNillablePersonnelNumber sets the "personnel_number" field if the given value is not nil.
-func (uc *UserCreate) SetNillablePersonnelNumber(s *string) *UserCreate {
-	if s != nil {
-		uc.SetPersonnelNumber(*s)
-	}
-	return uc
-}
-
 // SetNationalCode sets the "national_code" field.
 func (uc *UserCreate) SetNationalCode(s string) *UserCreate {
 	uc.mutation.SetNationalCode(s)
-	return uc
-}
-
-// SetNillableNationalCode sets the "national_code" field if the given value is not nil.
-func (uc *UserCreate) SetNillableNationalCode(s *string) *UserCreate {
-	if s != nil {
-		uc.SetNationalCode(*s)
-	}
 	return uc
 }
 
@@ -321,6 +305,22 @@ func (uc *UserCreate) check() error {
 	if v, ok := uc.mutation.Role(); ok {
 		if err := user.RoleValidator(v); err != nil {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.PersonnelNumber(); !ok {
+		return &ValidationError{Name: "personnel_number", err: errors.New(`ent: missing required field "User.personnel_number"`)}
+	}
+	if v, ok := uc.mutation.PersonnelNumber(); ok {
+		if err := user.PersonnelNumberValidator(v); err != nil {
+			return &ValidationError{Name: "personnel_number", err: fmt.Errorf(`ent: validator failed for field "User.personnel_number": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.NationalCode(); !ok {
+		return &ValidationError{Name: "national_code", err: errors.New(`ent: missing required field "User.national_code"`)}
+	}
+	if v, ok := uc.mutation.NationalCode(); ok {
+		if err := user.NationalCodeValidator(v); err != nil {
+			return &ValidationError{Name: "national_code", err: fmt.Errorf(`ent: validator failed for field "User.national_code": %w`, err)}
 		}
 	}
 	return nil

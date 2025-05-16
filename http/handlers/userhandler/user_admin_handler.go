@@ -59,6 +59,8 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 		DepartmentID:         req.DepartmentID,
 		Birthdate:            req.Birthdate,
 		CooperationStartDate: req.CooperationStartDate,
+		PersonnelNumber:      req.PersonnelNumber,
+		NationalCode:         req.NationalCode,
 	})
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())

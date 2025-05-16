@@ -660,16 +660,6 @@ func PersonnelNumberHasSuffix(v string) predicate.User {
 	return predicate.User(sql.FieldHasSuffix(FieldPersonnelNumber, v))
 }
 
-// PersonnelNumberIsNil applies the IsNil predicate on the "personnel_number" field.
-func PersonnelNumberIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldPersonnelNumber))
-}
-
-// PersonnelNumberNotNil applies the NotNil predicate on the "personnel_number" field.
-func PersonnelNumberNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldPersonnelNumber))
-}
-
 // PersonnelNumberEqualFold applies the EqualFold predicate on the "personnel_number" field.
 func PersonnelNumberEqualFold(v string) predicate.User {
 	return predicate.User(sql.FieldEqualFold(FieldPersonnelNumber, v))
@@ -733,16 +723,6 @@ func NationalCodeHasPrefix(v string) predicate.User {
 // NationalCodeHasSuffix applies the HasSuffix predicate on the "national_code" field.
 func NationalCodeHasSuffix(v string) predicate.User {
 	return predicate.User(sql.FieldHasSuffix(FieldNationalCode, v))
-}
-
-// NationalCodeIsNil applies the IsNil predicate on the "national_code" field.
-func NationalCodeIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldNationalCode))
-}
-
-// NationalCodeNotNil applies the NotNil predicate on the "national_code" field.
-func NationalCodeNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldNationalCode))
 }
 
 // NationalCodeEqualFold applies the EqualFold predicate on the "national_code" field.

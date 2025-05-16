@@ -136,6 +136,10 @@ var (
 	LastNameValidator func(string) error
 	// FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
 	FullNameValidator func(string) error
+	// PersonnelNumberValidator is a validator for the "personnel_number" field. It is called by the builders before save.
+	PersonnelNumberValidator func(string) error
+	// NationalCodeValidator is a validator for the "national_code" field. It is called by the builders before save.
+	NationalCodeValidator func(string) error
 )
 
 // Role defines the type for the "role" enum field.

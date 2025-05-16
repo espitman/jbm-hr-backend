@@ -171,12 +171,6 @@ func (uu *UserUpdate) SetNillablePersonnelNumber(s *string) *UserUpdate {
 	return uu
 }
 
-// ClearPersonnelNumber clears the value of the "personnel_number" field.
-func (uu *UserUpdate) ClearPersonnelNumber() *UserUpdate {
-	uu.mutation.ClearPersonnelNumber()
-	return uu
-}
-
 // SetNationalCode sets the "national_code" field.
 func (uu *UserUpdate) SetNationalCode(s string) *UserUpdate {
 	uu.mutation.SetNationalCode(s)
@@ -188,12 +182,6 @@ func (uu *UserUpdate) SetNillableNationalCode(s *string) *UserUpdate {
 	if s != nil {
 		uu.SetNationalCode(*s)
 	}
-	return uu
-}
-
-// ClearNationalCode clears the value of the "national_code" field.
-func (uu *UserUpdate) ClearNationalCode() *UserUpdate {
-	uu.mutation.ClearNationalCode()
 	return uu
 }
 
@@ -470,6 +458,16 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.PersonnelNumber(); ok {
+		if err := user.PersonnelNumberValidator(v); err != nil {
+			return &ValidationError{Name: "personnel_number", err: fmt.Errorf(`ent: validator failed for field "User.personnel_number": %w`, err)}
+		}
+	}
+	if v, ok := uu.mutation.NationalCode(); ok {
+		if err := user.NationalCodeValidator(v); err != nil {
+			return &ValidationError{Name: "national_code", err: fmt.Errorf(`ent: validator failed for field "User.national_code": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -518,14 +516,8 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.PersonnelNumber(); ok {
 		_spec.SetField(user.FieldPersonnelNumber, field.TypeString, value)
 	}
-	if uu.mutation.PersonnelNumberCleared() {
-		_spec.ClearField(user.FieldPersonnelNumber, field.TypeString)
-	}
 	if value, ok := uu.mutation.NationalCode(); ok {
 		_spec.SetField(user.FieldNationalCode, field.TypeString, value)
-	}
-	if uu.mutation.NationalCodeCleared() {
-		_spec.ClearField(user.FieldNationalCode, field.TypeString)
 	}
 	if value, ok := uu.mutation.Birthdate(); ok {
 		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)
@@ -906,12 +898,6 @@ func (uuo *UserUpdateOne) SetNillablePersonnelNumber(s *string) *UserUpdateOne {
 	return uuo
 }
 
-// ClearPersonnelNumber clears the value of the "personnel_number" field.
-func (uuo *UserUpdateOne) ClearPersonnelNumber() *UserUpdateOne {
-	uuo.mutation.ClearPersonnelNumber()
-	return uuo
-}
-
 // SetNationalCode sets the "national_code" field.
 func (uuo *UserUpdateOne) SetNationalCode(s string) *UserUpdateOne {
 	uuo.mutation.SetNationalCode(s)
@@ -923,12 +909,6 @@ func (uuo *UserUpdateOne) SetNillableNationalCode(s *string) *UserUpdateOne {
 	if s != nil {
 		uuo.SetNationalCode(*s)
 	}
-	return uuo
-}
-
-// ClearNationalCode clears the value of the "national_code" field.
-func (uuo *UserUpdateOne) ClearNationalCode() *UserUpdateOne {
-	uuo.mutation.ClearNationalCode()
 	return uuo
 }
 
@@ -1218,6 +1198,16 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.PersonnelNumber(); ok {
+		if err := user.PersonnelNumberValidator(v); err != nil {
+			return &ValidationError{Name: "personnel_number", err: fmt.Errorf(`ent: validator failed for field "User.personnel_number": %w`, err)}
+		}
+	}
+	if v, ok := uuo.mutation.NationalCode(); ok {
+		if err := user.NationalCodeValidator(v); err != nil {
+			return &ValidationError{Name: "national_code", err: fmt.Errorf(`ent: validator failed for field "User.national_code": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -1283,14 +1273,8 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.PersonnelNumber(); ok {
 		_spec.SetField(user.FieldPersonnelNumber, field.TypeString, value)
 	}
-	if uuo.mutation.PersonnelNumberCleared() {
-		_spec.ClearField(user.FieldPersonnelNumber, field.TypeString)
-	}
 	if value, ok := uuo.mutation.NationalCode(); ok {
 		_spec.SetField(user.FieldNationalCode, field.TypeString, value)
-	}
-	if uuo.mutation.NationalCodeCleared() {
-		_spec.ClearField(user.FieldNationalCode, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Birthdate(); ok {
 		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)

@@ -231,4 +231,12 @@ func init() {
 	userDescFullName := userFields[4].Descriptor()
 	// user.FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
 	user.FullNameValidator = userDescFullName.Validators[0].(func(string) error)
+	// userDescPersonnelNumber is the schema descriptor for personnel_number field.
+	userDescPersonnelNumber := userFields[8].Descriptor()
+	// user.PersonnelNumberValidator is a validator for the "personnel_number" field. It is called by the builders before save.
+	user.PersonnelNumberValidator = userDescPersonnelNumber.Validators[0].(func(string) error)
+	// userDescNationalCode is the schema descriptor for national_code field.
+	userDescNationalCode := userFields[9].Descriptor()
+	// user.NationalCodeValidator is a validator for the "national_code" field. It is called by the builders before save.
+	user.NationalCodeValidator = userDescNationalCode.Validators[0].(func(string) error)
 }

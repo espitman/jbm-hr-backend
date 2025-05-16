@@ -36,9 +36,11 @@ func (User) Fields() []ent.Field {
 			Optional().
 			Sensitive(),
 		field.String("personnel_number").
-			Optional(),
+			Unique().
+			NotEmpty(),
 		field.String("national_code").
-			Optional(),
+			Unique().
+			NotEmpty(),
 		field.Time("birthdate").
 			SchemaType(map[string]string{
 				dialect.Postgres: "date",
