@@ -372,6 +372,7 @@ func (r *EntRepository) GetUsersWithBirthdateInJalaliMonth(ctx context.Context) 
 		WithDepartment(func(q *ent.DepartmentQuery) {
 			q.Select("id", "title", "icon", "short_name")
 		}).
+		Order(ent.Asc(entUser.FieldBirthdate)).
 		All(ctx)
 	if err != nil {
 		return nil, err
@@ -395,6 +396,7 @@ func (r *EntRepository) GetUsersWithCooperationStartDateInJalaliMonth(ctx contex
 		WithDepartment(func(q *ent.DepartmentQuery) {
 			q.Select("id", "title", "icon", "short_name")
 		}).
+		Order(ent.Asc(entUser.FieldCooperationStartDate)).
 		All(ctx)
 	if err != nil {
 		return nil, err
