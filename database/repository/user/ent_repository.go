@@ -360,3 +360,49 @@ func (r *EntRepository) GetUsersWithTodayCooperationStartDate(ctx context.Contex
 	}
 	return result, nil
 }
+
+// GetUsersWithBirthdateInJalaliMonth retrieves all users whose birthdate is in the current Jalali month
+func (r *EntRepository) GetUsersWithBirthdateInJalaliMonth(ctx context.Context) ([]*contract.User, error) {
+	dates := utils.GenerateDatesForJalaliMonth(100)
+
+	users, err := r.client.User.Query().
+		Where(
+			entUser.BirthdateIn(dates...),
+		).
+		WithDepartment(func(q *ent.DepartmentQuery) {
+			q.Select("id", "title", "icon", "short_name")
+		}).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*contract.User, len(users))
+	for i, u := range users {
+		result[i] = convertToContractUser(u)
+	}
+	return result, nil
+}
+
+// GetUsersWithCooperationStartDateInJalaliMonth retrieves all users whose cooperation start date is in the current Jalali month
+func (r *EntRepository) GetUsersWithCooperationStartDateInJalaliMonth(ctx context.Context) ([]*contract.User, error) {
+	dates := utils.GenerateDatesForJalaliMonth(100)
+
+	users, err := r.client.User.Query().
+		Where(
+			entUser.CooperationStartDateIn(dates...),
+		).
+		WithDepartment(func(q *ent.DepartmentQuery) {
+			q.Select("id", "title", "icon", "short_name")
+		}).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*contract.User, len(users))
+	for i, u := range users {
+		result[i] = convertToContractUser(u)
+	}
+	return result, nil
+}

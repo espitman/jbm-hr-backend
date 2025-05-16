@@ -23,6 +23,38 @@ func convertToDepartmentDTO(departmentID *int, title *string, icon *string, shor
 	}
 }
 
+// convertToUserData converts a contract.User to UserData
+func convertToUserData(user *contract.User) UserData {
+	return UserData{
+		ID:        user.ID,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Avatar:    user.Avatar,
+		Department: convertToDepartmentDTO(
+			user.DepartmentID,
+			user.DepartmentTitle,
+			user.DepartmentIcon,
+			user.DepartmentShortName,
+		),
+		Birthdate:            user.Birthdate,
+		CooperationStartDate: user.CooperationStartDate,
+		PersonnelNumber:      user.PersonnelNumber,
+		NationalCode:         user.NationalCode,
+	}
+}
+
+// convertToUserDataList converts a slice of contract.User to []UserData
+func convertToUserDataList(users []*contract.User) []UserData {
+	usersData := make([]UserData, len(users))
+	for i, user := range users {
+		usersData[i] = convertToUserData(user)
+	}
+	return usersData
+}
+
 // RegisterUser handles the user registration
 // @Summary Register a new user
 // @Description Register a new user in the system (Admin only)
@@ -131,28 +163,7 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 	}
 
 	// Convert users to response format
-	usersData := make([]UserData, len(users))
-	for i, user := range users {
-		usersData[i] = UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-			Department: convertToDepartmentDTO(
-				user.DepartmentID,
-				user.DepartmentTitle,
-				user.DepartmentIcon,
-				user.DepartmentShortName,
-			),
-			Birthdate:            user.Birthdate,
-			CooperationStartDate: user.CooperationStartDate,
-			PersonnelNumber:      user.PersonnelNumber,
-			NationalCode:         user.NationalCode,
-		}
-	}
+	usersData := convertToUserDataList(users)
 
 	return dto.SuccessJSON(c, ListUsersData{
 		Users: usersData,
@@ -196,15 +207,7 @@ func (h *UserHandler) AdminLogin(c echo.Context) error {
 
 	return dto.SuccessJSON(c, AdminLoginResponse{
 		Token: token,
-		User: UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-		},
+		User:  convertToUserData(user),
 	})
 }
 
@@ -235,26 +238,7 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, UserData{
-		ID:        user.ID,
-		Email:     user.Email,
-		Phone:     user.Phone,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Role:      user.Role,
-		Avatar:    user.Avatar,
-		Department: convertToDepartmentDTO(
-			user.DepartmentID,
-			user.DepartmentTitle,
-			user.DepartmentIcon,
-			user.DepartmentShortName,
-		),
-		Birthdate:            user.Birthdate,
-		CooperationStartDate: user.CooperationStartDate,
-		PersonnelNumber:      user.PersonnelNumber,
-		NationalCode:         user.NationalCode,
-		Confirmed:            user.Confirmed,
-	})
+	return dto.SuccessJSON(c, convertToUserData(user))
 }
 
 // UpdateUser handles updating a user's information
@@ -294,21 +278,7 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, UserData{
-		ID:        user.ID,
-		Email:     user.Email,
-		Phone:     user.Phone,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Role:      user.Role,
-		Avatar:    user.Avatar,
-		Department: convertToDepartmentDTO(
-			user.DepartmentID,
-			user.DepartmentTitle,
-			user.DepartmentIcon,
-			user.DepartmentShortName,
-		),
-	})
+	return dto.SuccessJSON(c, convertToUserData(user))
 }
 
 // UpdateUserPassword handles updating a user's password by admin
@@ -394,15 +364,7 @@ func (h *UserHandler) UpdateUserAvatar(c echo.Context) error {
 	}
 
 	return dto.SuccessJSON(c, UpdateUserResponse{
-		Data: UserData{
-			ID:        updatedUser.ID,
-			Email:     updatedUser.Email,
-			Phone:     updatedUser.Phone,
-			FirstName: updatedUser.FirstName,
-			LastName:  updatedUser.LastName,
-			Role:      updatedUser.Role,
-			Avatar:    updatedUser.Avatar,
-		},
+		Data: convertToUserData(updatedUser),
 	})
 }
 
@@ -444,23 +406,7 @@ func (h *UserHandler) UpdateUserBirthdate(c echo.Context) error {
 	}
 
 	return dto.SuccessJSON(c, UpdateUserResponse{
-		Data: UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-			Department: convertToDepartmentDTO(
-				user.DepartmentID,
-				user.DepartmentTitle,
-				user.DepartmentIcon,
-				user.DepartmentShortName,
-			),
-			Birthdate:            user.Birthdate,
-			CooperationStartDate: user.CooperationStartDate,
-		},
+		Data: convertToUserData(user),
 	})
 }
 
@@ -502,23 +448,7 @@ func (h *UserHandler) UpdateUserCooperationStartDate(c echo.Context) error {
 	}
 
 	return dto.SuccessJSON(c, UpdateUserResponse{
-		Data: UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-			Department: convertToDepartmentDTO(
-				user.DepartmentID,
-				user.DepartmentTitle,
-				user.DepartmentIcon,
-				user.DepartmentShortName,
-			),
-			Birthdate:            user.Birthdate,
-			CooperationStartDate: user.CooperationStartDate,
-		},
+		Data: convertToUserData(user),
 	})
 }
 
@@ -567,28 +497,7 @@ func (h *UserHandler) GetUsersWithTodayBirthdate(c echo.Context) error {
 	}
 
 	// Convert users to response format
-	usersData := make([]UserData, len(users))
-	for i, user := range users {
-		usersData[i] = UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-			Department: convertToDepartmentDTO(
-				user.DepartmentID,
-				user.DepartmentTitle,
-				user.DepartmentIcon,
-				user.DepartmentShortName,
-			),
-			Birthdate:            user.Birthdate,
-			CooperationStartDate: user.CooperationStartDate,
-			PersonnelNumber:      user.PersonnelNumber,
-			NationalCode:         user.NationalCode,
-		}
-	}
+	usersData := convertToUserDataList(users)
 
 	return dto.SuccessJSON(c, ListUsersData{
 		Users: usersData,
@@ -613,29 +522,52 @@ func (h *UserHandler) GetUsersWithTodayCooperationStartDate(c echo.Context) erro
 	}
 
 	// Convert users to response format
-	usersData := make([]UserData, len(users))
-	for i, user := range users {
-		usersData[i] = UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-			Department: convertToDepartmentDTO(
-				user.DepartmentID,
-				user.DepartmentTitle,
-				user.DepartmentIcon,
-				user.DepartmentShortName,
-			),
-			Birthdate:            user.Birthdate,
-			CooperationStartDate: user.CooperationStartDate,
-			PersonnelNumber:      user.PersonnelNumber,
-			NationalCode:         user.NationalCode,
-		}
+	usersData := convertToUserDataList(users)
+
+	return dto.SuccessJSON(c, ListUsersData{
+		Users: usersData,
+		Total: int64(len(usersData)),
+	})
+}
+
+// GetUsersWithBirthdateInJalaliMonth godoc
+// @Summary Get users with birthdate in current Jalali month
+// @Description Get all users whose birthdate is in the current Jalali month
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} ListUsersData
+// @Router /api/v1/admin/users/jalali-month-birthdate [get]
+func (h *UserHandler) GetUsersWithBirthdateInJalaliMonth(c echo.Context) error {
+	users, err := h.userService.GetUsersWithBirthdateInJalaliMonth(c.Request().Context())
+	if err != nil {
+		return err
 	}
 
+	usersData := convertToUserDataList(users)
+	return dto.SuccessJSON(c, ListUsersData{
+		Users: usersData,
+		Total: int64(len(usersData)),
+	})
+}
+
+// GetUsersWithCooperationStartDateInJalaliMonth godoc
+// @Summary Get users with cooperation start date in current Jalali month
+// @Description Get all users whose cooperation start date is in the current Jalali month
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} ListUsersData
+// @Router /api/v1/admin/users/jalali-month-cooperation-start-date [get]
+func (h *UserHandler) GetUsersWithCooperationStartDateInJalaliMonth(c echo.Context) error {
+	users, err := h.userService.GetUsersWithCooperationStartDateInJalaliMonth(c.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	usersData := convertToUserDataList(users)
 	return dto.SuccessJSON(c, ListUsersData{
 		Users: usersData,
 		Total: int64(len(usersData)),

@@ -364,3 +364,13 @@ func (s *service) GetUsersWithTodayBirthdate(ctx context.Context) ([]*contract.U
 func (s *service) GetUsersWithTodayCooperationStartDate(ctx context.Context) ([]*contract.User, error) {
 	return s.userRepo.GetUsersWithTodayCooperationStartDate(ctx)
 }
+
+// GetUsersWithBirthdateInJalaliMonth retrieves all users whose birthdate is in the current Jalali month
+func (s *service) GetUsersWithBirthdateInJalaliMonth(ctx context.Context) ([]*contract.User, error) {
+	return s.userRepo.GetUsersWithBirthdateInJalaliMonth(ctx)
+}
+
+// GetUsersWithCooperationStartDateInJalaliMonth retrieves all users whose cooperation start date is in the current Jalali month
+func (s *service) GetUsersWithCooperationStartDateInJalaliMonth(ctx context.Context) ([]*contract.User, error) {
+	return s.userRepo.GetUsersWithCooperationStartDateInJalaliMonth(ctx)
+}

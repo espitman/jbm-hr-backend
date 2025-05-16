@@ -68,6 +68,12 @@ type Service interface {
 
 	// GetUsersWithTodayCooperationStartDate retrieves all users whose cooperation start date is today
 	GetUsersWithTodayCooperationStartDate(ctx context.Context) ([]*contract.User, error)
+
+	// GetUsersWithBirthdateInJalaliMonth retrieves all users whose birthdate is in the current Jalali month
+	GetUsersWithBirthdateInJalaliMonth(ctx context.Context) ([]*contract.User, error)
+
+	// GetUsersWithCooperationStartDateInJalaliMonth retrieves all users whose cooperation start date is in the current Jalali month
+	GetUsersWithCooperationStartDateInJalaliMonth(ctx context.Context) ([]*contract.User, error)
 }
 
 // ListUsers retrieves a list of users with pagination

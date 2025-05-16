@@ -41,5 +41,7 @@ func (r *Router) registerUserAdminRoutes(group *echo.Group) {
 		users.GET("/search/:term", r.userHandler.SearchUsers)
 		users.GET("/today-birthdate", r.userHandler.GetUsersWithTodayBirthdate)
 		users.GET("/today-cooperation-start-date", r.userHandler.GetUsersWithTodayCooperationStartDate)
+		users.GET("/jalali-month-birthdate", r.userHandler.GetUsersWithBirthdateInJalaliMonth, middleware.JWT(), middleware.Admin())
+		users.GET("/jalali-month-cooperation-start-date", r.userHandler.GetUsersWithCooperationStartDateInJalaliMonth, middleware.JWT(), middleware.Admin())
 	}
 }

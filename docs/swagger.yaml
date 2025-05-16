@@ -2326,6 +2326,41 @@ paths:
       summary: Update user password
       tags:
       - users - admin
+  /api/v1/admin/users/jalali-month-birthdate:
+    get:
+      consumes:
+      - application/json
+      description: Get all users whose birthdate is in the current Jalali month
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.ListUsersData'
+      security:
+      - ApiKeyAuth: []
+      summary: Get users with birthdate in current Jalali month
+      tags:
+      - users - admin
+  /api/v1/admin/users/jalali-month-cooperation-start-date:
+    get:
+      consumes:
+      - application/json
+      description: Get all users whose cooperation start date is in the current Jalali
+        month
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.ListUsersData'
+      security:
+      - ApiKeyAuth: []
+      summary: Get users with cooperation start date in current Jalali month
+      tags:
+      - users - admin
   /api/v1/admin/users/register:
     post:
       consumes:
