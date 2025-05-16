@@ -8,6 +8,7 @@ import (
 
 	"github.com/espitman/jbm-hr-backend/database"
 	"github.com/espitman/jbm-hr-backend/database/repository/album"
+	"github.com/espitman/jbm-hr-backend/database/repository/alibaba_code"
 	"github.com/espitman/jbm-hr-backend/database/repository/department"
 	"github.com/espitman/jbm-hr-backend/database/repository/digikala_code"
 	"github.com/espitman/jbm-hr-backend/database/repository/hrteam"
@@ -17,6 +18,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/database/repository/user"
 	"github.com/espitman/jbm-hr-backend/ent/migrate"
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/alibabacodehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/digikalacodehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
@@ -27,6 +29,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/userhandler"
 	"github.com/espitman/jbm-hr-backend/http/router"
 	"github.com/espitman/jbm-hr-backend/service/albumservice"
+	"github.com/espitman/jbm-hr-backend/service/alibabacodeservice"
 	"github.com/espitman/jbm-hr-backend/service/departmentservice"
 	"github.com/espitman/jbm-hr-backend/service/digikalacodeservice"
 	"github.com/espitman/jbm-hr-backend/service/hrteamservice"
@@ -35,6 +38,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/service/uploadservice"
 	"github.com/espitman/jbm-hr-backend/service/userservice"
 	"github.com/espitman/jbm-hr-backend/utils/config"
+	_ "github.com/swaggo/echo-swagger"
 	_ "github.com/swaggo/files"
 )
 
@@ -90,6 +94,7 @@ func main() {
 	resumeRepo := resume.NewRepository(client)
 	requestRepo := request.NewEntRepository(client)
 	digikalaCodeRepo := digikala_code.NewEntRepository(client)
+	alibabaCodeRepo := alibaba_code.NewEntRepository(client)
 
 	// Initialize service
 	albumService := albumservice.New(albumRepo)
@@ -99,6 +104,7 @@ func main() {
 	resumeService := resumeservice.New(resumeRepo)
 	requestService := requestservice.New(requestRepo)
 	digikalaCodeService := digikalacodeservice.New(digikalaCodeRepo)
+	alibabaCodeService := alibabacodeservice.NewService(alibabaCodeRepo)
 
 	// Initialize upload service
 	uploadService, err := uploadservice.New()
@@ -120,6 +126,7 @@ func main() {
 	requestHandler := requesthandler.NewHandler(requestService)
 	requestAdminHandler := requesthandler.NewAdminHandler(requestService)
 	digikalaCodeAdminHandler := digikalacodehandler.NewDigikalaCodeAdminHandler(digikalaCodeService)
+	alibabaCodeAdminHandler := alibabacodehandler.NewAlibabaCodeAdminHandler(alibabaCodeService)
 
 	// Initialize UI handler
 	webPath, _ := filepath.Abs("ui/web")
@@ -142,6 +149,7 @@ func main() {
 		requestHandler,
 		requestAdminHandler,
 		digikalaCodeAdminHandler,
+		alibabaCodeAdminHandler,
 	)
 	r.SetupRoutes()
 

@@ -41,6 +41,74 @@ definitions:
     - caption
     - url
     type: object
+  alibabacodehandler.AlibabaCodeListData:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/contract.AlibabaCode'
+        type: array
+      total:
+        type: integer
+    type: object
+  alibabacodehandler.AssignAlibabaCodeRequest:
+    properties:
+      user_id:
+        type: integer
+    required:
+    - user_id
+    type: object
+  alibabacodehandler.AssignAlibabaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.AlibabaCode'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  alibabacodehandler.CreateAlibabaCodeRequest:
+    properties:
+      code:
+        type: string
+      type:
+        enum:
+        - 1m
+        - 3m
+        - 6m
+        - 12m
+        - 25m
+        type: string
+    required:
+    - code
+    - type
+    type: object
+  alibabacodehandler.CreateAlibabaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.AlibabaCode'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  alibabacodehandler.GetAlibabaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/contract.AlibabaCode'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  alibabacodehandler.ListAlibabaCodeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/alibabacodehandler.AlibabaCodeListData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   contract.Album:
     properties:
       caption:
@@ -51,6 +119,23 @@ definitions:
         type: integer
       url:
         type: string
+    type: object
+  contract.AlibabaCode:
+    properties:
+      assign_at:
+        type: string
+      assign_to_user_id:
+        type: integer
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      type:
+        type: string
+      used:
+        type: boolean
     type: object
   contract.Department:
     properties:
@@ -1160,6 +1245,147 @@ paths:
       summary: Update an album
       tags:
       - albums - admin
+  /api/v1/admin/alibaba-codes:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all Alibaba codes
+      parameters:
+      - description: Filter by used status
+        in: query
+        name: used
+        type: boolean
+      - description: Filter by assigned user ID
+        in: query
+        name: assign_to_user_id
+        type: integer
+      - description: Filter by code type
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alibabacodehandler.ListAlibabaCodeResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: List all Alibaba codes
+      tags:
+      - alibaba-codes - admin
+    post:
+      consumes:
+      - application/json
+      description: Create a new Alibaba code
+      parameters:
+      - description: Create Alibaba code input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/alibabacodehandler.CreateAlibabaCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alibabacodehandler.CreateAlibabaCodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Create an Alibaba code
+      tags:
+      - alibaba-codes - admin
+  /api/v1/admin/alibaba-codes/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an Alibaba code by ID
+      parameters:
+      - description: Alibaba code ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alibabacodehandler.GetAlibabaCodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get an Alibaba code
+      tags:
+      - alibaba-codes - admin
+  /api/v1/admin/alibaba-codes/{id}/assign:
+    put:
+      consumes:
+      - application/json
+      description: Assign an Alibaba code to a user
+      parameters:
+      - description: Alibaba code ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Assign Alibaba code input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/alibabacodehandler.AssignAlibabaCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alibabacodehandler.AssignAlibabaCodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Assign an Alibaba code
+      tags:
+      - alibaba-codes - admin
   /api/v1/admin/departments:
     post:
       consumes:

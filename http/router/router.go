@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/espitman/jbm-hr-backend/docs" // This is important for Swagger
 	"github.com/espitman/jbm-hr-backend/http/handlers/albumhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/alibabacodehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/digikalacodehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
@@ -36,6 +37,7 @@ type Router struct {
 	requestHandler           *requesthandler.Handler
 	requestAdminHandler      *requesthandler.AdminHandler
 	digikalaCodeAdminHandler *digikalacodehandler.DigikalaCodeAdminHandler
+	alibabaCodeAdminHandler  *alibabacodehandler.AlibabaCodeAdminHandler
 }
 
 // NewRouter creates a new router instance
@@ -54,6 +56,7 @@ func NewRouter(
 	requestHandler *requesthandler.Handler,
 	requestAdminHandler *requesthandler.AdminHandler,
 	digikalaCodeAdminHandler *digikalacodehandler.DigikalaCodeAdminHandler,
+	alibabaCodeAdminHandler *alibabacodehandler.AlibabaCodeAdminHandler,
 ) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
@@ -76,6 +79,7 @@ func NewRouter(
 		requestHandler:           requestHandler,
 		requestAdminHandler:      requestAdminHandler,
 		digikalaCodeAdminHandler: digikalaCodeAdminHandler,
+		alibabaCodeAdminHandler:  alibabaCodeAdminHandler,
 	}
 }
 
@@ -111,6 +115,7 @@ func (r *Router) SetupRoutes() {
 	r.registerRequestRoutes(apiV1)
 	r.registerRequestAdminRoutes(apiV1Admin)
 	r.registerDigikalaCodeAdminRoutes(apiV1Admin)
+	r.registerAlibabaCodeAdminRoutes(apiV1Admin)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -124,4 +129,13 @@ func (r *Router) GetEcho() *echo.Echo {
 // ServeHTTP implements the http.Handler interface
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r.Echo.ServeHTTP(w, req)
+}
+
+// registerAlibabaCodeAdminRoutes registers all Alibaba code admin routes
+func (r *Router) registerAlibabaCodeAdminRoutes(apiV1Admin *echo.Group) {
+	alibabaCodeAdminGroup := apiV1Admin.Group("/alibaba-codes")
+	alibabaCodeAdminGroup.POST("", r.alibabaCodeAdminHandler.Create)
+	alibabaCodeAdminGroup.GET("", r.alibabaCodeAdminHandler.List)
+	alibabaCodeAdminGroup.GET("/:id", r.alibabaCodeAdminHandler.Get)
+	alibabaCodeAdminGroup.PUT("/:id/assign", r.alibabaCodeAdminHandler.Assign)
 }
