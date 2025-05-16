@@ -21,6 +21,18 @@ func (f AlbumFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlbumMutation", m)
 }
 
+// The AlibabaCodeFunc type is an adapter to allow the use of ordinary
+// function as AlibabaCode mutator.
+type AlibabaCodeFunc func(context.Context, *ent.AlibabaCodeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlibabaCodeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AlibabaCodeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlibabaCodeMutation", m)
+}
+
 // The DepartmentFunc type is an adapter to allow the use of ordinary
 // function as Department mutator.
 type DepartmentFunc func(context.Context, *ent.DepartmentMutation) (ent.Value, error)

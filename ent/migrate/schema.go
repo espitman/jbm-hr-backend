@@ -21,6 +21,37 @@ var (
 		Columns:    AlbumsColumns,
 		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
 	}
+	// AlibabaCodesColumns holds the columns for the "alibaba_codes" table.
+	AlibabaCodesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "code", Type: field.TypeString, Unique: true},
+		{Name: "used", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "assign_at", Type: field.TypeTime, Nullable: true},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"1m", "3m", "6m", "12m", "25m"}},
+		{Name: "assign_to_user_id", Type: field.TypeInt, Nullable: true},
+		{Name: "user_alibaba_codes", Type: field.TypeInt, Nullable: true},
+	}
+	// AlibabaCodesTable holds the schema information for the "alibaba_codes" table.
+	AlibabaCodesTable = &schema.Table{
+		Name:       "alibaba_codes",
+		Columns:    AlibabaCodesColumns,
+		PrimaryKey: []*schema.Column{AlibabaCodesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "alibaba_codes_users_assigned_to_user",
+				Columns:    []*schema.Column{AlibabaCodesColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "alibaba_codes_users_alibaba_codes",
+				Columns:    []*schema.Column{AlibabaCodesColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// DepartmentsColumns holds the columns for the "departments" table.
 	DepartmentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -207,6 +238,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AlbumsTable,
+		AlibabaCodesTable,
 		DepartmentsTable,
 		DigikalaCodesTable,
 		HrTeamsTable,
@@ -219,6 +251,8 @@ var (
 )
 
 func init() {
+	AlibabaCodesTable.ForeignKeys[0].RefTable = UsersTable
+	AlibabaCodesTable.ForeignKeys[1].RefTable = UsersTable
 	DigikalaCodesTable.ForeignKeys[0].RefTable = UsersTable
 	OtPsTable.ForeignKeys[0].RefTable = UsersTable
 	RequestsTable.ForeignKeys[0].RefTable = UsersTable

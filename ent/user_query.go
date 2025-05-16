@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/espitman/jbm-hr-backend/ent/alibabacode"
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
@@ -33,6 +34,7 @@ type UserQuery struct {
 	withRequests      *RequestQuery
 	withDepartment    *DepartmentQuery
 	withDigikalaCodes *DigikalaCodeQuery
+	withAlibabaCodes  *AlibabaCodeQuery
 	withFKs           bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -173,6 +175,28 @@ func (uq *UserQuery) QueryDigikalaCodes() *DigikalaCodeQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(digikalacode.Table, digikalacode.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.DigikalaCodesTable, user.DigikalaCodesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAlibabaCodes chains the current query on the "alibaba_codes" edge.
+func (uq *UserQuery) QueryAlibabaCodes() *AlibabaCodeQuery {
+	query := (&AlibabaCodeClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(alibabacode.Table, alibabacode.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AlibabaCodesTable, user.AlibabaCodesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -377,6 +401,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withRequests:      uq.withRequests.Clone(),
 		withDepartment:    uq.withDepartment.Clone(),
 		withDigikalaCodes: uq.withDigikalaCodes.Clone(),
+		withAlibabaCodes:  uq.withAlibabaCodes.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -435,6 +460,17 @@ func (uq *UserQuery) WithDigikalaCodes(opts ...func(*DigikalaCodeQuery)) *UserQu
 		opt(query)
 	}
 	uq.withDigikalaCodes = query
+	return uq
+}
+
+// WithAlibabaCodes tells the query-builder to eager-load the nodes that are connected to
+// the "alibaba_codes" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAlibabaCodes(opts ...func(*AlibabaCodeQuery)) *UserQuery {
+	query := (&AlibabaCodeClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAlibabaCodes = query
 	return uq
 }
 
@@ -517,12 +553,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		nodes       = []*User{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			uq.withOtps != nil,
 			uq.withResumes != nil,
 			uq.withRequests != nil,
 			uq.withDepartment != nil,
 			uq.withDigikalaCodes != nil,
+			uq.withAlibabaCodes != nil,
 		}
 	)
 	if uq.withDepartment != nil {
@@ -580,6 +617,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadDigikalaCodes(ctx, query, nodes,
 			func(n *User) { n.Edges.DigikalaCodes = []*DigikalaCode{} },
 			func(n *User, e *DigikalaCode) { n.Edges.DigikalaCodes = append(n.Edges.DigikalaCodes, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withAlibabaCodes; query != nil {
+		if err := uq.loadAlibabaCodes(ctx, query, nodes,
+			func(n *User) { n.Edges.AlibabaCodes = []*AlibabaCode{} },
+			func(n *User, e *AlibabaCode) { n.Edges.AlibabaCodes = append(n.Edges.AlibabaCodes, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -734,6 +778,37 @@ func (uq *UserQuery) loadDigikalaCodes(ctx context.Context, query *DigikalaCodeQ
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "assign_to_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadAlibabaCodes(ctx context.Context, query *AlibabaCodeQuery, nodes []*User, init func(*User), assign func(*User, *AlibabaCode)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.AlibabaCode(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.AlibabaCodesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_alibaba_codes
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_alibaba_codes" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_alibaba_codes" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

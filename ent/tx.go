@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
+	// AlibabaCode is the client for interacting with the AlibabaCode builders.
+	AlibabaCode *AlibabaCodeClient
 	// Department is the client for interacting with the Department builders.
 	Department *DepartmentClient
 	// DigikalaCode is the client for interacting with the DigikalaCode builders.
@@ -162,6 +164,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
+	tx.AlibabaCode = NewAlibabaCodeClient(tx.config)
 	tx.Department = NewDepartmentClient(tx.config)
 	tx.DigikalaCode = NewDigikalaCodeClient(tx.config)
 	tx.HRTeam = NewHRTeamClient(tx.config)

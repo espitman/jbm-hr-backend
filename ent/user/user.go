@@ -50,6 +50,8 @@ const (
 	EdgeDepartment = "department"
 	// EdgeDigikalaCodes holds the string denoting the digikala_codes edge name in mutations.
 	EdgeDigikalaCodes = "digikala_codes"
+	// EdgeAlibabaCodes holds the string denoting the alibaba_codes edge name in mutations.
+	EdgeAlibabaCodes = "alibaba_codes"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OtpsTable is the table that holds the otps relation/edge.
@@ -87,6 +89,13 @@ const (
 	DigikalaCodesInverseTable = "digikala_codes"
 	// DigikalaCodesColumn is the table column denoting the digikala_codes relation/edge.
 	DigikalaCodesColumn = "assign_to_user_id"
+	// AlibabaCodesTable is the table that holds the alibaba_codes relation/edge.
+	AlibabaCodesTable = "alibaba_codes"
+	// AlibabaCodesInverseTable is the table name for the AlibabaCode entity.
+	// It exists in this package in order to avoid circular dependency with the "alibabacode" package.
+	AlibabaCodesInverseTable = "alibaba_codes"
+	// AlibabaCodesColumn is the table column denoting the alibaba_codes relation/edge.
+	AlibabaCodesColumn = "user_alibaba_codes"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -308,6 +317,20 @@ func ByDigikalaCodes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newDigikalaCodesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByAlibabaCodesCount orders the results by alibaba_codes count.
+func ByAlibabaCodesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAlibabaCodesStep(), opts...)
+	}
+}
+
+// ByAlibabaCodes orders the results by alibaba_codes terms.
+func ByAlibabaCodes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAlibabaCodesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOtpsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -341,5 +364,12 @@ func newDigikalaCodesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DigikalaCodesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, DigikalaCodesTable, DigikalaCodesColumn),
+	)
+}
+func newAlibabaCodesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AlibabaCodesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AlibabaCodesTable, AlibabaCodesColumn),
 	)
 }

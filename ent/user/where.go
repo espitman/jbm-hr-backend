@@ -965,6 +965,29 @@ func HasDigikalaCodesWith(preds ...predicate.DigikalaCode) predicate.User {
 	})
 }
 
+// HasAlibabaCodes applies the HasEdge predicate on the "alibaba_codes" edge.
+func HasAlibabaCodes() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AlibabaCodesTable, AlibabaCodesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAlibabaCodesWith applies the HasEdge predicate on the "alibaba_codes" edge with a given conditions (other predicates).
+func HasAlibabaCodesWith(preds ...predicate.AlibabaCode) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAlibabaCodesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

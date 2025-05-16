@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/alibabacode"
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
@@ -31,6 +32,20 @@ func init() {
 	albumDescDisplayOrder := albumFields[2].Descriptor()
 	// album.DefaultDisplayOrder holds the default value on creation for the display_order field.
 	album.DefaultDisplayOrder = albumDescDisplayOrder.Default.(int)
+	alibabacodeFields := schema.AlibabaCode{}.Fields()
+	_ = alibabacodeFields
+	// alibabacodeDescCode is the schema descriptor for code field.
+	alibabacodeDescCode := alibabacodeFields[0].Descriptor()
+	// alibabacode.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	alibabacode.CodeValidator = alibabacodeDescCode.Validators[0].(func(string) error)
+	// alibabacodeDescUsed is the schema descriptor for used field.
+	alibabacodeDescUsed := alibabacodeFields[1].Descriptor()
+	// alibabacode.DefaultUsed holds the default value on creation for the used field.
+	alibabacode.DefaultUsed = alibabacodeDescUsed.Default.(bool)
+	// alibabacodeDescCreatedAt is the schema descriptor for created_at field.
+	alibabacodeDescCreatedAt := alibabacodeFields[2].Descriptor()
+	// alibabacode.DefaultCreatedAt holds the default value on creation for the created_at field.
+	alibabacode.DefaultCreatedAt = alibabacodeDescCreatedAt.Default.(func() time.Time)
 	departmentFields := schema.Department{}.Fields()
 	_ = departmentFields
 	// departmentDescTitle is the schema descriptor for title field.

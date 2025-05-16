@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/alibabacode"
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
@@ -33,6 +34,7 @@ const (
 
 	// Node types.
 	TypeAlbum        = "Album"
+	TypeAlibabaCode  = "AlibabaCode"
 	TypeDepartment   = "Department"
 	TypeDigikalaCode = "DigikalaCode"
 	TypeHRTeam       = "HRTeam"
@@ -533,6 +535,713 @@ func (m *AlbumMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AlbumMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Album edge %s", name)
+}
+
+// AlibabaCodeMutation represents an operation that mutates the AlibabaCode nodes in the graph.
+type AlibabaCodeMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *int
+	code                    *string
+	used                    *bool
+	created_at              *time.Time
+	assign_at               *time.Time
+	_type                   *alibabacode.Type
+	clearedFields           map[string]struct{}
+	assigned_to_user        *int
+	clearedassigned_to_user bool
+	done                    bool
+	oldValue                func(context.Context) (*AlibabaCode, error)
+	predicates              []predicate.AlibabaCode
+}
+
+var _ ent.Mutation = (*AlibabaCodeMutation)(nil)
+
+// alibabacodeOption allows management of the mutation configuration using functional options.
+type alibabacodeOption func(*AlibabaCodeMutation)
+
+// newAlibabaCodeMutation creates new mutation for the AlibabaCode entity.
+func newAlibabaCodeMutation(c config, op Op, opts ...alibabacodeOption) *AlibabaCodeMutation {
+	m := &AlibabaCodeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAlibabaCode,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAlibabaCodeID sets the ID field of the mutation.
+func withAlibabaCodeID(id int) alibabacodeOption {
+	return func(m *AlibabaCodeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AlibabaCode
+		)
+		m.oldValue = func(ctx context.Context) (*AlibabaCode, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AlibabaCode.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAlibabaCode sets the old AlibabaCode of the mutation.
+func withAlibabaCode(node *AlibabaCode) alibabacodeOption {
+	return func(m *AlibabaCodeMutation) {
+		m.oldValue = func(context.Context) (*AlibabaCode, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AlibabaCodeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AlibabaCodeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AlibabaCodeMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AlibabaCodeMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AlibabaCode.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCode sets the "code" field.
+func (m *AlibabaCodeMutation) SetCode(s string) {
+	m.code = &s
+}
+
+// Code returns the value of the "code" field in the mutation.
+func (m *AlibabaCodeMutation) Code() (r string, exists bool) {
+	v := m.code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCode returns the old "code" field's value of the AlibabaCode entity.
+// If the AlibabaCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlibabaCodeMutation) OldCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+	}
+	return oldValue.Code, nil
+}
+
+// ResetCode resets all changes to the "code" field.
+func (m *AlibabaCodeMutation) ResetCode() {
+	m.code = nil
+}
+
+// SetUsed sets the "used" field.
+func (m *AlibabaCodeMutation) SetUsed(b bool) {
+	m.used = &b
+}
+
+// Used returns the value of the "used" field in the mutation.
+func (m *AlibabaCodeMutation) Used() (r bool, exists bool) {
+	v := m.used
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsed returns the old "used" field's value of the AlibabaCode entity.
+// If the AlibabaCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlibabaCodeMutation) OldUsed(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUsed is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUsed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsed: %w", err)
+	}
+	return oldValue.Used, nil
+}
+
+// ResetUsed resets all changes to the "used" field.
+func (m *AlibabaCodeMutation) ResetUsed() {
+	m.used = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AlibabaCodeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AlibabaCodeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AlibabaCode entity.
+// If the AlibabaCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlibabaCodeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AlibabaCodeMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetAssignToUserID sets the "assign_to_user_id" field.
+func (m *AlibabaCodeMutation) SetAssignToUserID(i int) {
+	m.assigned_to_user = &i
+}
+
+// AssignToUserID returns the value of the "assign_to_user_id" field in the mutation.
+func (m *AlibabaCodeMutation) AssignToUserID() (r int, exists bool) {
+	v := m.assigned_to_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAssignToUserID returns the old "assign_to_user_id" field's value of the AlibabaCode entity.
+// If the AlibabaCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlibabaCodeMutation) OldAssignToUserID(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAssignToUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAssignToUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAssignToUserID: %w", err)
+	}
+	return oldValue.AssignToUserID, nil
+}
+
+// ClearAssignToUserID clears the value of the "assign_to_user_id" field.
+func (m *AlibabaCodeMutation) ClearAssignToUserID() {
+	m.assigned_to_user = nil
+	m.clearedFields[alibabacode.FieldAssignToUserID] = struct{}{}
+}
+
+// AssignToUserIDCleared returns if the "assign_to_user_id" field was cleared in this mutation.
+func (m *AlibabaCodeMutation) AssignToUserIDCleared() bool {
+	_, ok := m.clearedFields[alibabacode.FieldAssignToUserID]
+	return ok
+}
+
+// ResetAssignToUserID resets all changes to the "assign_to_user_id" field.
+func (m *AlibabaCodeMutation) ResetAssignToUserID() {
+	m.assigned_to_user = nil
+	delete(m.clearedFields, alibabacode.FieldAssignToUserID)
+}
+
+// SetAssignAt sets the "assign_at" field.
+func (m *AlibabaCodeMutation) SetAssignAt(t time.Time) {
+	m.assign_at = &t
+}
+
+// AssignAt returns the value of the "assign_at" field in the mutation.
+func (m *AlibabaCodeMutation) AssignAt() (r time.Time, exists bool) {
+	v := m.assign_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAssignAt returns the old "assign_at" field's value of the AlibabaCode entity.
+// If the AlibabaCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlibabaCodeMutation) OldAssignAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAssignAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAssignAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAssignAt: %w", err)
+	}
+	return oldValue.AssignAt, nil
+}
+
+// ClearAssignAt clears the value of the "assign_at" field.
+func (m *AlibabaCodeMutation) ClearAssignAt() {
+	m.assign_at = nil
+	m.clearedFields[alibabacode.FieldAssignAt] = struct{}{}
+}
+
+// AssignAtCleared returns if the "assign_at" field was cleared in this mutation.
+func (m *AlibabaCodeMutation) AssignAtCleared() bool {
+	_, ok := m.clearedFields[alibabacode.FieldAssignAt]
+	return ok
+}
+
+// ResetAssignAt resets all changes to the "assign_at" field.
+func (m *AlibabaCodeMutation) ResetAssignAt() {
+	m.assign_at = nil
+	delete(m.clearedFields, alibabacode.FieldAssignAt)
+}
+
+// SetType sets the "type" field.
+func (m *AlibabaCodeMutation) SetType(a alibabacode.Type) {
+	m._type = &a
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *AlibabaCodeMutation) GetType() (r alibabacode.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the AlibabaCode entity.
+// If the AlibabaCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AlibabaCodeMutation) OldType(ctx context.Context) (v alibabacode.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *AlibabaCodeMutation) ResetType() {
+	m._type = nil
+}
+
+// SetAssignedToUserID sets the "assigned_to_user" edge to the User entity by id.
+func (m *AlibabaCodeMutation) SetAssignedToUserID(id int) {
+	m.assigned_to_user = &id
+}
+
+// ClearAssignedToUser clears the "assigned_to_user" edge to the User entity.
+func (m *AlibabaCodeMutation) ClearAssignedToUser() {
+	m.clearedassigned_to_user = true
+	m.clearedFields[alibabacode.FieldAssignToUserID] = struct{}{}
+}
+
+// AssignedToUserCleared reports if the "assigned_to_user" edge to the User entity was cleared.
+func (m *AlibabaCodeMutation) AssignedToUserCleared() bool {
+	return m.AssignToUserIDCleared() || m.clearedassigned_to_user
+}
+
+// AssignedToUserID returns the "assigned_to_user" edge ID in the mutation.
+func (m *AlibabaCodeMutation) AssignedToUserID() (id int, exists bool) {
+	if m.assigned_to_user != nil {
+		return *m.assigned_to_user, true
+	}
+	return
+}
+
+// AssignedToUserIDs returns the "assigned_to_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AssignedToUserID instead. It exists only for internal usage by the builders.
+func (m *AlibabaCodeMutation) AssignedToUserIDs() (ids []int) {
+	if id := m.assigned_to_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAssignedToUser resets all changes to the "assigned_to_user" edge.
+func (m *AlibabaCodeMutation) ResetAssignedToUser() {
+	m.assigned_to_user = nil
+	m.clearedassigned_to_user = false
+}
+
+// Where appends a list predicates to the AlibabaCodeMutation builder.
+func (m *AlibabaCodeMutation) Where(ps ...predicate.AlibabaCode) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AlibabaCodeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AlibabaCodeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AlibabaCode, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AlibabaCodeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AlibabaCodeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AlibabaCode).
+func (m *AlibabaCodeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AlibabaCodeMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.code != nil {
+		fields = append(fields, alibabacode.FieldCode)
+	}
+	if m.used != nil {
+		fields = append(fields, alibabacode.FieldUsed)
+	}
+	if m.created_at != nil {
+		fields = append(fields, alibabacode.FieldCreatedAt)
+	}
+	if m.assigned_to_user != nil {
+		fields = append(fields, alibabacode.FieldAssignToUserID)
+	}
+	if m.assign_at != nil {
+		fields = append(fields, alibabacode.FieldAssignAt)
+	}
+	if m._type != nil {
+		fields = append(fields, alibabacode.FieldType)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AlibabaCodeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case alibabacode.FieldCode:
+		return m.Code()
+	case alibabacode.FieldUsed:
+		return m.Used()
+	case alibabacode.FieldCreatedAt:
+		return m.CreatedAt()
+	case alibabacode.FieldAssignToUserID:
+		return m.AssignToUserID()
+	case alibabacode.FieldAssignAt:
+		return m.AssignAt()
+	case alibabacode.FieldType:
+		return m.GetType()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AlibabaCodeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case alibabacode.FieldCode:
+		return m.OldCode(ctx)
+	case alibabacode.FieldUsed:
+		return m.OldUsed(ctx)
+	case alibabacode.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case alibabacode.FieldAssignToUserID:
+		return m.OldAssignToUserID(ctx)
+	case alibabacode.FieldAssignAt:
+		return m.OldAssignAt(ctx)
+	case alibabacode.FieldType:
+		return m.OldType(ctx)
+	}
+	return nil, fmt.Errorf("unknown AlibabaCode field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AlibabaCodeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case alibabacode.FieldCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCode(v)
+		return nil
+	case alibabacode.FieldUsed:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsed(v)
+		return nil
+	case alibabacode.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case alibabacode.FieldAssignToUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAssignToUserID(v)
+		return nil
+	case alibabacode.FieldAssignAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAssignAt(v)
+		return nil
+	case alibabacode.FieldType:
+		v, ok := value.(alibabacode.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AlibabaCode field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AlibabaCodeMutation) AddedFields() []string {
+	var fields []string
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AlibabaCodeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AlibabaCodeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AlibabaCode numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AlibabaCodeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(alibabacode.FieldAssignToUserID) {
+		fields = append(fields, alibabacode.FieldAssignToUserID)
+	}
+	if m.FieldCleared(alibabacode.FieldAssignAt) {
+		fields = append(fields, alibabacode.FieldAssignAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AlibabaCodeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AlibabaCodeMutation) ClearField(name string) error {
+	switch name {
+	case alibabacode.FieldAssignToUserID:
+		m.ClearAssignToUserID()
+		return nil
+	case alibabacode.FieldAssignAt:
+		m.ClearAssignAt()
+		return nil
+	}
+	return fmt.Errorf("unknown AlibabaCode nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AlibabaCodeMutation) ResetField(name string) error {
+	switch name {
+	case alibabacode.FieldCode:
+		m.ResetCode()
+		return nil
+	case alibabacode.FieldUsed:
+		m.ResetUsed()
+		return nil
+	case alibabacode.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case alibabacode.FieldAssignToUserID:
+		m.ResetAssignToUserID()
+		return nil
+	case alibabacode.FieldAssignAt:
+		m.ResetAssignAt()
+		return nil
+	case alibabacode.FieldType:
+		m.ResetType()
+		return nil
+	}
+	return fmt.Errorf("unknown AlibabaCode field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AlibabaCodeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.assigned_to_user != nil {
+		edges = append(edges, alibabacode.EdgeAssignedToUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AlibabaCodeMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case alibabacode.EdgeAssignedToUser:
+		if id := m.assigned_to_user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AlibabaCodeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AlibabaCodeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AlibabaCodeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedassigned_to_user {
+		edges = append(edges, alibabacode.EdgeAssignedToUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AlibabaCodeMutation) EdgeCleared(name string) bool {
+	switch name {
+	case alibabacode.EdgeAssignedToUser:
+		return m.clearedassigned_to_user
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AlibabaCodeMutation) ClearEdge(name string) error {
+	switch name {
+	case alibabacode.EdgeAssignedToUser:
+		m.ClearAssignedToUser()
+		return nil
+	}
+	return fmt.Errorf("unknown AlibabaCode unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AlibabaCodeMutation) ResetEdge(name string) error {
+	switch name {
+	case alibabacode.EdgeAssignedToUser:
+		m.ResetAssignedToUser()
+		return nil
+	}
+	return fmt.Errorf("unknown AlibabaCode edge %s", name)
 }
 
 // DepartmentMutation represents an operation that mutates the Department nodes in the graph.
@@ -5276,6 +5985,9 @@ type UserMutation struct {
 	digikala_codes         map[int]struct{}
 	removeddigikala_codes  map[int]struct{}
 	cleareddigikala_codes  bool
+	alibaba_codes          map[int]struct{}
+	removedalibaba_codes   map[int]struct{}
+	clearedalibaba_codes   bool
 	done                   bool
 	oldValue               func(context.Context) (*User, error)
 	predicates             []predicate.User
@@ -6154,6 +6866,60 @@ func (m *UserMutation) ResetDigikalaCodes() {
 	m.removeddigikala_codes = nil
 }
 
+// AddAlibabaCodeIDs adds the "alibaba_codes" edge to the AlibabaCode entity by ids.
+func (m *UserMutation) AddAlibabaCodeIDs(ids ...int) {
+	if m.alibaba_codes == nil {
+		m.alibaba_codes = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.alibaba_codes[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAlibabaCodes clears the "alibaba_codes" edge to the AlibabaCode entity.
+func (m *UserMutation) ClearAlibabaCodes() {
+	m.clearedalibaba_codes = true
+}
+
+// AlibabaCodesCleared reports if the "alibaba_codes" edge to the AlibabaCode entity was cleared.
+func (m *UserMutation) AlibabaCodesCleared() bool {
+	return m.clearedalibaba_codes
+}
+
+// RemoveAlibabaCodeIDs removes the "alibaba_codes" edge to the AlibabaCode entity by IDs.
+func (m *UserMutation) RemoveAlibabaCodeIDs(ids ...int) {
+	if m.removedalibaba_codes == nil {
+		m.removedalibaba_codes = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.alibaba_codes, ids[i])
+		m.removedalibaba_codes[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAlibabaCodes returns the removed IDs of the "alibaba_codes" edge to the AlibabaCode entity.
+func (m *UserMutation) RemovedAlibabaCodesIDs() (ids []int) {
+	for id := range m.removedalibaba_codes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AlibabaCodesIDs returns the "alibaba_codes" edge IDs in the mutation.
+func (m *UserMutation) AlibabaCodesIDs() (ids []int) {
+	for id := range m.alibaba_codes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAlibabaCodes resets all changes to the "alibaba_codes" edge.
+func (m *UserMutation) ResetAlibabaCodes() {
+	m.alibaba_codes = nil
+	m.clearedalibaba_codes = false
+	m.removedalibaba_codes = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -6518,7 +7284,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.otps != nil {
 		edges = append(edges, user.EdgeOtps)
 	}
@@ -6533,6 +7299,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.digikala_codes != nil {
 		edges = append(edges, user.EdgeDigikalaCodes)
+	}
+	if m.alibaba_codes != nil {
+		edges = append(edges, user.EdgeAlibabaCodes)
 	}
 	return edges
 }
@@ -6569,13 +7338,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeAlibabaCodes:
+		ids := make([]ent.Value, 0, len(m.alibaba_codes))
+		for id := range m.alibaba_codes {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedotps != nil {
 		edges = append(edges, user.EdgeOtps)
 	}
@@ -6587,6 +7362,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removeddigikala_codes != nil {
 		edges = append(edges, user.EdgeDigikalaCodes)
+	}
+	if m.removedalibaba_codes != nil {
+		edges = append(edges, user.EdgeAlibabaCodes)
 	}
 	return edges
 }
@@ -6619,13 +7397,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeAlibabaCodes:
+		ids := make([]ent.Value, 0, len(m.removedalibaba_codes))
+		for id := range m.removedalibaba_codes {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedotps {
 		edges = append(edges, user.EdgeOtps)
 	}
@@ -6640,6 +7424,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.cleareddigikala_codes {
 		edges = append(edges, user.EdgeDigikalaCodes)
+	}
+	if m.clearedalibaba_codes {
+		edges = append(edges, user.EdgeAlibabaCodes)
 	}
 	return edges
 }
@@ -6658,6 +7445,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.cleareddepartment
 	case user.EdgeDigikalaCodes:
 		return m.cleareddigikala_codes
+	case user.EdgeAlibabaCodes:
+		return m.clearedalibaba_codes
 	}
 	return false
 }
@@ -6691,6 +7480,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeDigikalaCodes:
 		m.ResetDigikalaCodes()
+		return nil
+	case user.EdgeAlibabaCodes:
+		m.ResetAlibabaCodes()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

@@ -63,9 +63,11 @@ type UserEdges struct {
 	Department *Department `json:"department,omitempty"`
 	// DigikalaCodes holds the value of the digikala_codes edge.
 	DigikalaCodes []*DigikalaCode `json:"digikala_codes,omitempty"`
+	// AlibabaCodes holds the value of the alibaba_codes edge.
+	AlibabaCodes []*AlibabaCode `json:"alibaba_codes,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // OtpsOrErr returns the Otps value or an error if the edge
@@ -113,6 +115,15 @@ func (e UserEdges) DigikalaCodesOrErr() ([]*DigikalaCode, error) {
 		return e.DigikalaCodes, nil
 	}
 	return nil, &NotLoadedError{edge: "digikala_codes"}
+}
+
+// AlibabaCodesOrErr returns the AlibabaCodes value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AlibabaCodesOrErr() ([]*AlibabaCode, error) {
+	if e.loadedTypes[5] {
+		return e.AlibabaCodes, nil
+	}
+	return nil, &NotLoadedError{edge: "alibaba_codes"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -272,6 +283,11 @@ func (u *User) QueryDepartment() *DepartmentQuery {
 // QueryDigikalaCodes queries the "digikala_codes" edge of the User entity.
 func (u *User) QueryDigikalaCodes() *DigikalaCodeQuery {
 	return NewUserClient(u.config).QueryDigikalaCodes(u)
+}
+
+// QueryAlibabaCodes queries the "alibaba_codes" edge of the User entity.
+func (u *User) QueryAlibabaCodes() *AlibabaCodeQuery {
+	return NewUserClient(u.config).QueryAlibabaCodes(u)
 }
 
 // Update returns a builder for updating this User.

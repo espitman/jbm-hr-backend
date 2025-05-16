@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/espitman/jbm-hr-backend/ent/alibabacode"
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
@@ -318,6 +319,21 @@ func (uu *UserUpdate) AddDigikalaCodes(d ...*DigikalaCode) *UserUpdate {
 	return uu.AddDigikalaCodeIDs(ids...)
 }
 
+// AddAlibabaCodeIDs adds the "alibaba_codes" edge to the AlibabaCode entity by IDs.
+func (uu *UserUpdate) AddAlibabaCodeIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAlibabaCodeIDs(ids...)
+	return uu
+}
+
+// AddAlibabaCodes adds the "alibaba_codes" edges to the AlibabaCode entity.
+func (uu *UserUpdate) AddAlibabaCodes(a ...*AlibabaCode) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAlibabaCodeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -411,6 +427,27 @@ func (uu *UserUpdate) RemoveDigikalaCodes(d ...*DigikalaCode) *UserUpdate {
 		ids[i] = d[i].ID
 	}
 	return uu.RemoveDigikalaCodeIDs(ids...)
+}
+
+// ClearAlibabaCodes clears all "alibaba_codes" edges to the AlibabaCode entity.
+func (uu *UserUpdate) ClearAlibabaCodes() *UserUpdate {
+	uu.mutation.ClearAlibabaCodes()
+	return uu
+}
+
+// RemoveAlibabaCodeIDs removes the "alibaba_codes" edge to AlibabaCode entities by IDs.
+func (uu *UserUpdate) RemoveAlibabaCodeIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAlibabaCodeIDs(ids...)
+	return uu
+}
+
+// RemoveAlibabaCodes removes "alibaba_codes" edges to AlibabaCode entities.
+func (uu *UserUpdate) RemoveAlibabaCodes(a ...*AlibabaCode) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAlibabaCodeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -757,6 +794,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.AlibabaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlibabaCodesTable,
+			Columns: []string{user.AlibabaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alibabacode.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAlibabaCodesIDs(); len(nodes) > 0 && !uu.mutation.AlibabaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlibabaCodesTable,
+			Columns: []string{user.AlibabaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alibabacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AlibabaCodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlibabaCodesTable,
+			Columns: []string{user.AlibabaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alibabacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -1062,6 +1144,21 @@ func (uuo *UserUpdateOne) AddDigikalaCodes(d ...*DigikalaCode) *UserUpdateOne {
 	return uuo.AddDigikalaCodeIDs(ids...)
 }
 
+// AddAlibabaCodeIDs adds the "alibaba_codes" edge to the AlibabaCode entity by IDs.
+func (uuo *UserUpdateOne) AddAlibabaCodeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAlibabaCodeIDs(ids...)
+	return uuo
+}
+
+// AddAlibabaCodes adds the "alibaba_codes" edges to the AlibabaCode entity.
+func (uuo *UserUpdateOne) AddAlibabaCodes(a ...*AlibabaCode) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAlibabaCodeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1155,6 +1252,27 @@ func (uuo *UserUpdateOne) RemoveDigikalaCodes(d ...*DigikalaCode) *UserUpdateOne
 		ids[i] = d[i].ID
 	}
 	return uuo.RemoveDigikalaCodeIDs(ids...)
+}
+
+// ClearAlibabaCodes clears all "alibaba_codes" edges to the AlibabaCode entity.
+func (uuo *UserUpdateOne) ClearAlibabaCodes() *UserUpdateOne {
+	uuo.mutation.ClearAlibabaCodes()
+	return uuo
+}
+
+// RemoveAlibabaCodeIDs removes the "alibaba_codes" edge to AlibabaCode entities by IDs.
+func (uuo *UserUpdateOne) RemoveAlibabaCodeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAlibabaCodeIDs(ids...)
+	return uuo
+}
+
+// RemoveAlibabaCodes removes "alibaba_codes" edges to AlibabaCode entities.
+func (uuo *UserUpdateOne) RemoveAlibabaCodes(a ...*AlibabaCode) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAlibabaCodeIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1524,6 +1642,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.AlibabaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlibabaCodesTable,
+			Columns: []string{user.AlibabaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alibabacode.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAlibabaCodesIDs(); len(nodes) > 0 && !uuo.mutation.AlibabaCodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlibabaCodesTable,
+			Columns: []string{user.AlibabaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alibabacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AlibabaCodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlibabaCodesTable,
+			Columns: []string{user.AlibabaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alibabacode.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/espitman/jbm-hr-backend/ent/alibabacode"
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/otp"
@@ -228,6 +229,21 @@ func (uc *UserCreate) AddDigikalaCodes(d ...*DigikalaCode) *UserCreate {
 		ids[i] = d[i].ID
 	}
 	return uc.AddDigikalaCodeIDs(ids...)
+}
+
+// AddAlibabaCodeIDs adds the "alibaba_codes" edge to the AlibabaCode entity by IDs.
+func (uc *UserCreate) AddAlibabaCodeIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAlibabaCodeIDs(ids...)
+	return uc
+}
+
+// AddAlibabaCodes adds the "alibaba_codes" edges to the AlibabaCode entity.
+func (uc *UserCreate) AddAlibabaCodes(a ...*AlibabaCode) *UserCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAlibabaCodeIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -496,6 +512,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(digikalacode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AlibabaCodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlibabaCodesTable,
+			Columns: []string{user.AlibabaCodesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alibabacode.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

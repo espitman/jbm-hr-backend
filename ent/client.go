@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/espitman/jbm-hr-backend/ent/album"
+	"github.com/espitman/jbm-hr-backend/ent/alibabacode"
 	"github.com/espitman/jbm-hr-backend/ent/department"
 	"github.com/espitman/jbm-hr-backend/ent/digikalacode"
 	"github.com/espitman/jbm-hr-backend/ent/hrteam"
@@ -33,6 +34,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Album is the client for interacting with the Album builders.
 	Album *AlbumClient
+	// AlibabaCode is the client for interacting with the AlibabaCode builders.
+	AlibabaCode *AlibabaCodeClient
 	// Department is the client for interacting with the Department builders.
 	Department *DepartmentClient
 	// DigikalaCode is the client for interacting with the DigikalaCode builders.
@@ -61,6 +64,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Album = NewAlbumClient(c.config)
+	c.AlibabaCode = NewAlibabaCodeClient(c.config)
 	c.Department = NewDepartmentClient(c.config)
 	c.DigikalaCode = NewDigikalaCodeClient(c.config)
 	c.HRTeam = NewHRTeamClient(c.config)
@@ -162,6 +166,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:          ctx,
 		config:       cfg,
 		Album:        NewAlbumClient(cfg),
+		AlibabaCode:  NewAlibabaCodeClient(cfg),
 		Department:   NewDepartmentClient(cfg),
 		DigikalaCode: NewDigikalaCodeClient(cfg),
 		HRTeam:       NewHRTeamClient(cfg),
@@ -190,6 +195,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:          ctx,
 		config:       cfg,
 		Album:        NewAlbumClient(cfg),
+		AlibabaCode:  NewAlibabaCodeClient(cfg),
 		Department:   NewDepartmentClient(cfg),
 		DigikalaCode: NewDigikalaCodeClient(cfg),
 		HRTeam:       NewHRTeamClient(cfg),
@@ -227,8 +233,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Album, c.Department, c.DigikalaCode, c.HRTeam, c.OTP, c.Request,
-		c.RequestMeta, c.Resume, c.User,
+		c.Album, c.AlibabaCode, c.Department, c.DigikalaCode, c.HRTeam, c.OTP,
+		c.Request, c.RequestMeta, c.Resume, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -238,8 +244,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Album, c.Department, c.DigikalaCode, c.HRTeam, c.OTP, c.Request,
-		c.RequestMeta, c.Resume, c.User,
+		c.Album, c.AlibabaCode, c.Department, c.DigikalaCode, c.HRTeam, c.OTP,
+		c.Request, c.RequestMeta, c.Resume, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -250,6 +256,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AlbumMutation:
 		return c.Album.mutate(ctx, m)
+	case *AlibabaCodeMutation:
+		return c.AlibabaCode.mutate(ctx, m)
 	case *DepartmentMutation:
 		return c.Department.mutate(ctx, m)
 	case *DigikalaCodeMutation:
@@ -401,6 +409,155 @@ func (c *AlbumClient) mutate(ctx context.Context, m *AlbumMutation) (Value, erro
 		return (&AlbumDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Album mutation op: %q", m.Op())
+	}
+}
+
+// AlibabaCodeClient is a client for the AlibabaCode schema.
+type AlibabaCodeClient struct {
+	config
+}
+
+// NewAlibabaCodeClient returns a client for the AlibabaCode from the given config.
+func NewAlibabaCodeClient(c config) *AlibabaCodeClient {
+	return &AlibabaCodeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `alibabacode.Hooks(f(g(h())))`.
+func (c *AlibabaCodeClient) Use(hooks ...Hook) {
+	c.hooks.AlibabaCode = append(c.hooks.AlibabaCode, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `alibabacode.Intercept(f(g(h())))`.
+func (c *AlibabaCodeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AlibabaCode = append(c.inters.AlibabaCode, interceptors...)
+}
+
+// Create returns a builder for creating a AlibabaCode entity.
+func (c *AlibabaCodeClient) Create() *AlibabaCodeCreate {
+	mutation := newAlibabaCodeMutation(c.config, OpCreate)
+	return &AlibabaCodeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AlibabaCode entities.
+func (c *AlibabaCodeClient) CreateBulk(builders ...*AlibabaCodeCreate) *AlibabaCodeCreateBulk {
+	return &AlibabaCodeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AlibabaCodeClient) MapCreateBulk(slice any, setFunc func(*AlibabaCodeCreate, int)) *AlibabaCodeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AlibabaCodeCreateBulk{err: fmt.Errorf("calling to AlibabaCodeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AlibabaCodeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AlibabaCodeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AlibabaCode.
+func (c *AlibabaCodeClient) Update() *AlibabaCodeUpdate {
+	mutation := newAlibabaCodeMutation(c.config, OpUpdate)
+	return &AlibabaCodeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AlibabaCodeClient) UpdateOne(ac *AlibabaCode) *AlibabaCodeUpdateOne {
+	mutation := newAlibabaCodeMutation(c.config, OpUpdateOne, withAlibabaCode(ac))
+	return &AlibabaCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AlibabaCodeClient) UpdateOneID(id int) *AlibabaCodeUpdateOne {
+	mutation := newAlibabaCodeMutation(c.config, OpUpdateOne, withAlibabaCodeID(id))
+	return &AlibabaCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AlibabaCode.
+func (c *AlibabaCodeClient) Delete() *AlibabaCodeDelete {
+	mutation := newAlibabaCodeMutation(c.config, OpDelete)
+	return &AlibabaCodeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AlibabaCodeClient) DeleteOne(ac *AlibabaCode) *AlibabaCodeDeleteOne {
+	return c.DeleteOneID(ac.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AlibabaCodeClient) DeleteOneID(id int) *AlibabaCodeDeleteOne {
+	builder := c.Delete().Where(alibabacode.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AlibabaCodeDeleteOne{builder}
+}
+
+// Query returns a query builder for AlibabaCode.
+func (c *AlibabaCodeClient) Query() *AlibabaCodeQuery {
+	return &AlibabaCodeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAlibabaCode},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AlibabaCode entity by its id.
+func (c *AlibabaCodeClient) Get(ctx context.Context, id int) (*AlibabaCode, error) {
+	return c.Query().Where(alibabacode.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AlibabaCodeClient) GetX(ctx context.Context, id int) *AlibabaCode {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAssignedToUser queries the assigned_to_user edge of a AlibabaCode.
+func (c *AlibabaCodeClient) QueryAssignedToUser(ac *AlibabaCode) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ac.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alibabacode.Table, alibabacode.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, alibabacode.AssignedToUserTable, alibabacode.AssignedToUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ac.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AlibabaCodeClient) Hooks() []Hook {
+	return c.hooks.AlibabaCode
+}
+
+// Interceptors returns the client interceptors.
+func (c *AlibabaCodeClient) Interceptors() []Interceptor {
+	return c.inters.AlibabaCode
+}
+
+func (c *AlibabaCodeClient) mutate(ctx context.Context, m *AlibabaCodeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AlibabaCodeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AlibabaCodeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AlibabaCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AlibabaCodeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AlibabaCode mutation op: %q", m.Op())
 	}
 }
 
@@ -1635,6 +1792,22 @@ func (c *UserClient) QueryDigikalaCodes(u *User) *DigikalaCodeQuery {
 	return query
 }
 
+// QueryAlibabaCodes queries the alibaba_codes edge of a User.
+func (c *UserClient) QueryAlibabaCodes(u *User) *AlibabaCodeQuery {
+	query := (&AlibabaCodeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(alibabacode.Table, alibabacode.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AlibabaCodesTable, user.AlibabaCodesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -1663,11 +1836,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Album, Department, DigikalaCode, HRTeam, OTP, Request, RequestMeta, Resume,
-		User []ent.Hook
+		Album, AlibabaCode, Department, DigikalaCode, HRTeam, OTP, Request, RequestMeta,
+		Resume, User []ent.Hook
 	}
 	inters struct {
-		Album, Department, DigikalaCode, HRTeam, OTP, Request, RequestMeta, Resume,
-		User []ent.Interceptor
+		Album, AlibabaCode, Department, DigikalaCode, HRTeam, OTP, Request, RequestMeta,
+		Resume, User []ent.Interceptor
 	}
 )
