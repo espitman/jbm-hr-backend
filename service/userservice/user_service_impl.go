@@ -349,3 +349,8 @@ func (s *service) UpdateCooperationStartDate(ctx context.Context, id int, startD
 func (s *service) SearchUsers(ctx context.Context, term string) ([]*contract.User, error) {
 	return s.userRepo.SearchUsers(ctx, term)
 }
+
+// UpdateConfirmed updates a user's confirmed status
+func (s *service) UpdateConfirmed(ctx context.Context, id int) (*contract.User, error) {
+	return s.userRepo.UpdateConfirmed(ctx, id)
+}

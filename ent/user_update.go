@@ -225,6 +225,20 @@ func (uu *UserUpdate) ClearCooperationStartDate() *UserUpdate {
 	return uu
 }
 
+// SetConfirmed sets the "confirmed" field.
+func (uu *UserUpdate) SetConfirmed(b bool) *UserUpdate {
+	uu.mutation.SetConfirmed(b)
+	return uu
+}
+
+// SetNillableConfirmed sets the "confirmed" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableConfirmed(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetConfirmed(*b)
+	}
+	return uu
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by IDs.
 func (uu *UserUpdate) AddOtpIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddOtpIDs(ids...)
@@ -530,6 +544,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.CooperationStartDateCleared() {
 		_spec.ClearField(user.FieldCooperationStartDate, field.TypeTime)
+	}
+	if value, ok := uu.mutation.Confirmed(); ok {
+		_spec.SetField(user.FieldConfirmed, field.TypeBool, value)
 	}
 	if uu.mutation.OtpsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -952,6 +969,20 @@ func (uuo *UserUpdateOne) ClearCooperationStartDate() *UserUpdateOne {
 	return uuo
 }
 
+// SetConfirmed sets the "confirmed" field.
+func (uuo *UserUpdateOne) SetConfirmed(b bool) *UserUpdateOne {
+	uuo.mutation.SetConfirmed(b)
+	return uuo
+}
+
+// SetNillableConfirmed sets the "confirmed" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableConfirmed(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetConfirmed(*b)
+	}
+	return uuo
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by IDs.
 func (uuo *UserUpdateOne) AddOtpIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddOtpIDs(ids...)
@@ -1287,6 +1318,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.CooperationStartDateCleared() {
 		_spec.ClearField(user.FieldCooperationStartDate, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.Confirmed(); ok {
+		_spec.SetField(user.FieldConfirmed, field.TypeBool, value)
 	}
 	if uuo.mutation.OtpsCleared() {
 		edge := &sqlgraph.EdgeSpec{

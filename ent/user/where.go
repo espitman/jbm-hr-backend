@@ -110,6 +110,11 @@ func CooperationStartDate(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCooperationStartDate, v))
 }
 
+// Confirmed applies equality check predicate on the "confirmed" field. It's identical to ConfirmedEQ.
+func Confirmed(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldConfirmed, v))
+}
+
 // EmailEQ applies the EQ predicate on the "email" field.
 func EmailEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))
@@ -833,6 +838,16 @@ func CooperationStartDateIsNil() predicate.User {
 // CooperationStartDateNotNil applies the NotNil predicate on the "cooperation_start_date" field.
 func CooperationStartDateNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldCooperationStartDate))
+}
+
+// ConfirmedEQ applies the EQ predicate on the "confirmed" field.
+func ConfirmedEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldConfirmed, v))
+}
+
+// ConfirmedNEQ applies the NEQ predicate on the "confirmed" field.
+func ConfirmedNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldConfirmed, v))
 }
 
 // HasOtps applies the HasEdge predicate on the "otps" edge.

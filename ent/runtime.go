@@ -239,4 +239,8 @@ func init() {
 	userDescNationalCode := userFields[9].Descriptor()
 	// user.NationalCodeValidator is a validator for the "national_code" field. It is called by the builders before save.
 	user.NationalCodeValidator = userDescNationalCode.Validators[0].(func(string) error)
+	// userDescConfirmed is the schema descriptor for confirmed field.
+	userDescConfirmed := userFields[12].Descriptor()
+	// user.DefaultConfirmed holds the default value on creation for the confirmed field.
+	user.DefaultConfirmed = userDescConfirmed.Default.(bool)
 }

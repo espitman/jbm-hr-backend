@@ -137,6 +137,20 @@ func (uc *UserCreate) SetNillableCooperationStartDate(t *time.Time) *UserCreate 
 	return uc
 }
 
+// SetConfirmed sets the "confirmed" field.
+func (uc *UserCreate) SetConfirmed(b bool) *UserCreate {
+	uc.mutation.SetConfirmed(b)
+	return uc
+}
+
+// SetNillableConfirmed sets the "confirmed" field if the given value is not nil.
+func (uc *UserCreate) SetNillableConfirmed(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetConfirmed(*b)
+	}
+	return uc
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by IDs.
 func (uc *UserCreate) AddOtpIDs(ids ...int) *UserCreate {
 	uc.mutation.AddOtpIDs(ids...)
@@ -255,6 +269,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultRole
 		uc.mutation.SetRole(v)
 	}
+	if _, ok := uc.mutation.Confirmed(); !ok {
+		v := user.DefaultConfirmed
+		uc.mutation.SetConfirmed(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -322,6 +340,9 @@ func (uc *UserCreate) check() error {
 		if err := user.NationalCodeValidator(v); err != nil {
 			return &ValidationError{Name: "national_code", err: fmt.Errorf(`ent: validator failed for field "User.national_code": %w`, err)}
 		}
+	}
+	if _, ok := uc.mutation.Confirmed(); !ok {
+		return &ValidationError{Name: "confirmed", err: errors.New(`ent: missing required field "User.confirmed"`)}
 	}
 	return nil
 }
@@ -396,6 +417,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.CooperationStartDate(); ok {
 		_spec.SetField(user.FieldCooperationStartDate, field.TypeTime, value)
 		_node.CooperationStartDate = value
+	}
+	if value, ok := uc.mutation.Confirmed(); ok {
+		_spec.SetField(user.FieldConfirmed, field.TypeBool, value)
+		_node.Confirmed = value
 	}
 	if nodes := uc.mutation.OtpsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

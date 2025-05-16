@@ -237,6 +237,8 @@ definitions:
         type: string
       birthdate:
         type: string
+      confirmed:
+        type: boolean
       cooperation_start_date:
         type: string
       department_icon:
@@ -778,6 +780,8 @@ definitions:
         type: string
       birthdate:
         type: string
+      confirmed:
+        type: boolean
       cooperation_start_date:
         type: string
       department:
@@ -952,6 +956,8 @@ definitions:
         type: string
       birthdate:
         type: string
+      confirmed:
+        type: boolean
       cooperation_start_date:
         type: string
       department:
@@ -2537,6 +2543,31 @@ paths:
       security:
       - BearerAuth: []
       summary: Update current user avatar
+      tags:
+      - users
+  /api/v1/users/confirm:
+    put:
+      consumes:
+      - application/json
+      description: Confirm the current user's email by setting confirmed to true
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.UpdateUserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Confirm user email
       tags:
       - users
   /api/v1/users/me:

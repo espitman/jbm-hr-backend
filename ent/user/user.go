@@ -38,6 +38,8 @@ const (
 	FieldBirthdate = "birthdate"
 	// FieldCooperationStartDate holds the string denoting the cooperation_start_date field in the database.
 	FieldCooperationStartDate = "cooperation_start_date"
+	// FieldConfirmed holds the string denoting the confirmed field in the database.
+	FieldConfirmed = "confirmed"
 	// EdgeOtps holds the string denoting the otps edge name in mutations.
 	EdgeOtps = "otps"
 	// EdgeResumes holds the string denoting the resumes edge name in mutations.
@@ -102,6 +104,7 @@ var Columns = []string{
 	FieldNationalCode,
 	FieldBirthdate,
 	FieldCooperationStartDate,
+	FieldConfirmed,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
@@ -140,6 +143,8 @@ var (
 	PersonnelNumberValidator func(string) error
 	// NationalCodeValidator is a validator for the "national_code" field. It is called by the builders before save.
 	NationalCodeValidator func(string) error
+	// DefaultConfirmed holds the default value on creation for the "confirmed" field.
+	DefaultConfirmed bool
 )
 
 // Role defines the type for the "role" enum field.
@@ -234,6 +239,11 @@ func ByBirthdate(opts ...sql.OrderTermOption) OrderOption {
 // ByCooperationStartDate orders the results by the cooperation_start_date field.
 func ByCooperationStartDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCooperationStartDate, opts...).ToFunc()
+}
+
+// ByConfirmed orders the results by the confirmed field.
+func ByConfirmed(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldConfirmed, opts...).ToFunc()
 }
 
 // ByOtpsCount orders the results by otps count.

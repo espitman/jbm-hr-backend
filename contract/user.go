@@ -19,6 +19,7 @@ type User struct {
 	CooperationStartDate *string `json:"cooperation_start_date,omitempty"`
 	PersonnelNumber      string  `json:"personnel_number,omitempty"`
 	NationalCode         string  `json:"national_code,omitempty"`
+	Confirmed            bool    `json:"confirmed"`
 }
 
 // CreateUserInput represents the input for creating a new user

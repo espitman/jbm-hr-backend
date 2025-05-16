@@ -78,6 +78,7 @@ type GetMeData struct {
 	CooperationStartDate *string        `json:"cooperation_start_date,omitempty"`
 	PersonnelNumber      *string        `json:"personnel_number,omitempty"`
 	NationalCode         *string        `json:"national_code,omitempty"`
+	Confirmed            bool           `json:"confirmed"`
 }
 
 // GetMeResponse represents the response structure for the /me endpoint
@@ -100,6 +101,7 @@ type UserData struct {
 	CooperationStartDate *string        `json:"cooperation_start_date,omitempty"`
 	PersonnelNumber      string         `json:"personnel_number,omitempty"`
 	NationalCode         string         `json:"national_code,omitempty"`
+	Confirmed            bool           `json:"confirmed"`
 }
 
 // ListUsersData represents the data structure for list users response

@@ -143,6 +143,7 @@ func (h *UserHandler) GetMe(c echo.Context) error {
 		CooperationStartDate: user.CooperationStartDate,
 		PersonnelNumber:      &user.PersonnelNumber,
 		NationalCode:         &user.NationalCode,
+		Confirmed:            user.Confirmed,
 	})
 }
 
@@ -177,25 +178,65 @@ func (h *UserHandler) UpdateAvatar(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, UpdateUserResponse{
-		Data: UserData{
-			ID:        updatedUser.ID,
-			Email:     updatedUser.Email,
-			Phone:     updatedUser.Phone,
-			FirstName: updatedUser.FirstName,
-			LastName:  updatedUser.LastName,
-			Role:      updatedUser.Role,
-			Avatar:    updatedUser.Avatar,
-			Department: convertToDepartmentDTO(
-				updatedUser.DepartmentID,
-				updatedUser.DepartmentTitle,
-				updatedUser.DepartmentIcon,
-				updatedUser.DepartmentShortName,
-			),
-			Birthdate:            updatedUser.Birthdate,
-			CooperationStartDate: updatedUser.CooperationStartDate,
-			PersonnelNumber:      updatedUser.PersonnelNumber,
-			NationalCode:         updatedUser.NationalCode,
-		},
+	return dto.SuccessJSON(c, UserData{
+		ID:        updatedUser.ID,
+		Email:     updatedUser.Email,
+		Phone:     updatedUser.Phone,
+		FirstName: updatedUser.FirstName,
+		LastName:  updatedUser.LastName,
+		Role:      updatedUser.Role,
+		Avatar:    updatedUser.Avatar,
+		Department: convertToDepartmentDTO(
+			updatedUser.DepartmentID,
+			updatedUser.DepartmentTitle,
+			updatedUser.DepartmentIcon,
+			updatedUser.DepartmentShortName,
+		),
+		Birthdate:            updatedUser.Birthdate,
+		CooperationStartDate: updatedUser.CooperationStartDate,
+		PersonnelNumber:      updatedUser.PersonnelNumber,
+		NationalCode:         updatedUser.NationalCode,
+	})
+}
+
+// ConfirmUser handles confirming the current user's email
+// @Summary Confirm user email
+// @Description Confirm the current user's email by setting confirmed to true
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} UpdateUserResponse
+// @Failure 401 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/users/confirm [put]
+func (h *UserHandler) ConfirmUser(c echo.Context) error {
+	// Get user claims from context (set by JWT middleware)
+	claims := c.Get("user").(*utils.Claims)
+
+	// Update confirmed status
+	updatedUser, err := h.userService.UpdateConfirmed(c.Request().Context(), claims.UserID)
+	if err != nil {
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, UserData{
+		ID:        updatedUser.ID,
+		Email:     updatedUser.Email,
+		Phone:     updatedUser.Phone,
+		FirstName: updatedUser.FirstName,
+		LastName:  updatedUser.LastName,
+		Role:      updatedUser.Role,
+		Avatar:    updatedUser.Avatar,
+		Department: convertToDepartmentDTO(
+			updatedUser.DepartmentID,
+			updatedUser.DepartmentTitle,
+			updatedUser.DepartmentIcon,
+			updatedUser.DepartmentShortName,
+		),
+		Birthdate:            updatedUser.Birthdate,
+		CooperationStartDate: updatedUser.CooperationStartDate,
+		PersonnelNumber:      updatedUser.PersonnelNumber,
+		NationalCode:         updatedUser.NationalCode,
 	})
 }

@@ -20,6 +20,7 @@ func (r *Router) registerUserRoutes(group *echo.Group) {
 		{
 			protected.GET("/me", r.userHandler.GetMe)
 			protected.PUT("/avatar", r.userHandler.UpdateAvatar)
+			protected.PUT("/confirm", r.userHandler.ConfirmUser)
 		}
 	}
 }

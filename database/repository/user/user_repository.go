@@ -35,6 +35,9 @@ type Repository interface {
 	// UpdateCooperationStartDate updates a user's cooperation start date
 	UpdateCooperationStartDate(ctx context.Context, id int, startDate string) (*contract.User, error)
 
+	// UpdateConfirmed updates a user's confirmed status
+	UpdateConfirmed(ctx context.Context, id int) (*contract.User, error)
+
 	// Delete deletes a user by their ID
 	Delete(ctx context.Context, id int) error
 

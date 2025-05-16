@@ -66,6 +66,7 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		CooperationStartDate: cooperationStartDate,
 		PersonnelNumber:      entUser.PersonnelNumber,
 		NationalCode:         entUser.NationalCode,
+		Confirmed:            entUser.Confirmed,
 	}
 }
 
@@ -293,4 +294,21 @@ func (r *EntRepository) SearchUsers(ctx context.Context, term string) ([]*contra
 		result[i] = convertToContractUser(u)
 	}
 	return result, nil
+}
+
+// UpdateConfirmed updates a user's confirmed status
+func (r *EntRepository) UpdateConfirmed(ctx context.Context, id int) (*contract.User, error) {
+	entUser, err := r.client.User.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	entUser, err = entUser.Update().
+		SetConfirmed(true).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertToContractUser(entUser), nil
 }

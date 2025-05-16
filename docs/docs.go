@@ -2363,6 +2363,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/users/confirm": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Confirm the current user's email by setting confirmed to true",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Confirm user email",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userhandler.UpdateUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/users/me": {
             "get": {
                 "security": [
@@ -2867,6 +2907,9 @@ const docTemplate = `{
                 },
                 "birthdate": {
                     "type": "string"
+                },
+                "confirmed": {
+                    "type": "boolean"
                 },
                 "cooperation_start_date": {
                     "type": "string"
@@ -3680,6 +3723,9 @@ const docTemplate = `{
                 "birthdate": {
                     "type": "string"
                 },
+                "confirmed": {
+                    "type": "boolean"
+                },
                 "cooperation_start_date": {
                     "type": "string"
                 },
@@ -3944,6 +3990,9 @@ const docTemplate = `{
                 },
                 "birthdate": {
                     "type": "string"
+                },
+                "confirmed": {
+                    "type": "boolean"
                 },
                 "cooperation_start_date": {
                     "type": "string"

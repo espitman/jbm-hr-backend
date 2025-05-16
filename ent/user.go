@@ -42,6 +42,8 @@ type User struct {
 	Birthdate time.Time `json:"birthdate,omitempty"`
 	// CooperationStartDate holds the value of the "cooperation_start_date" field.
 	CooperationStartDate time.Time `json:"cooperation_start_date,omitempty"`
+	// Confirmed holds the value of the "confirmed" field.
+	Confirmed bool `json:"confirmed,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges            UserEdges `json:"edges"`
@@ -118,6 +120,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldConfirmed:
+			values[i] = new(sql.NullBool)
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
 		case user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldFullName, user.FieldRole, user.FieldAvatar, user.FieldPassword, user.FieldPersonnelNumber, user.FieldNationalCode:
@@ -218,6 +222,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field cooperation_start_date", values[i])
 			} else if value.Valid {
 				u.CooperationStartDate = value.Time
+			}
+		case user.FieldConfirmed:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field confirmed", values[i])
+			} else if value.Valid {
+				u.Confirmed = value.Bool
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -321,6 +331,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cooperation_start_date=")
 	builder.WriteString(u.CooperationStartDate.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("confirmed=")
+	builder.WriteString(fmt.Sprintf("%v", u.Confirmed))
 	builder.WriteByte(')')
 	return builder.String()
 }

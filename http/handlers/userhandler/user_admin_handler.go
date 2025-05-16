@@ -253,6 +253,7 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 		CooperationStartDate: user.CooperationStartDate,
 		PersonnelNumber:      user.PersonnelNumber,
 		NationalCode:         user.NationalCode,
+		Confirmed:            user.Confirmed,
 	})
 }
 
@@ -293,22 +294,20 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, UpdateUserResponse{
-		Data: UserData{
-			ID:        user.ID,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Role:      user.Role,
-			Avatar:    user.Avatar,
-			Department: convertToDepartmentDTO(
-				user.DepartmentID,
-				user.DepartmentTitle,
-				user.DepartmentIcon,
-				user.DepartmentShortName,
-			),
-		},
+	return dto.SuccessJSON(c, UserData{
+		ID:        user.ID,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Role:      user.Role,
+		Avatar:    user.Avatar,
+		Department: convertToDepartmentDTO(
+			user.DepartmentID,
+			user.DepartmentTitle,
+			user.DepartmentIcon,
+			user.DepartmentShortName,
+		),
 	})
 }
 

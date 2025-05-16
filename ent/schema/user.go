@@ -51,6 +51,8 @@ func (User) Fields() []ent.Field {
 				dialect.Postgres: "date",
 			}).
 			Optional(),
+		field.Bool("confirmed").
+			Default(false),
 	}
 }
 
