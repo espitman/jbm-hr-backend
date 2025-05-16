@@ -33,3 +33,6 @@ go.work
 # Log files
 *.log
 .history/
+
+# Debug binary files
+__debug_*
