@@ -549,3 +549,95 @@ func (h *UserHandler) SearchUsers(c echo.Context) error {
 		Total: len(users),
 	})
 }
+
+// GetUsersWithTodayBirthdate handles the request to get users with today's birthdate
+// @Summary Get users with today's birthdate
+// @Description Get all users whose birthdate is today
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} ListUsersResponse
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/admin/users/today-birthdate [get]
+func (h *UserHandler) GetUsersWithTodayBirthdate(c echo.Context) error {
+	users, err := h.userService.GetUsersWithTodayBirthdate(c.Request().Context())
+	if err != nil {
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	// Convert users to response format
+	usersData := make([]UserData, len(users))
+	for i, user := range users {
+		usersData[i] = UserData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+			Department: convertToDepartmentDTO(
+				user.DepartmentID,
+				user.DepartmentTitle,
+				user.DepartmentIcon,
+				user.DepartmentShortName,
+			),
+			Birthdate:            user.Birthdate,
+			CooperationStartDate: user.CooperationStartDate,
+			PersonnelNumber:      user.PersonnelNumber,
+			NationalCode:         user.NationalCode,
+		}
+	}
+
+	return dto.SuccessJSON(c, ListUsersData{
+		Users: usersData,
+		Total: int64(len(usersData)),
+	})
+}
+
+// GetUsersWithTodayCooperationStartDate handles the request to get users with today's cooperation start date
+// @Summary Get users with today's cooperation start date
+// @Description Get all users whose cooperation start date is today
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} ListUsersResponse
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/admin/users/today-cooperation-start-date [get]
+func (h *UserHandler) GetUsersWithTodayCooperationStartDate(c echo.Context) error {
+	users, err := h.userService.GetUsersWithTodayCooperationStartDate(c.Request().Context())
+	if err != nil {
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	// Convert users to response format
+	usersData := make([]UserData, len(users))
+	for i, user := range users {
+		usersData[i] = UserData{
+			ID:        user.ID,
+			Email:     user.Email,
+			Phone:     user.Phone,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+			Avatar:    user.Avatar,
+			Department: convertToDepartmentDTO(
+				user.DepartmentID,
+				user.DepartmentTitle,
+				user.DepartmentIcon,
+				user.DepartmentShortName,
+			),
+			Birthdate:            user.Birthdate,
+			CooperationStartDate: user.CooperationStartDate,
+			PersonnelNumber:      user.PersonnelNumber,
+			NationalCode:         user.NationalCode,
+		}
+	}
+
+	return dto.SuccessJSON(c, ListUsersData{
+		Users: usersData,
+		Total: int64(len(usersData)),
+	})
+}

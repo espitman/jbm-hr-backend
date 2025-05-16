@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/espitman/jbm-hr-backend/utils"
+
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/ent"
 	entDepartment "github.com/espitman/jbm-hr-backend/ent/department"
@@ -311,4 +313,50 @@ func (r *EntRepository) UpdateConfirmed(ctx context.Context, id int) (*contract.
 	}
 
 	return convertToContractUser(entUser), nil
+}
+
+// GetUsersWithTodayBirthdate retrieves all users whose birthdate is today (ignoring year)
+func (r *EntRepository) GetUsersWithTodayBirthdate(ctx context.Context) ([]*contract.User, error) {
+	birthDates := utils.GenerateDatesForTodayMonthDay(100)
+
+	users, err := r.client.User.Query().
+		Where(
+			entUser.BirthdateIn(birthDates...),
+		).
+		WithDepartment(func(q *ent.DepartmentQuery) {
+			q.Select("id", "title", "icon", "short_name")
+		}).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*contract.User, len(users))
+	for i, u := range users {
+		result[i] = convertToContractUser(u)
+	}
+	return result, nil
+}
+
+// GetUsersWithTodayCooperationStartDate retrieves all users whose cooperation start date is today (ignoring year)
+func (r *EntRepository) GetUsersWithTodayCooperationStartDate(ctx context.Context) ([]*contract.User, error) {
+	cooperationDates := utils.GenerateDatesForTodayMonthDay(20)
+
+	users, err := r.client.User.Query().
+		Where(
+			entUser.CooperationStartDateIn(cooperationDates...),
+		).
+		WithDepartment(func(q *ent.DepartmentQuery) {
+			q.Select("id", "title", "icon", "short_name")
+		}).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*contract.User, len(users))
+	for i, u := range users {
+		result[i] = convertToContractUser(u)
+	}
+	return result, nil
 }

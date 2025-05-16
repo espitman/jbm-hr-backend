@@ -354,3 +354,13 @@ func (s *service) SearchUsers(ctx context.Context, term string) ([]*contract.Use
 func (s *service) UpdateConfirmed(ctx context.Context, id int) (*contract.User, error) {
 	return s.userRepo.UpdateConfirmed(ctx, id)
 }
+
+// GetUsersWithTodayBirthdate retrieves all users whose birthdate is today
+func (s *service) GetUsersWithTodayBirthdate(ctx context.Context) ([]*contract.User, error) {
+	return s.userRepo.GetUsersWithTodayBirthdate(ctx)
+}
+
+// GetUsersWithTodayCooperationStartDate retrieves all users whose cooperation start date is today
+func (s *service) GetUsersWithTodayCooperationStartDate(ctx context.Context) ([]*contract.User, error) {
+	return s.userRepo.GetUsersWithTodayCooperationStartDate(ctx)
+}

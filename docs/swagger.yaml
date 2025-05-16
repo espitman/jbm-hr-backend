@@ -2391,6 +2391,48 @@ paths:
       summary: Search users
       tags:
       - users - admin
+  /api/v1/admin/users/today-birthdate:
+    get:
+      consumes:
+      - application/json
+      description: Get all users whose birthdate is today
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.ListUsersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get users with today's birthdate
+      tags:
+      - users - admin
+  /api/v1/admin/users/today-cooperation-start-date:
+    get:
+      consumes:
+      - application/json
+      description: Get all users whose cooperation start date is today
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.ListUsersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get users with today's cooperation start date
+      tags:
+      - users - admin
   /api/v1/albums:
     get:
       consumes:

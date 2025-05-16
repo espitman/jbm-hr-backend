@@ -43,4 +43,10 @@ type Repository interface {
 
 	// SearchUsers searches users by term (full name, email, or phone)
 	SearchUsers(ctx context.Context, term string) ([]*contract.User, error)
+
+	// GetUsersWithTodayBirthdate retrieves all users whose birthdate is today
+	GetUsersWithTodayBirthdate(ctx context.Context) ([]*contract.User, error)
+
+	// GetUsersWithTodayCooperationStartDate retrieves all users whose cooperation start date is today
+	GetUsersWithTodayCooperationStartDate(ctx context.Context) ([]*contract.User, error)
 }
