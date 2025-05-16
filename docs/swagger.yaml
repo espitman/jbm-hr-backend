@@ -1791,7 +1791,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get a list of all users with pagination
+      description: Get a list of all users with pagination and filters
       parameters:
       - default: 1
         description: Page number
@@ -1802,6 +1802,30 @@ paths:
         description: Items per page
         in: query
         name: limit
+        type: integer
+      - description: Filter by full name
+        in: query
+        name: full_name
+        type: string
+      - description: Filter by role (admin/employee)
+        in: query
+        name: role
+        type: string
+      - description: Filter by personnel number
+        in: query
+        name: personnel_number
+        type: string
+      - description: Filter by national code
+        in: query
+        name: national_code
+        type: string
+      - description: Filter by phone number
+        in: query
+        name: phone
+        type: string
+      - description: Filter by department ID
+        in: query
+        name: department_id
         type: integer
       produces:
       - application/json

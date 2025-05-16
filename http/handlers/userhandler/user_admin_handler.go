@@ -88,12 +88,18 @@ func (h *UserHandler) RegisterUser(c echo.Context) error {
 
 // ListUsers handles listing all users
 // @Summary List all users
-// @Description Get a list of all users with pagination
+// @Description Get a list of all users with pagination and filters
 // @Tags users - admin
 // @Accept json
 // @Produce json
 // @Param page query int false "Page number" default(1)
 // @Param limit query int false "Items per page" default(10)
+// @Param full_name query string false "Filter by full name"
+// @Param role query string false "Filter by role (admin/employee)"
+// @Param personnel_number query string false "Filter by personnel number"
+// @Param national_code query string false "Filter by national code"
+// @Param phone query string false "Filter by phone number"
+// @Param department_id query int false "Filter by department ID"
 // @Success 200 {object} ListUsersResponse
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
@@ -104,13 +110,27 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 	page := utils.GetQueryParamInt(c, "page", 1)
 	limit := utils.GetQueryParamInt(c, "limit", 10)
 
-	// Get users with pagination
-	users, total, err := h.userService.ListUsers(c.Request().Context(), page, limit)
+	// Get filter parameters
+	var departmentID *int
+	if deptID := utils.GetQueryParamInt(c, "department_id", 0); deptID > 0 {
+		departmentID = &deptID
+	}
+
+	filters := &contract.UserFilters{
+		FullName:        utils.GetQueryParamString(c, "full_name"),
+		Role:            utils.GetQueryParamString(c, "role"),
+		PersonnelNumber: utils.GetQueryParamString(c, "personnel_number"),
+		NationalCode:    utils.GetQueryParamString(c, "national_code"),
+		Phone:           utils.GetQueryParamString(c, "phone"),
+		DepartmentID:    departmentID,
+	}
+
+	users, total, err := h.userService.ListUsers(c.Request().Context(), page, limit, filters)
 	if err != nil {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	// Prepare response data
+	// Convert users to response format
 	usersData := make([]UserData, len(users))
 	for i, user := range users {
 		usersData[i] = UserData{
@@ -134,7 +154,6 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 		}
 	}
 
-	// Return paginated response
 	return dto.SuccessJSON(c, ListUsersData{
 		Users: usersData,
 		Total: total,

@@ -46,3 +46,15 @@ type UpdateUserBirthdateRequest struct {
 type UpdateUserCooperationStartDateRequest struct {
 	CooperationStartDate string `json:"cooperation_start_date" validate:"required,datetime=2006-01-02"`
 }
+
+// ListUsersRequest represents the request structure for listing users with filters
+type ListUsersRequest struct {
+	Page            int     `query:"page" validate:"required,min=1"`
+	Limit           int     `query:"limit" validate:"required,min=1,max=100"`
+	FullName        *string `query:"full_name"`
+	Role            *string `query:"role" validate:"omitempty,oneof=admin employee"`
+	PersonnelNumber *string `query:"personnel_number"`
+	NationalCode    *string `query:"national_code"`
+	Phone           *string `query:"phone"`
+	DepartmentID    *int    `query:"department_id"`
+}

@@ -2,11 +2,9 @@ package utils
 
 import (
 	"errors"
-	"strconv"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
 )
 
 var validate *validator.Validate
@@ -44,19 +42,4 @@ func ValidateStruct(s interface{}) error {
 // Returns nil if validation passes, otherwise returns the validation error
 func ValidateVar(field interface{}, tag string) error {
 	return validate.Var(field, tag)
-}
-
-// GetQueryParamInt gets an integer query parameter with a default value
-func GetQueryParamInt(c echo.Context, param string, defaultValue int) int {
-	value := c.QueryParam(param)
-	if value == "" {
-		return defaultValue
-	}
-
-	result, err := strconv.Atoi(value)
-	if err != nil {
-		return defaultValue
-	}
-
-	return result
 }

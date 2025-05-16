@@ -7,6 +7,7 @@ import (
 
 	"github.com/espitman/jbm-hr-backend/contract"
 	"github.com/espitman/jbm-hr-backend/ent"
+	entDepartment "github.com/espitman/jbm-hr-backend/ent/department"
 	entUser "github.com/espitman/jbm-hr-backend/ent/user"
 )
 
@@ -69,13 +70,35 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 }
 
 // GetAll retrieves all users
-func (r *EntRepository) GetAll(ctx context.Context) ([]*contract.User, error) {
-	entUsers, err := r.client.User.Query().
+func (r *EntRepository) GetAll(ctx context.Context, filters *contract.UserFilters) ([]*contract.User, error) {
+	query := r.client.User.Query().
 		WithDepartment(func(q *ent.DepartmentQuery) {
 			q.Select("id", "title", "icon", "short_name")
-		}).
-		Order(ent.Asc(entUser.FieldID)).
-		All(ctx)
+		})
+
+	// Apply filters
+	if filters != nil {
+		if filters.FullName != nil {
+			query = query.Where(entUser.FullNameContains(*filters.FullName))
+		}
+		if filters.Role != nil {
+			query = query.Where(entUser.RoleEQ(entUser.Role(*filters.Role)))
+		}
+		if filters.PersonnelNumber != nil {
+			query = query.Where(entUser.PersonnelNumberContains(*filters.PersonnelNumber))
+		}
+		if filters.NationalCode != nil {
+			query = query.Where(entUser.NationalCodeContains(*filters.NationalCode))
+		}
+		if filters.Phone != nil {
+			query = query.Where(entUser.PhoneContains(*filters.Phone))
+		}
+		if filters.DepartmentID != nil {
+			query = query.Where(entUser.HasDepartmentWith(entDepartment.IDEQ(*filters.DepartmentID)))
+		}
+	}
+
+	entUsers, err := query.Order(ent.Asc(entUser.FieldID)).All(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -9,7 +9,7 @@ import (
 // Repository defines the interface for user data access
 type Repository interface {
 	// GetAll retrieves all users
-	GetAll(ctx context.Context) ([]*contract.User, error)
+	GetAll(ctx context.Context, filters *contract.UserFilters) ([]*contract.User, error)
 
 	// GetByID retrieves a user by their ID
 	GetByID(ctx context.Context, id int) (*contract.User, error)

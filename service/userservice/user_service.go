@@ -4,7 +4,20 @@ import (
 	"context"
 
 	"github.com/espitman/jbm-hr-backend/contract"
+	"github.com/espitman/jbm-hr-backend/database/repository/user"
 )
+
+// UserService handles user-related business logic
+type UserService struct {
+	userRepository user.Repository
+}
+
+// NewUserService creates a new instance of UserService
+func NewUserService(userRepository user.Repository) *UserService {
+	return &UserService{
+		userRepository: userRepository,
+	}
+}
 
 // Service defines the interface for user-related operations
 type Service interface {
@@ -21,7 +34,7 @@ type Service interface {
 	GetUserByID(ctx context.Context, id int) (*contract.User, error)
 
 	// ListUsers retrieves a paginated list of users
-	ListUsers(ctx context.Context, page, limit int) ([]*contract.User, int64, error)
+	ListUsers(ctx context.Context, page, limit int, filters *contract.UserFilters) ([]*contract.User, int64, error)
 
 	// UpdatePassword updates a user's password
 	UpdatePassword(ctx context.Context, id int, input *contract.UpdatePasswordInput) error
@@ -46,4 +59,28 @@ type Service interface {
 
 	// SearchUsers searches users by term (full name, email, or phone)
 	SearchUsers(ctx context.Context, term string) ([]*contract.User, error)
+}
+
+// ListUsers retrieves a list of users with pagination
+func (s *UserService) ListUsers(ctx context.Context, page, limit int, filters *contract.UserFilters) ([]*contract.User, int64, error) {
+	// Get all users with filters
+	users, err := s.userRepository.GetAll(ctx, filters)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Calculate total count
+	total := int64(len(users))
+
+	// Apply pagination
+	start := (page - 1) * limit
+	end := start + limit
+	if int64(start) >= total {
+		return []*contract.User{}, total, nil
+	}
+	if int64(end) > total {
+		end = int(total)
+	}
+
+	return users[start:end], total, nil
 }

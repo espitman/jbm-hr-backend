@@ -70,3 +70,13 @@ type RegisterUserInput struct {
 type UpdatePasswordInput struct {
 	Password string `json:"password" validate:"required"`
 }
+
+// UserFilters represents the filters for listing users
+type UserFilters struct {
+	FullName        *string `json:"full_name,omitempty"`
+	Role            *string `json:"role,omitempty"`
+	PersonnelNumber *string `json:"personnel_number,omitempty"`
+	NationalCode    *string `json:"national_code,omitempty"`
+	Phone           *string `json:"phone,omitempty"`
+	DepartmentID    *int    `json:"department_id,omitempty"`
+}
