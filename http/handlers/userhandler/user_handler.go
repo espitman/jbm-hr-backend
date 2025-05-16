@@ -133,5 +133,15 @@ func (h *UserHandler) GetMe(c echo.Context) error {
 		LastName:  user.LastName,
 		Role:      user.Role,
 		Avatar:    user.Avatar,
+		Department: convertToDepartmentDTO(
+			user.DepartmentID,
+			user.DepartmentTitle,
+			user.DepartmentIcon,
+			user.DepartmentShortName,
+		),
+		Birthdate:            user.Birthdate,
+		CooperationStartDate: user.CooperationStartDate,
+		PersonnelNumber:      &user.PersonnelNumber,
+		NationalCode:         &user.NationalCode,
 	})
 }

@@ -3647,6 +3647,12 @@ const docTemplate = `{
                 "last_name": {
                     "type": "string"
                 },
+                "national_code": {
+                    "type": "string"
+                },
+                "personnel_number": {
+                    "type": "string"
+                },
                 "phone": {
                     "type": "string"
                 },
