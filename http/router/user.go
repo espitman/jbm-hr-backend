@@ -19,6 +19,7 @@ func (r *Router) registerUserRoutes(group *echo.Group) {
 		protected.Use(middleware.JWT())
 		{
 			protected.GET("/me", r.userHandler.GetMe)
+			protected.PUT("/avatar", r.userHandler.UpdateAvatar)
 		}
 	}
 }

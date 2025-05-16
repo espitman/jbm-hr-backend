@@ -145,3 +145,57 @@ func (h *UserHandler) GetMe(c echo.Context) error {
 		NationalCode:         &user.NationalCode,
 	})
 }
+
+// UpdateAvatar handles updating the current user's avatar
+// @Summary Update current user avatar
+// @Description Update the current user's avatar URL
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body UpdateUserAvatarRequest true "Update Avatar"
+// @Success 200 {object} UpdateUserResponse
+// @Failure 400 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Security BearerAuth
+// @Router /api/v1/users/avatar [put]
+func (h *UserHandler) UpdateAvatar(c echo.Context) error {
+	// Get user claims from context (set by JWT middleware)
+	claims := c.Get("user").(*utils.Claims)
+
+	var req UpdateUserAvatarRequest
+	if err := c.Bind(&req); err != nil {
+		return dto.BadRequestJSON(c, "invalid request format")
+	}
+
+	if err := utils.ValidateStruct(req); err != nil {
+		return dto.BadRequestJSON(c, err.Error())
+	}
+
+	// Update avatar
+	updatedUser, err := h.userService.UpdateAvatar(c.Request().Context(), claims.UserID, req.Avatar)
+	if err != nil {
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, UpdateUserResponse{
+		Data: UserData{
+			ID:        updatedUser.ID,
+			Email:     updatedUser.Email,
+			Phone:     updatedUser.Phone,
+			FirstName: updatedUser.FirstName,
+			LastName:  updatedUser.LastName,
+			Role:      updatedUser.Role,
+			Avatar:    updatedUser.Avatar,
+			Department: convertToDepartmentDTO(
+				updatedUser.DepartmentID,
+				updatedUser.DepartmentTitle,
+				updatedUser.DepartmentIcon,
+				updatedUser.DepartmentShortName,
+			),
+			Birthdate:            updatedUser.Birthdate,
+			CooperationStartDate: updatedUser.CooperationStartDate,
+			PersonnelNumber:      updatedUser.PersonnelNumber,
+			NationalCode:         updatedUser.NationalCode,
+		},
+	})
+}
