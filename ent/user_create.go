@@ -97,6 +97,34 @@ func (uc *UserCreate) SetNillablePassword(s *string) *UserCreate {
 	return uc
 }
 
+// SetPersonnelNumber sets the "personnel_number" field.
+func (uc *UserCreate) SetPersonnelNumber(s string) *UserCreate {
+	uc.mutation.SetPersonnelNumber(s)
+	return uc
+}
+
+// SetNillablePersonnelNumber sets the "personnel_number" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePersonnelNumber(s *string) *UserCreate {
+	if s != nil {
+		uc.SetPersonnelNumber(*s)
+	}
+	return uc
+}
+
+// SetNationalCode sets the "national_code" field.
+func (uc *UserCreate) SetNationalCode(s string) *UserCreate {
+	uc.mutation.SetNationalCode(s)
+	return uc
+}
+
+// SetNillableNationalCode sets the "national_code" field if the given value is not nil.
+func (uc *UserCreate) SetNillableNationalCode(s *string) *UserCreate {
+	if s != nil {
+		uc.SetNationalCode(*s)
+	}
+	return uc
+}
+
 // SetBirthdate sets the "birthdate" field.
 func (uc *UserCreate) SetBirthdate(t time.Time) *UserCreate {
 	uc.mutation.SetBirthdate(t)
@@ -352,6 +380,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
+	}
+	if value, ok := uc.mutation.PersonnelNumber(); ok {
+		_spec.SetField(user.FieldPersonnelNumber, field.TypeString, value)
+		_node.PersonnelNumber = value
+	}
+	if value, ok := uc.mutation.NationalCode(); ok {
+		_spec.SetField(user.FieldNationalCode, field.TypeString, value)
+		_node.NationalCode = value
 	}
 	if value, ok := uc.mutation.Birthdate(); ok {
 		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)

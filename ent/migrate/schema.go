@@ -183,6 +183,8 @@ var (
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"admin", "employee"}, Default: "employee"},
 		{Name: "avatar", Type: field.TypeString, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
+		{Name: "personnel_number", Type: field.TypeString, Nullable: true},
+		{Name: "national_code", Type: field.TypeString, Nullable: true},
 		{Name: "birthdate", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "date"}},
 		{Name: "cooperation_start_date", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "date"}},
 		{Name: "department_users", Type: field.TypeInt, Nullable: true},
@@ -195,7 +197,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_departments_users",
-				Columns:    []*schema.Column{UsersColumns[11]},
+				Columns:    []*schema.Column{UsersColumns[13]},
 				RefColumns: []*schema.Column{DepartmentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

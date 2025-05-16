@@ -34,6 +34,10 @@ type User struct {
 	Avatar string `json:"avatar,omitempty"`
 	// Password holds the value of the "password" field.
 	Password string `json:"-"`
+	// PersonnelNumber holds the value of the "personnel_number" field.
+	PersonnelNumber string `json:"personnel_number,omitempty"`
+	// NationalCode holds the value of the "national_code" field.
+	NationalCode string `json:"national_code,omitempty"`
 	// Birthdate holds the value of the "birthdate" field.
 	Birthdate time.Time `json:"birthdate,omitempty"`
 	// CooperationStartDate holds the value of the "cooperation_start_date" field.
@@ -116,7 +120,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldFullName, user.FieldRole, user.FieldAvatar, user.FieldPassword:
+		case user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldFullName, user.FieldRole, user.FieldAvatar, user.FieldPassword, user.FieldPersonnelNumber, user.FieldNationalCode:
 			values[i] = new(sql.NullString)
 		case user.FieldBirthdate, user.FieldCooperationStartDate:
 			values[i] = new(sql.NullTime)
@@ -190,6 +194,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
 				u.Password = value.String
+			}
+		case user.FieldPersonnelNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field personnel_number", values[i])
+			} else if value.Valid {
+				u.PersonnelNumber = value.String
+			}
+		case user.FieldNationalCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field national_code", values[i])
+			} else if value.Valid {
+				u.NationalCode = value.String
 			}
 		case user.FieldBirthdate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -293,6 +309,12 @@ func (u *User) String() string {
 	builder.WriteString(u.Avatar)
 	builder.WriteString(", ")
 	builder.WriteString("password=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("personnel_number=")
+	builder.WriteString(u.PersonnelNumber)
+	builder.WriteString(", ")
+	builder.WriteString("national_code=")
+	builder.WriteString(u.NationalCode)
 	builder.WriteString(", ")
 	builder.WriteString("birthdate=")
 	builder.WriteString(u.Birthdate.Format(time.ANSIC))

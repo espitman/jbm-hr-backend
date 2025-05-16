@@ -30,6 +30,10 @@ const (
 	FieldAvatar = "avatar"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
+	// FieldPersonnelNumber holds the string denoting the personnel_number field in the database.
+	FieldPersonnelNumber = "personnel_number"
+	// FieldNationalCode holds the string denoting the national_code field in the database.
+	FieldNationalCode = "national_code"
 	// FieldBirthdate holds the string denoting the birthdate field in the database.
 	FieldBirthdate = "birthdate"
 	// FieldCooperationStartDate holds the string denoting the cooperation_start_date field in the database.
@@ -94,6 +98,8 @@ var Columns = []string{
 	FieldRole,
 	FieldAvatar,
 	FieldPassword,
+	FieldPersonnelNumber,
+	FieldNationalCode,
 	FieldBirthdate,
 	FieldCooperationStartDate,
 }
@@ -204,6 +210,16 @@ func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
 // ByPassword orders the results by the password field.
 func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
+}
+
+// ByPersonnelNumber orders the results by the personnel_number field.
+func ByPersonnelNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPersonnelNumber, opts...).ToFunc()
+}
+
+// ByNationalCode orders the results by the national_code field.
+func ByNationalCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNationalCode, opts...).ToFunc()
 }
 
 // ByBirthdate orders the results by the birthdate field.

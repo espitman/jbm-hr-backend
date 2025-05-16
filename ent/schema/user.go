@@ -35,6 +35,10 @@ func (User) Fields() []ent.Field {
 		field.String("password").
 			Optional().
 			Sensitive(),
+		field.String("personnel_number").
+			Optional(),
+		field.String("national_code").
+			Optional(),
 		field.Time("birthdate").
 			SchemaType(map[string]string{
 				dialect.Postgres: "date",

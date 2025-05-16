@@ -157,6 +157,46 @@ func (uu *UserUpdate) ClearPassword() *UserUpdate {
 	return uu
 }
 
+// SetPersonnelNumber sets the "personnel_number" field.
+func (uu *UserUpdate) SetPersonnelNumber(s string) *UserUpdate {
+	uu.mutation.SetPersonnelNumber(s)
+	return uu
+}
+
+// SetNillablePersonnelNumber sets the "personnel_number" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePersonnelNumber(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetPersonnelNumber(*s)
+	}
+	return uu
+}
+
+// ClearPersonnelNumber clears the value of the "personnel_number" field.
+func (uu *UserUpdate) ClearPersonnelNumber() *UserUpdate {
+	uu.mutation.ClearPersonnelNumber()
+	return uu
+}
+
+// SetNationalCode sets the "national_code" field.
+func (uu *UserUpdate) SetNationalCode(s string) *UserUpdate {
+	uu.mutation.SetNationalCode(s)
+	return uu
+}
+
+// SetNillableNationalCode sets the "national_code" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableNationalCode(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetNationalCode(*s)
+	}
+	return uu
+}
+
+// ClearNationalCode clears the value of the "national_code" field.
+func (uu *UserUpdate) ClearNationalCode() *UserUpdate {
+	uu.mutation.ClearNationalCode()
+	return uu
+}
+
 // SetBirthdate sets the "birthdate" field.
 func (uu *UserUpdate) SetBirthdate(t time.Time) *UserUpdate {
 	uu.mutation.SetBirthdate(t)
@@ -474,6 +514,18 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.PasswordCleared() {
 		_spec.ClearField(user.FieldPassword, field.TypeString)
+	}
+	if value, ok := uu.mutation.PersonnelNumber(); ok {
+		_spec.SetField(user.FieldPersonnelNumber, field.TypeString, value)
+	}
+	if uu.mutation.PersonnelNumberCleared() {
+		_spec.ClearField(user.FieldPersonnelNumber, field.TypeString)
+	}
+	if value, ok := uu.mutation.NationalCode(); ok {
+		_spec.SetField(user.FieldNationalCode, field.TypeString, value)
+	}
+	if uu.mutation.NationalCodeCleared() {
+		_spec.ClearField(user.FieldNationalCode, field.TypeString)
 	}
 	if value, ok := uu.mutation.Birthdate(); ok {
 		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)
@@ -840,6 +892,46 @@ func (uuo *UserUpdateOne) ClearPassword() *UserUpdateOne {
 	return uuo
 }
 
+// SetPersonnelNumber sets the "personnel_number" field.
+func (uuo *UserUpdateOne) SetPersonnelNumber(s string) *UserUpdateOne {
+	uuo.mutation.SetPersonnelNumber(s)
+	return uuo
+}
+
+// SetNillablePersonnelNumber sets the "personnel_number" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePersonnelNumber(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetPersonnelNumber(*s)
+	}
+	return uuo
+}
+
+// ClearPersonnelNumber clears the value of the "personnel_number" field.
+func (uuo *UserUpdateOne) ClearPersonnelNumber() *UserUpdateOne {
+	uuo.mutation.ClearPersonnelNumber()
+	return uuo
+}
+
+// SetNationalCode sets the "national_code" field.
+func (uuo *UserUpdateOne) SetNationalCode(s string) *UserUpdateOne {
+	uuo.mutation.SetNationalCode(s)
+	return uuo
+}
+
+// SetNillableNationalCode sets the "national_code" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableNationalCode(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetNationalCode(*s)
+	}
+	return uuo
+}
+
+// ClearNationalCode clears the value of the "national_code" field.
+func (uuo *UserUpdateOne) ClearNationalCode() *UserUpdateOne {
+	uuo.mutation.ClearNationalCode()
+	return uuo
+}
+
 // SetBirthdate sets the "birthdate" field.
 func (uuo *UserUpdateOne) SetBirthdate(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetBirthdate(t)
@@ -1187,6 +1279,18 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.PasswordCleared() {
 		_spec.ClearField(user.FieldPassword, field.TypeString)
+	}
+	if value, ok := uuo.mutation.PersonnelNumber(); ok {
+		_spec.SetField(user.FieldPersonnelNumber, field.TypeString, value)
+	}
+	if uuo.mutation.PersonnelNumberCleared() {
+		_spec.ClearField(user.FieldPersonnelNumber, field.TypeString)
+	}
+	if value, ok := uuo.mutation.NationalCode(); ok {
+		_spec.SetField(user.FieldNationalCode, field.TypeString, value)
+	}
+	if uuo.mutation.NationalCodeCleared() {
+		_spec.ClearField(user.FieldNationalCode, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Birthdate(); ok {
 		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)

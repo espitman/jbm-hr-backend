@@ -90,6 +90,16 @@ func Password(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPassword, v))
 }
 
+// PersonnelNumber applies equality check predicate on the "personnel_number" field. It's identical to PersonnelNumberEQ.
+func PersonnelNumber(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPersonnelNumber, v))
+}
+
+// NationalCode applies equality check predicate on the "national_code" field. It's identical to NationalCodeEQ.
+func NationalCode(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldNationalCode, v))
+}
+
 // Birthdate applies equality check predicate on the "birthdate" field. It's identical to BirthdateEQ.
 func Birthdate(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBirthdate, v))
@@ -593,6 +603,156 @@ func PasswordEqualFold(v string) predicate.User {
 // PasswordContainsFold applies the ContainsFold predicate on the "password" field.
 func PasswordContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldPassword, v))
+}
+
+// PersonnelNumberEQ applies the EQ predicate on the "personnel_number" field.
+func PersonnelNumberEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberNEQ applies the NEQ predicate on the "personnel_number" field.
+func PersonnelNumberNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberIn applies the In predicate on the "personnel_number" field.
+func PersonnelNumberIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldPersonnelNumber, vs...))
+}
+
+// PersonnelNumberNotIn applies the NotIn predicate on the "personnel_number" field.
+func PersonnelNumberNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldPersonnelNumber, vs...))
+}
+
+// PersonnelNumberGT applies the GT predicate on the "personnel_number" field.
+func PersonnelNumberGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberGTE applies the GTE predicate on the "personnel_number" field.
+func PersonnelNumberGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberLT applies the LT predicate on the "personnel_number" field.
+func PersonnelNumberLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberLTE applies the LTE predicate on the "personnel_number" field.
+func PersonnelNumberLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberContains applies the Contains predicate on the "personnel_number" field.
+func PersonnelNumberContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberHasPrefix applies the HasPrefix predicate on the "personnel_number" field.
+func PersonnelNumberHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberHasSuffix applies the HasSuffix predicate on the "personnel_number" field.
+func PersonnelNumberHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberIsNil applies the IsNil predicate on the "personnel_number" field.
+func PersonnelNumberIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldPersonnelNumber))
+}
+
+// PersonnelNumberNotNil applies the NotNil predicate on the "personnel_number" field.
+func PersonnelNumberNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldPersonnelNumber))
+}
+
+// PersonnelNumberEqualFold applies the EqualFold predicate on the "personnel_number" field.
+func PersonnelNumberEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldPersonnelNumber, v))
+}
+
+// PersonnelNumberContainsFold applies the ContainsFold predicate on the "personnel_number" field.
+func PersonnelNumberContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldPersonnelNumber, v))
+}
+
+// NationalCodeEQ applies the EQ predicate on the "national_code" field.
+func NationalCodeEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldNationalCode, v))
+}
+
+// NationalCodeNEQ applies the NEQ predicate on the "national_code" field.
+func NationalCodeNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldNationalCode, v))
+}
+
+// NationalCodeIn applies the In predicate on the "national_code" field.
+func NationalCodeIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldNationalCode, vs...))
+}
+
+// NationalCodeNotIn applies the NotIn predicate on the "national_code" field.
+func NationalCodeNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldNationalCode, vs...))
+}
+
+// NationalCodeGT applies the GT predicate on the "national_code" field.
+func NationalCodeGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldNationalCode, v))
+}
+
+// NationalCodeGTE applies the GTE predicate on the "national_code" field.
+func NationalCodeGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldNationalCode, v))
+}
+
+// NationalCodeLT applies the LT predicate on the "national_code" field.
+func NationalCodeLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldNationalCode, v))
+}
+
+// NationalCodeLTE applies the LTE predicate on the "national_code" field.
+func NationalCodeLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldNationalCode, v))
+}
+
+// NationalCodeContains applies the Contains predicate on the "national_code" field.
+func NationalCodeContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldNationalCode, v))
+}
+
+// NationalCodeHasPrefix applies the HasPrefix predicate on the "national_code" field.
+func NationalCodeHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldNationalCode, v))
+}
+
+// NationalCodeHasSuffix applies the HasSuffix predicate on the "national_code" field.
+func NationalCodeHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldNationalCode, v))
+}
+
+// NationalCodeIsNil applies the IsNil predicate on the "national_code" field.
+func NationalCodeIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldNationalCode))
+}
+
+// NationalCodeNotNil applies the NotNil predicate on the "national_code" field.
+func NationalCodeNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldNationalCode))
+}
+
+// NationalCodeEqualFold applies the EqualFold predicate on the "national_code" field.
+func NationalCodeEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldNationalCode, v))
+}
+
+// NationalCodeContainsFold applies the ContainsFold predicate on the "national_code" field.
+func NationalCodeContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldNationalCode, v))
 }
 
 // BirthdateEQ applies the EQ predicate on the "birthdate" field.

@@ -5256,6 +5256,8 @@ type UserMutation struct {
 	role                   *user.Role
 	avatar                 *string
 	password               *string
+	personnel_number       *string
+	national_code          *string
 	birthdate              *time.Time
 	cooperation_start_date *time.Time
 	clearedFields          map[string]struct{}
@@ -5690,6 +5692,104 @@ func (m *UserMutation) ResetPassword() {
 	delete(m.clearedFields, user.FieldPassword)
 }
 
+// SetPersonnelNumber sets the "personnel_number" field.
+func (m *UserMutation) SetPersonnelNumber(s string) {
+	m.personnel_number = &s
+}
+
+// PersonnelNumber returns the value of the "personnel_number" field in the mutation.
+func (m *UserMutation) PersonnelNumber() (r string, exists bool) {
+	v := m.personnel_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPersonnelNumber returns the old "personnel_number" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldPersonnelNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPersonnelNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPersonnelNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPersonnelNumber: %w", err)
+	}
+	return oldValue.PersonnelNumber, nil
+}
+
+// ClearPersonnelNumber clears the value of the "personnel_number" field.
+func (m *UserMutation) ClearPersonnelNumber() {
+	m.personnel_number = nil
+	m.clearedFields[user.FieldPersonnelNumber] = struct{}{}
+}
+
+// PersonnelNumberCleared returns if the "personnel_number" field was cleared in this mutation.
+func (m *UserMutation) PersonnelNumberCleared() bool {
+	_, ok := m.clearedFields[user.FieldPersonnelNumber]
+	return ok
+}
+
+// ResetPersonnelNumber resets all changes to the "personnel_number" field.
+func (m *UserMutation) ResetPersonnelNumber() {
+	m.personnel_number = nil
+	delete(m.clearedFields, user.FieldPersonnelNumber)
+}
+
+// SetNationalCode sets the "national_code" field.
+func (m *UserMutation) SetNationalCode(s string) {
+	m.national_code = &s
+}
+
+// NationalCode returns the value of the "national_code" field in the mutation.
+func (m *UserMutation) NationalCode() (r string, exists bool) {
+	v := m.national_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNationalCode returns the old "national_code" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldNationalCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNationalCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNationalCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNationalCode: %w", err)
+	}
+	return oldValue.NationalCode, nil
+}
+
+// ClearNationalCode clears the value of the "national_code" field.
+func (m *UserMutation) ClearNationalCode() {
+	m.national_code = nil
+	m.clearedFields[user.FieldNationalCode] = struct{}{}
+}
+
+// NationalCodeCleared returns if the "national_code" field was cleared in this mutation.
+func (m *UserMutation) NationalCodeCleared() bool {
+	_, ok := m.clearedFields[user.FieldNationalCode]
+	return ok
+}
+
+// ResetNationalCode resets all changes to the "national_code" field.
+func (m *UserMutation) ResetNationalCode() {
+	m.national_code = nil
+	delete(m.clearedFields, user.FieldNationalCode)
+}
+
 // SetBirthdate sets the "birthdate" field.
 func (m *UserMutation) SetBirthdate(t time.Time) {
 	m.birthdate = &t
@@ -6077,7 +6177,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
 	}
@@ -6101,6 +6201,12 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.password != nil {
 		fields = append(fields, user.FieldPassword)
+	}
+	if m.personnel_number != nil {
+		fields = append(fields, user.FieldPersonnelNumber)
+	}
+	if m.national_code != nil {
+		fields = append(fields, user.FieldNationalCode)
 	}
 	if m.birthdate != nil {
 		fields = append(fields, user.FieldBirthdate)
@@ -6132,6 +6238,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Avatar()
 	case user.FieldPassword:
 		return m.Password()
+	case user.FieldPersonnelNumber:
+		return m.PersonnelNumber()
+	case user.FieldNationalCode:
+		return m.NationalCode()
 	case user.FieldBirthdate:
 		return m.Birthdate()
 	case user.FieldCooperationStartDate:
@@ -6161,6 +6271,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAvatar(ctx)
 	case user.FieldPassword:
 		return m.OldPassword(ctx)
+	case user.FieldPersonnelNumber:
+		return m.OldPersonnelNumber(ctx)
+	case user.FieldNationalCode:
+		return m.OldNationalCode(ctx)
 	case user.FieldBirthdate:
 		return m.OldBirthdate(ctx)
 	case user.FieldCooperationStartDate:
@@ -6230,6 +6344,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPassword(v)
 		return nil
+	case user.FieldPersonnelNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPersonnelNumber(v)
+		return nil
+	case user.FieldNationalCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNationalCode(v)
+		return nil
 	case user.FieldBirthdate:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -6280,6 +6408,12 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldPassword) {
 		fields = append(fields, user.FieldPassword)
 	}
+	if m.FieldCleared(user.FieldPersonnelNumber) {
+		fields = append(fields, user.FieldPersonnelNumber)
+	}
+	if m.FieldCleared(user.FieldNationalCode) {
+		fields = append(fields, user.FieldNationalCode)
+	}
 	if m.FieldCleared(user.FieldBirthdate) {
 		fields = append(fields, user.FieldBirthdate)
 	}
@@ -6305,6 +6439,12 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldPassword:
 		m.ClearPassword()
+		return nil
+	case user.FieldPersonnelNumber:
+		m.ClearPersonnelNumber()
+		return nil
+	case user.FieldNationalCode:
+		m.ClearNationalCode()
 		return nil
 	case user.FieldBirthdate:
 		m.ClearBirthdate()
@@ -6343,6 +6483,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPassword:
 		m.ResetPassword()
+		return nil
+	case user.FieldPersonnelNumber:
+		m.ResetPersonnelNumber()
+		return nil
+	case user.FieldNationalCode:
+		m.ResetNationalCode()
 		return nil
 	case user.FieldBirthdate:
 		m.ResetBirthdate()
