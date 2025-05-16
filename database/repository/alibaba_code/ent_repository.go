@@ -31,7 +31,7 @@ func convertToContractAlibabaCode(entCode *ent.AlibabaCode) *contract.AlibabaCod
 		assignToUserID = &entCode.Edges.AssignedToUser.ID
 	}
 	var assignAt *string
-	if !entCode.AssignAt.IsZero() {
+	if entCode.AssignAt != nil {
 		assignAtStr := entCode.AssignAt.Format(time.RFC3339)
 		assignAt = &assignAtStr
 	}
