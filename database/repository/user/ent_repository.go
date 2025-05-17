@@ -41,15 +41,26 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		departmentShortName = &entUser.Edges.Department.ShortName
 	}
 	var birthdate *string
+	var age *int
 	if !entUser.Birthdate.IsZero() {
 		birthdateStr := entUser.Birthdate.Format("2006-01-02")
 		birthdate = &birthdateStr
+
+		// Calculate age
+		today := time.Now()
+		ageValue := today.Year() - entUser.Birthdate.Year()
+		// Adjust age if birthday hasn't occurred this year
+		if today.Month() < entUser.Birthdate.Month() || (today.Month() == entUser.Birthdate.Month() && today.Day() < entUser.Birthdate.Day()) {
+			ageValue--
+		}
+		age = &ageValue
 	}
 	var cooperationStartDate *string
 	if !entUser.CooperationStartDate.IsZero() {
 		startDateStr := entUser.CooperationStartDate.Format("2006-01-02")
 		cooperationStartDate = &startDateStr
 	}
+
 	return &contract.User{
 		ID:                   entUser.ID,
 		Email:                entUser.Email,
@@ -69,6 +80,7 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		PersonnelNumber:      entUser.PersonnelNumber,
 		NationalCode:         entUser.NationalCode,
 		Confirmed:            entUser.Confirmed,
+		Age:                  age,
 	}
 }
 

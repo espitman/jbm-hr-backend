@@ -43,6 +43,7 @@ func convertToUserData(user *contract.User) UserData {
 		CooperationStartDate: user.CooperationStartDate,
 		PersonnelNumber:      user.PersonnelNumber,
 		NationalCode:         user.NationalCode,
+		Age:                  user.Age,
 	}
 }
 

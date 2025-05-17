@@ -3380,6 +3380,9 @@ const docTemplate = `{
         "contract.User": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer"
+                },
                 "avatar": {
                     "type": "string"
                 },
@@ -4463,6 +4466,9 @@ const docTemplate = `{
         "userhandler.UserData": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer"
+                },
                 "avatar": {
                     "type": "string"
                 },

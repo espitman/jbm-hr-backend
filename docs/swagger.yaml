@@ -320,6 +320,8 @@ definitions:
     type: object
   contract.User:
     properties:
+      age:
+        type: integer
       avatar:
         type: string
       birthdate:
@@ -1039,6 +1041,8 @@ definitions:
     type: object
   userhandler.UserData:
     properties:
+      age:
+        type: integer
       avatar:
         type: string
       birthdate:

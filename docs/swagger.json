@@ -3373,6 +3373,9 @@
         "contract.User": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer"
+                },
                 "avatar": {
                     "type": "string"
                 },
@@ -4456,6 +4459,9 @@
         "userhandler.UserData": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer"
+                },
                 "avatar": {
                     "type": "string"
                 },
