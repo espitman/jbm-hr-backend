@@ -46,13 +46,9 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		birthdateStr := entUser.Birthdate.Format("2006-01-02")
 		birthdate = &birthdateStr
 
-		// Calculate age
+		// Calculate age based on year difference only
 		today := time.Now()
 		ageValue := today.Year() - entUser.Birthdate.Year()
-		// Adjust age if birthday hasn't occurred this year
-		if today.Month() < entUser.Birthdate.Month() || (today.Month() == entUser.Birthdate.Month() && today.Day() < entUser.Birthdate.Day()) {
-			ageValue--
-		}
 		age = &ageValue
 	}
 	var cooperationStartDate *string
@@ -61,13 +57,9 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		startDateStr := entUser.CooperationStartDate.Format("2006-01-02")
 		cooperationStartDate = &startDateStr
 
-		// Calculate cooperation duration in years
+		// Calculate cooperation duration based on year difference only
 		today := time.Now()
 		durationValue := today.Year() - entUser.CooperationStartDate.Year()
-		// Adjust duration if anniversary hasn't occurred this year
-		if today.Month() < entUser.CooperationStartDate.Month() || (today.Month() == entUser.CooperationStartDate.Month() && today.Day() < entUser.CooperationStartDate.Day()) {
-			durationValue--
-		}
 		cooperationDuration = &durationValue
 	}
 
