@@ -372,5 +372,18 @@ func (s *service) GetUsersWithBirthdateInJalaliMonth(ctx context.Context) ([]*co
 
 // GetUsersWithCooperationStartDateInJalaliMonth retrieves all users whose cooperation start date is in the current Jalali month
 func (s *service) GetUsersWithCooperationStartDateInJalaliMonth(ctx context.Context) ([]*contract.User, error) {
-	return s.userRepo.GetUsersWithCooperationStartDateInJalaliMonth(ctx)
+	users, err := s.userRepo.GetUsersWithCooperationStartDateInJalaliMonth(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter out users with cooperation_duration of 0
+	var filteredUsers []*contract.User
+	for _, user := range users {
+		if user.CooperationDuration != nil && *user.CooperationDuration > 0 {
+			filteredUsers = append(filteredUsers, user)
+		}
+	}
+
+	return filteredUsers, nil
 }
