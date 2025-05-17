@@ -7,6 +7,7 @@ type AlibabaCode struct {
 	Used           bool    `json:"used"`
 	CreatedAt      string  `json:"created_at"`
 	AssignToUserID *int    `json:"assign_to_user_id,omitempty"`
+	AssignToUser   *User   `json:"assign_to_user,omitempty"`
 	AssignAt       *string `json:"assign_at,omitempty"`
 	Type           string  `json:"type"`
 }

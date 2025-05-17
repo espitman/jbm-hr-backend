@@ -124,6 +124,8 @@ definitions:
     properties:
       assign_at:
         type: string
+      assign_to_user:
+        $ref: '#/definitions/contract.User'
       assign_to_user_id:
         type: integer
       code:

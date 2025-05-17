@@ -28,8 +28,18 @@ func convertToContractAlibabaCode(entCode *ent.AlibabaCode, includeCode bool) (*
 		return nil, nil
 	}
 	var assignToUserID *int
+	var assignToUser *contract.User
 	if entCode.Edges.AssignedToUser != nil {
 		assignToUserID = &entCode.Edges.AssignedToUser.ID
+		assignToUser = &contract.User{
+			ID:        entCode.Edges.AssignedToUser.ID,
+			Email:     entCode.Edges.AssignedToUser.Email,
+			Phone:     entCode.Edges.AssignedToUser.Phone,
+			FirstName: entCode.Edges.AssignedToUser.FirstName,
+			LastName:  entCode.Edges.AssignedToUser.LastName,
+			Role:      string(entCode.Edges.AssignedToUser.Role),
+			Avatar:    entCode.Edges.AssignedToUser.Avatar,
+		}
 	}
 	var assignAt *string
 	if entCode.AssignAt != nil {
@@ -53,6 +63,7 @@ func convertToContractAlibabaCode(entCode *ent.AlibabaCode, includeCode bool) (*
 		Used:           entCode.Used,
 		CreatedAt:      entCode.CreatedAt.Format(time.RFC3339),
 		AssignToUserID: assignToUserID,
+		AssignToUser:   assignToUser,
 		AssignAt:       assignAt,
 		Type:           string(entCode.Type),
 	}, nil
@@ -149,8 +160,9 @@ func (r *EntRepository) Update(ctx context.Context, id int, req *contract.Update
 
 	if req.AssignToUserID != nil {
 		update = update.SetAssignToUserID(*req.AssignToUserID)
-	}
-	if req.AssignAt != "" {
+		// Set assign_at to current time when assigning to a user
+		update = update.SetAssignAt(time.Now())
+	} else if req.AssignAt != "" {
 		assignAt, err := time.Parse(time.RFC3339, req.AssignAt)
 		if err != nil {
 			return nil, err
