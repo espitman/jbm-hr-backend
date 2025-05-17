@@ -56,9 +56,19 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		age = &ageValue
 	}
 	var cooperationStartDate *string
+	var cooperationDuration *int
 	if !entUser.CooperationStartDate.IsZero() {
 		startDateStr := entUser.CooperationStartDate.Format("2006-01-02")
 		cooperationStartDate = &startDateStr
+
+		// Calculate cooperation duration in years
+		today := time.Now()
+		durationValue := today.Year() - entUser.CooperationStartDate.Year()
+		// Adjust duration if anniversary hasn't occurred this year
+		if today.Month() < entUser.CooperationStartDate.Month() || (today.Month() == entUser.CooperationStartDate.Month() && today.Day() < entUser.CooperationStartDate.Day()) {
+			durationValue--
+		}
+		cooperationDuration = &durationValue
 	}
 
 	return &contract.User{
@@ -81,6 +91,7 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		NationalCode:         entUser.NationalCode,
 		Confirmed:            entUser.Confirmed,
 		Age:                  age,
+		CooperationDuration:  cooperationDuration,
 	}
 }
 

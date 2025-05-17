@@ -3392,6 +3392,9 @@ const docTemplate = `{
                 "confirmed": {
                     "type": "boolean"
                 },
+                "cooperation_duration": {
+                    "type": "integer"
+                },
                 "cooperation_start_date": {
                     "type": "string"
                 },
@@ -4477,6 +4480,9 @@ const docTemplate = `{
                 },
                 "confirmed": {
                     "type": "boolean"
+                },
+                "cooperation_duration": {
+                    "type": "integer"
                 },
                 "cooperation_start_date": {
                     "type": "string"

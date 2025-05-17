@@ -3385,6 +3385,9 @@
                 "confirmed": {
                     "type": "boolean"
                 },
+                "cooperation_duration": {
+                    "type": "integer"
+                },
                 "cooperation_start_date": {
                     "type": "string"
                 },
@@ -4470,6 +4473,9 @@
                 },
                 "confirmed": {
                     "type": "boolean"
+                },
+                "cooperation_duration": {
+                    "type": "integer"
                 },
                 "cooperation_start_date": {
                     "type": "string"

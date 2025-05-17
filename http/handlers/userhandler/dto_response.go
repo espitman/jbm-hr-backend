@@ -103,6 +103,7 @@ type UserData struct {
 	NationalCode         string         `json:"national_code,omitempty"`
 	Confirmed            bool           `json:"confirmed"`
 	Age                  *int           `json:"age,omitempty"`
+	CooperationDuration  *int           `json:"cooperation_duration,omitempty"`
 }
 
 // ListUsersData represents the data structure for list users response
