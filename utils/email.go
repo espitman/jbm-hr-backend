@@ -106,11 +106,81 @@ func SendOTPEmail(to, otp string) error {
 	subject := "فهرست آشنایی - کد ورود یکبار مصرف"
 	body := fmt.Sprintf(`
 		<html>
-			<body dir="rtl" style="font-family: 'Vazir', sans-serif; font-size: 16px; line-height: 1.6; color: #333; direction: rtl;">
-				<h2>کد ورود یکبار مصرف شما</h2>
-				<p>کد: <strong>%s</strong></p>
-				<p>این کد در سه دقیقه دیگر منقضی می شود.</p>
-				<p>اگر این کد را درخواست نکرده اید، لطفا این ایمیل را نادیده بگیرید.</p>
+			<head>
+				<meta charset="UTF-8">
+				<link rel="preconnect" href="https://fonts.googleapis.com">
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+				<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+				<style>
+					* {
+						direction: rtl;
+					}
+					body {
+						font-family: "Vazirmatn", sans-serif;
+						font-optical-sizing: auto;
+						font-weight: 400;
+						font-style: normal;
+						font-size: 16px;
+						line-height: 1.6;
+						color: #333;
+						direction: rtl;
+						margin: 0;
+						padding: 0;
+						background-color: #f8f9fa;
+					}
+					.container {
+						max-width: 600px;
+						margin: 0 auto;
+						padding: 20px;
+						background-color: #ffffff;
+						border-radius: 8px;
+						box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+					}
+					.header {
+						text-align: center;
+						margin-bottom: 30px;
+					}
+					.header img {
+						width: 100%%;
+						max-width: 600px;
+						height: auto;
+						border-radius: 8px;
+					}
+					.otp-code {
+						background-color: #f8f9fa;
+						padding: 15px;
+						border-radius: 4px;
+						text-align: center;
+						font-size: 24px;
+						font-weight: 700;
+						letter-spacing: 4px;
+						margin: 20px 0;
+						direction: ltr;
+					}
+					.footer {
+						margin-top: 30px;
+						padding-top: 20px;
+						border-top: 1px solid #e9ecef;
+						font-size: 14px;
+						color: #6c757d;
+					}
+					h2 {
+						font-weight: 600;
+					}
+				</style>
+			</head>
+			<body>
+				<div class="container">
+					<div class="header">
+						<img src="https://jabama-files.storage.c2.liara.space/images/email/otp-banner.jpg" alt="OTP Banner">
+					</div>
+					<h2 style="text-align: center; color: #212529;">کد ورود یکبار مصرف شما</h2>
+					<div class="otp-code">%s</div>
+					<p style="text-align: center; color: #6c757d;">این کد در سه دقیقه دیگر منقضی می شود.</p>
+					<div class="footer">
+						<p style="text-align: center;">اگر این کد را درخواست نکرده اید، لطفا این ایمیل را نادیده بگیرید.</p>
+					</div>
+				</div>
 			</body>
 		</html>
 	`, otp)
