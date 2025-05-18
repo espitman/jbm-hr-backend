@@ -22,6 +22,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/digikalacodehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/infohandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/requesthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/resumehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
@@ -33,6 +34,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/service/departmentservice"
 	"github.com/espitman/jbm-hr-backend/service/digikalacodeservice"
 	"github.com/espitman/jbm-hr-backend/service/hrteamservice"
+	"github.com/espitman/jbm-hr-backend/service/infoservice"
 	"github.com/espitman/jbm-hr-backend/service/requestservice"
 	"github.com/espitman/jbm-hr-backend/service/resumeservice"
 	"github.com/espitman/jbm-hr-backend/service/uploadservice"
@@ -105,6 +107,7 @@ func main() {
 	requestService := requestservice.New(requestRepo)
 	digikalaCodeService := digikalacodeservice.New(digikalaCodeRepo)
 	alibabaCodeService := alibabacodeservice.NewService(alibabaCodeRepo)
+	infoService := infoservice.NewInfoService(userRepo, requestRepo, resumeRepo, departmentRepo)
 
 	// Initialize upload service
 	uploadService, err := uploadservice.New()
@@ -127,6 +130,7 @@ func main() {
 	requestAdminHandler := requesthandler.NewAdminHandler(requestService)
 	digikalaCodeAdminHandler := digikalacodehandler.NewDigikalaCodeAdminHandler(digikalaCodeService)
 	alibabaCodeAdminHandler := alibabacodehandler.NewAlibabaCodeAdminHandler(alibabaCodeService)
+	infoHandler := infohandler.NewInfoHandler(infoService)
 
 	// Initialize UI handler
 	webPath, _ := filepath.Abs("ui/web")
@@ -150,6 +154,7 @@ func main() {
 		requestAdminHandler,
 		digikalaCodeAdminHandler,
 		alibabaCodeAdminHandler,
+		infoHandler,
 	)
 	r.SetupRoutes()
 

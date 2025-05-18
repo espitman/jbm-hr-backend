@@ -55,4 +55,7 @@ type Repository interface {
 
 	// GetUsersWithCooperationStartDateInJalaliMonth retrieves all users whose cooperation start date is in the current Jalali month
 	GetUsersWithCooperationStartDateInJalaliMonth(ctx context.Context) ([]*contract.User, error)
+
+	// GetTotalCount returns the total number of users
+	GetTotalCount(ctx context.Context) (int, error)
 }

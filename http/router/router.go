@@ -9,6 +9,7 @@ import (
 	"github.com/espitman/jbm-hr-backend/http/handlers/departmenthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/digikalacodehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/hrteamhandler"
+	"github.com/espitman/jbm-hr-backend/http/handlers/infohandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/requesthandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/resumehandler"
 	"github.com/espitman/jbm-hr-backend/http/handlers/uihandler"
@@ -38,6 +39,7 @@ type Router struct {
 	requestAdminHandler      *requesthandler.AdminHandler
 	digikalaCodeAdminHandler *digikalacodehandler.DigikalaCodeAdminHandler
 	alibabaCodeAdminHandler  *alibabacodehandler.AlibabaCodeAdminHandler
+	infoHandler              *infohandler.InfoHandler
 }
 
 // NewRouter creates a new router instance
@@ -57,6 +59,7 @@ func NewRouter(
 	requestAdminHandler *requesthandler.AdminHandler,
 	digikalaCodeAdminHandler *digikalacodehandler.DigikalaCodeAdminHandler,
 	alibabaCodeAdminHandler *alibabacodehandler.AlibabaCodeAdminHandler,
+	infoHandler *infohandler.InfoHandler,
 ) *Router {
 	e := echo.New()
 	e.Use(customMiddleware.Logger())
@@ -80,6 +83,7 @@ func NewRouter(
 		requestAdminHandler:      requestAdminHandler,
 		digikalaCodeAdminHandler: digikalaCodeAdminHandler,
 		alibabaCodeAdminHandler:  alibabaCodeAdminHandler,
+		infoHandler:              infoHandler,
 	}
 }
 
@@ -116,6 +120,7 @@ func (r *Router) SetupRoutes() {
 	r.registerRequestAdminRoutes(apiV1Admin)
 	r.registerDigikalaCodeAdminRoutes(apiV1Admin)
 	r.registerAlibabaCodeAdminRoutes(apiV1Admin)
+	r.registerInfoAdminRoutes(apiV1Admin)
 
 	// Add Swagger
 	r.GET("/swagger/*", echoSwagger.WrapHandler)

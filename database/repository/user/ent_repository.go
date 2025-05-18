@@ -423,3 +423,8 @@ func (r *EntRepository) GetUsersWithCooperationStartDateInJalaliMonth(ctx contex
 	}
 	return result, nil
 }
+
+// GetTotalCount returns the total number of users
+func (r *EntRepository) GetTotalCount(ctx context.Context) (int, error) {
+	return r.client.User.Query().Count(ctx)
+}

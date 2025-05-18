@@ -25,4 +25,7 @@ type Repository interface {
 
 	// List retrieves a paginated list of departments
 	List(ctx context.Context, page, limit int) ([]*contract.Department, int, error)
+
+	// GetTotalCount returns the total number of departments
+	GetTotalCount(ctx context.Context) (int, error)
 }

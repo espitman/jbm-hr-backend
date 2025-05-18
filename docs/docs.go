@@ -1020,6 +1020,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/admin/info/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get counts of users, requests, resumes, and departments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "info - admin"
+                ],
+                "summary": "Get dashboard information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/infohandler.DashboardInfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/login": {
             "post": {
                 "description": "Authenticate admin user with email and password",
@@ -3763,6 +3797,30 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "infohandler.DashboardInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "departments": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requests": {
+                    "type": "integer"
+                },
+                "resumes": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "users": {
+                    "type": "integer"
                 }
             }
         },

@@ -25,4 +25,7 @@ type Repository interface {
 
 	// List retrieves a paginated list of resumes
 	List(ctx context.Context, page, limit int) ([]*contract.Resume, int, error)
+
+	// GetTotalCount returns the total number of resumes
+	GetTotalCount(ctx context.Context) (int, error)
 }

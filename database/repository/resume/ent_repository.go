@@ -190,3 +190,8 @@ func (r *repository) List(ctx context.Context, page, limit int) ([]*contract.Res
 
 	return result, total, nil
 }
+
+// GetTotalCount returns the total number of resumes
+func (r *repository) GetTotalCount(ctx context.Context) (int, error) {
+	return r.client.Resume.Query().Count(ctx)
+}

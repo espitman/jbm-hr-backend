@@ -132,3 +132,8 @@ func (r *EntRepository) List(ctx context.Context, page, limit int) ([]*contract.
 
 	return departments, total, nil
 }
+
+// GetTotalCount returns the total number of departments
+func (r *EntRepository) GetTotalCount(ctx context.Context) (int, error) {
+	return r.client.Department.Query().Count(ctx)
+}
