@@ -46,6 +46,7 @@ func convertToUserData(user *contract.User) UserData {
 		Age:                  user.Age,
 		CooperationDuration:  user.CooperationDuration,
 		Confirmed:            user.Confirmed,
+		Active:               user.Active,
 	}
 }
 
@@ -584,7 +585,7 @@ func (h *UserHandler) GetUsersWithCooperationStartDateInJalaliMonth(c echo.Conte
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
-// @Success 200 {object} dto.Response
+// @Success 200 {object} UserData
 // @Failure 400 {object} dto.Response
 // @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
@@ -603,7 +604,7 @@ func (h *UserHandler) ActivateUser(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, user)
+	return dto.SuccessJSON(c, convertToUserData(user))
 }
 
 // DeactivateUser deactivates a user's account
@@ -613,7 +614,7 @@ func (h *UserHandler) ActivateUser(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
-// @Success 200 {object} dto.Response
+// @Success 200 {object} UserData
 // @Failure 400 {object} dto.Response
 // @Failure 404 {object} dto.Response
 // @Failure 500 {object} dto.Response
@@ -632,5 +633,5 @@ func (h *UserHandler) DeactivateUser(c echo.Context) error {
 		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return dto.SuccessJSON(c, user)
+	return dto.SuccessJSON(c, convertToUserData(user))
 }

@@ -1917,7 +1917,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.Response"
+                            "$ref": "#/definitions/userhandler.UserData"
                         }
                     },
                     "400": {
@@ -2159,7 +2159,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.Response"
+                            "$ref": "#/definitions/userhandler.UserData"
                         }
                     },
                     "400": {
@@ -4630,6 +4630,9 @@ const docTemplate = `{
         "userhandler.UserData": {
             "type": "object",
             "properties": {
+                "active": {
+                    "type": "boolean"
+                },
                 "age": {
                     "type": "integer"
                 },

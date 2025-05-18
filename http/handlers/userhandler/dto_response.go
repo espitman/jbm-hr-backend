@@ -102,6 +102,7 @@ type UserData struct {
 	PersonnelNumber      string         `json:"personnel_number,omitempty"`
 	NationalCode         string         `json:"national_code,omitempty"`
 	Confirmed            bool           `json:"confirmed"`
+	Active               bool           `json:"active"`
 	Age                  *int           `json:"age,omitempty"`
 	CooperationDuration  *int           `json:"cooperation_duration,omitempty"`
 }
