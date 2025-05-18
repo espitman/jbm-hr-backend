@@ -103,14 +103,14 @@ func SendEmail(to, subject, body string) error {
 
 // SendOTPEmail sends an OTP code to a user's email
 func SendOTPEmail(to, otp string) error {
-	subject := "Your OTP Code"
+	subject := "فهرست آشنایی - کد ورود یکبار مصرف"
 	body := fmt.Sprintf(`
 		<html>
-			<body>
-				<h2>Your OTP Code</h2>
-				<p>Your OTP code is: <strong>%s</strong></p>
-				<p>This code will expire in 5 minutes.</p>
-				<p>If you didn't request this code, please ignore this email.</p>
+			<body dir="rtl" style="font-family: 'Vazir', sans-serif; font-size: 16px; line-height: 1.6; color: #333; direction: rtl;">
+				<h2>کد ورود یکبار مصرف شما</h2>
+				<p>کد: <strong>%s</strong></p>
+				<p>این کد در سه دقیقه دیگر منقضی می شود.</p>
+				<p>اگر این کد را درخواست نکرده اید، لطفا این ایمیل را نادیده بگیرید.</p>
 			</body>
 		</html>
 	`, otp)
