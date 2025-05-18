@@ -115,6 +115,11 @@ func Confirmed(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldConfirmed, v))
 }
 
+// Active applies equality check predicate on the "active" field. It's identical to ActiveEQ.
+func Active(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldActive, v))
+}
+
 // EmailEQ applies the EQ predicate on the "email" field.
 func EmailEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))
@@ -848,6 +853,16 @@ func ConfirmedEQ(v bool) predicate.User {
 // ConfirmedNEQ applies the NEQ predicate on the "confirmed" field.
 func ConfirmedNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldConfirmed, v))
+}
+
+// ActiveEQ applies the EQ predicate on the "active" field.
+func ActiveEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldActive, v))
+}
+
+// ActiveNEQ applies the NEQ predicate on the "active" field.
+func ActiveNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldActive, v))
 }
 
 // HasOtps applies the HasEdge predicate on the "otps" edge.

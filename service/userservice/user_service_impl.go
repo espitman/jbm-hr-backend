@@ -37,9 +37,14 @@ func New(userRepo user.Repository, otpRepo otp.Repository) Service {
 // RequestOTP generates and sends a new OTP for a user
 func (s *service) RequestOTP(ctx context.Context, email string) (*contract.OTP, error) {
 	// Check if user exists
-	_, err := s.userRepo.GetByEmail(ctx, email)
+	user, err := s.userRepo.GetByEmail(ctx, email)
 	if err != nil {
 		return nil, contract.ErrUserNotFound
+	}
+
+	// Check if user is active
+	if !user.Active {
+		return nil, errors.New("کاربر غیر فعال شده است.")
 	}
 
 	// Check for existing active OTPs
@@ -87,6 +92,11 @@ func (s *service) VerifyOTP(ctx context.Context, email string, code string) (str
 	user, err := s.userRepo.GetByEmail(ctx, email)
 	if err != nil {
 		return "", nil, contract.ErrUserNotFound
+	}
+
+	// Check if user is active
+	if !user.Active {
+		return "", nil, errors.New("کاربر غیر فعال شده است.")
 	}
 
 	// Verify user ID matches

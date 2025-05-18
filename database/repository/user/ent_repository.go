@@ -82,6 +82,7 @@ func convertToContractUser(entUser *ent.User) *contract.User {
 		PersonnelNumber:      entUser.PersonnelNumber,
 		NationalCode:         entUser.NationalCode,
 		Confirmed:            entUser.Confirmed,
+		Active:               entUser.Active,
 		Age:                  age,
 		CooperationDuration:  cooperationDuration,
 	}

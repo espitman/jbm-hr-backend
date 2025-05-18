@@ -53,6 +53,8 @@ func (User) Fields() []ent.Field {
 			Optional(),
 		field.Bool("confirmed").
 			Default(false),
+		field.Bool("active").
+			Default(true),
 	}
 }
 

@@ -152,6 +152,20 @@ func (uc *UserCreate) SetNillableConfirmed(b *bool) *UserCreate {
 	return uc
 }
 
+// SetActive sets the "active" field.
+func (uc *UserCreate) SetActive(b bool) *UserCreate {
+	uc.mutation.SetActive(b)
+	return uc
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (uc *UserCreate) SetNillableActive(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetActive(*b)
+	}
+	return uc
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by IDs.
 func (uc *UserCreate) AddOtpIDs(ids ...int) *UserCreate {
 	uc.mutation.AddOtpIDs(ids...)
@@ -289,6 +303,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultConfirmed
 		uc.mutation.SetConfirmed(v)
 	}
+	if _, ok := uc.mutation.Active(); !ok {
+		v := user.DefaultActive
+		uc.mutation.SetActive(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -359,6 +377,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Confirmed(); !ok {
 		return &ValidationError{Name: "confirmed", err: errors.New(`ent: missing required field "User.confirmed"`)}
+	}
+	if _, ok := uc.mutation.Active(); !ok {
+		return &ValidationError{Name: "active", err: errors.New(`ent: missing required field "User.active"`)}
 	}
 	return nil
 }
@@ -437,6 +458,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Confirmed(); ok {
 		_spec.SetField(user.FieldConfirmed, field.TypeBool, value)
 		_node.Confirmed = value
+	}
+	if value, ok := uc.mutation.Active(); ok {
+		_spec.SetField(user.FieldActive, field.TypeBool, value)
+		_node.Active = value
 	}
 	if nodes := uc.mutation.OtpsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

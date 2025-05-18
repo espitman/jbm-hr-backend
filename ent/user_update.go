@@ -240,6 +240,20 @@ func (uu *UserUpdate) SetNillableConfirmed(b *bool) *UserUpdate {
 	return uu
 }
 
+// SetActive sets the "active" field.
+func (uu *UserUpdate) SetActive(b bool) *UserUpdate {
+	uu.mutation.SetActive(b)
+	return uu
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableActive(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetActive(*b)
+	}
+	return uu
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by IDs.
 func (uu *UserUpdate) AddOtpIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddOtpIDs(ids...)
@@ -584,6 +598,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Confirmed(); ok {
 		_spec.SetField(user.FieldConfirmed, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.Active(); ok {
+		_spec.SetField(user.FieldActive, field.TypeBool, value)
 	}
 	if uu.mutation.OtpsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1065,6 +1082,20 @@ func (uuo *UserUpdateOne) SetNillableConfirmed(b *bool) *UserUpdateOne {
 	return uuo
 }
 
+// SetActive sets the "active" field.
+func (uuo *UserUpdateOne) SetActive(b bool) *UserUpdateOne {
+	uuo.mutation.SetActive(b)
+	return uuo
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableActive(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetActive(*b)
+	}
+	return uuo
+}
+
 // AddOtpIDs adds the "otps" edge to the OTP entity by IDs.
 func (uuo *UserUpdateOne) AddOtpIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddOtpIDs(ids...)
@@ -1439,6 +1470,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Confirmed(); ok {
 		_spec.SetField(user.FieldConfirmed, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.Active(); ok {
+		_spec.SetField(user.FieldActive, field.TypeBool, value)
 	}
 	if uuo.mutation.OtpsCleared() {
 		edge := &sqlgraph.EdgeSpec{

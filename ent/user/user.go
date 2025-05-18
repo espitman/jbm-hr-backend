@@ -40,6 +40,8 @@ const (
 	FieldCooperationStartDate = "cooperation_start_date"
 	// FieldConfirmed holds the string denoting the confirmed field in the database.
 	FieldConfirmed = "confirmed"
+	// FieldActive holds the string denoting the active field in the database.
+	FieldActive = "active"
 	// EdgeOtps holds the string denoting the otps edge name in mutations.
 	EdgeOtps = "otps"
 	// EdgeResumes holds the string denoting the resumes edge name in mutations.
@@ -114,6 +116,7 @@ var Columns = []string{
 	FieldBirthdate,
 	FieldCooperationStartDate,
 	FieldConfirmed,
+	FieldActive,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
@@ -154,6 +157,8 @@ var (
 	NationalCodeValidator func(string) error
 	// DefaultConfirmed holds the default value on creation for the "confirmed" field.
 	DefaultConfirmed bool
+	// DefaultActive holds the default value on creation for the "active" field.
+	DefaultActive bool
 )
 
 // Role defines the type for the "role" enum field.
@@ -253,6 +258,11 @@ func ByCooperationStartDate(opts ...sql.OrderTermOption) OrderOption {
 // ByConfirmed orders the results by the confirmed field.
 func ByConfirmed(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldConfirmed, opts...).ToFunc()
+}
+
+// ByActive orders the results by the active field.
+func ByActive(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldActive, opts...).ToFunc()
 }
 
 // ByOtpsCount orders the results by otps count.

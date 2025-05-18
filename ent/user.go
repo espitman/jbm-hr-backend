@@ -44,6 +44,8 @@ type User struct {
 	CooperationStartDate time.Time `json:"cooperation_start_date,omitempty"`
 	// Confirmed holds the value of the "confirmed" field.
 	Confirmed bool `json:"confirmed,omitempty"`
+	// Active holds the value of the "active" field.
+	Active bool `json:"active,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges            UserEdges `json:"edges"`
@@ -131,7 +133,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldConfirmed:
+		case user.FieldConfirmed, user.FieldActive:
 			values[i] = new(sql.NullBool)
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
@@ -239,6 +241,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field confirmed", values[i])
 			} else if value.Valid {
 				u.Confirmed = value.Bool
+			}
+		case user.FieldActive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field active", values[i])
+			} else if value.Valid {
+				u.Active = value.Bool
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -350,6 +358,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("confirmed=")
 	builder.WriteString(fmt.Sprintf("%v", u.Confirmed))
+	builder.WriteString(", ")
+	builder.WriteString("active=")
+	builder.WriteString(fmt.Sprintf("%v", u.Active))
 	builder.WriteByte(')')
 	return builder.String()
 }

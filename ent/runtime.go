@@ -258,4 +258,8 @@ func init() {
 	userDescConfirmed := userFields[12].Descriptor()
 	// user.DefaultConfirmed holds the default value on creation for the confirmed field.
 	user.DefaultConfirmed = userDescConfirmed.Default.(bool)
+	// userDescActive is the schema descriptor for active field.
+	userDescActive := userFields[13].Descriptor()
+	// user.DefaultActive holds the default value on creation for the active field.
+	user.DefaultActive = userDescActive.Default.(bool)
 }
