@@ -425,6 +425,18 @@ func (r *EntRepository) GetUsersWithCooperationStartDateInJalaliMonth(ctx contex
 	return result, nil
 }
 
+// UpdateActive updates a user's active status
+func (r *EntRepository) UpdateActive(ctx context.Context, id int, active bool) (*contract.User, error) {
+	entUser, err := r.client.User.
+		UpdateOneID(id).
+		SetActive(active).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return convertToContractUser(entUser), nil
+}
+
 // GetTotalCount returns the total number of users
 func (r *EntRepository) GetTotalCount(ctx context.Context) (int, error) {
 	return r.client.User.Query().Count(ctx)

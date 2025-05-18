@@ -38,6 +38,9 @@ type Repository interface {
 	// UpdateConfirmed updates a user's confirmed status
 	UpdateConfirmed(ctx context.Context, id int) (*contract.User, error)
 
+	// UpdateActive updates a user's active status
+	UpdateActive(ctx context.Context, id int, active bool) (*contract.User, error)
+
 	// Delete deletes a user by their ID
 	Delete(ctx context.Context, id int) error
 

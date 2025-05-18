@@ -60,6 +60,9 @@ type Service interface {
 	// UpdateConfirmed updates a user's confirmed status
 	UpdateConfirmed(ctx context.Context, id int) (*contract.User, error)
 
+	// UpdateActive updates a user's active status
+	UpdateActive(ctx context.Context, id int, active bool) (*contract.User, error)
+
 	// SearchUsers searches users by term (full name, email, or phone)
 	SearchUsers(ctx context.Context, term string) ([]*contract.User, error)
 

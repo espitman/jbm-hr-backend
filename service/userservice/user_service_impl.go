@@ -397,3 +397,20 @@ func (s *service) GetUsersWithCooperationStartDateInJalaliMonth(ctx context.Cont
 
 	return filteredUsers, nil
 }
+
+// UpdateActive updates a user's active status
+func (s *service) UpdateActive(ctx context.Context, id int, active bool) (*contract.User, error) {
+	// Check if user exists
+	_, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, contract.ErrUserNotFound
+	}
+
+	// Update active status
+	updatedUser, err := s.userRepo.UpdateActive(ctx, id, active)
+	if err != nil {
+		return nil, contract.ErrDatabaseQuery
+	}
+
+	return updatedUser, nil
+}

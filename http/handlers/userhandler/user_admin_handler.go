@@ -576,3 +576,61 @@ func (h *UserHandler) GetUsersWithCooperationStartDateInJalaliMonth(c echo.Conte
 		Total: int64(len(usersData)),
 	})
 }
+
+// ActivateUser activates a user's account
+// @Summary Activate user account
+// @Description Activate a user's account by setting active to true
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} dto.Response
+// @Failure 400 {object} dto.Response
+// @Failure 404 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/admin/users/{id}/active [put]
+func (h *UserHandler) ActivateUser(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return dto.BadRequestJSON(c, "invalid user ID")
+	}
+
+	user, err := h.userService.UpdateActive(c.Request().Context(), id, true)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, user)
+}
+
+// DeactivateUser deactivates a user's account
+// @Summary Deactivate user account
+// @Description Deactivate a user's account by setting active to false
+// @Tags users - admin
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} dto.Response
+// @Failure 400 {object} dto.Response
+// @Failure 404 {object} dto.Response
+// @Failure 500 {object} dto.Response
+// @Router /api/v1/admin/users/{id}/deactivate [put]
+func (h *UserHandler) DeactivateUser(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return dto.BadRequestJSON(c, "invalid user ID")
+	}
+
+	user, err := h.userService.UpdateActive(c.Request().Context(), id, false)
+	if err != nil {
+		if err == contract.ErrUserNotFound {
+			return dto.ErrorJSON(c, http.StatusNotFound, err.Error())
+		}
+		return dto.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return dto.SuccessJSON(c, user)
+}

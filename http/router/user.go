@@ -38,6 +38,8 @@ func (r *Router) registerUserAdminRoutes(group *echo.Group) {
 		users.PUT("/:id/avatar", r.userHandler.UpdateUserAvatar)
 		users.PUT("/:id/birthdate", r.userHandler.UpdateUserBirthdate)
 		users.PUT("/:id/cooperation-start-date", r.userHandler.UpdateUserCooperationStartDate)
+		users.PUT("/:id/active", r.userHandler.ActivateUser)
+		users.PUT("/:id/deactivate", r.userHandler.DeactivateUser)
 		users.GET("/search/:term", r.userHandler.SearchUsers)
 		users.GET("/today-birthdate", r.userHandler.GetUsersWithTodayBirthdate)
 		users.GET("/today-cooperation-start-date", r.userHandler.GetUsersWithTodayCooperationStartDate)

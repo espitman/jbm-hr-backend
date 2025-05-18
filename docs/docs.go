@@ -1891,6 +1891,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/admin/users/{id}/active": {
+            "put": {
+                "description": "Activate a user's account by setting active to true",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users - admin"
+                ],
+                "summary": "Activate user account",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/users/{id}/avatar": {
             "put": {
                 "security": [
@@ -2060,6 +2110,56 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/userhandler.UpdateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/users/{id}/deactivate": {
+            "put": {
+                "description": "Deactivate a user's account by setting active to false",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users - admin"
+                ],
+                "summary": "Deactivate user account",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Response"
                         }
                     },
                     "400": {
@@ -3414,6 +3514,9 @@ const docTemplate = `{
         "contract.User": {
             "type": "object",
             "properties": {
+                "active": {
+                    "type": "boolean"
+                },
                 "age": {
                     "type": "integer"
                 },
